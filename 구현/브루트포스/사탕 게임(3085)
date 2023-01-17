@@ -1,0 +1,116 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+int check();
+int change(char c,int row, int col);
+
+int N;
+char board[51][51];
+
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+
+void print() {
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cout << board[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+int change(int row, int col) {
+    int max = 0;
+    for (int i = 0; i < 4; i ++) {
+        int nx = row + dx[i];
+        int ny = col + dy[i];
+        if (nx < 0 || nx > N - 1 || ny < 0 || ny > N - 1 || board[row][col] == board[nx][ny]) {
+            continue;
+        }
+        char temp = board[nx][ny];
+        board[nx][ny] = board[row][col];
+        board[row][col] = temp;
+        cout << "변경후" << endl;
+        print();
+        
+        int maxs = check();
+        cout << maxs << endl;
+        if (maxs > max) {
+            max = maxs;
+        }
+        
+        temp = board[nx][ny];
+        board[nx][ny] = board[row][col];
+        board[row][col] = temp;
+
+    }
+    return max;
+}
+
+int check() {
+    int cMax = 0;
+    // 가로 계산
+    for(int i = 0; i < N; i ++) {
+        int sum = 1;
+        char before = board[i][0];
+        for (int j = 0; j < N-1; j ++) {
+            if (before == board[i][j+1]) {
+                sum ++;
+            }
+            else {
+                if (sum > cMax) {
+                    cMax = sum;
+                }
+                before = board[i][j+1];
+                sum = 1;
+            }
+        }
+        if (sum > cMax) {
+            cMax = sum;
+        }
+    }
+
+    // 세로 계산
+    for(int i = 0; i < N; i ++) {
+        int sum = 1;
+        char before = board[0][i];
+        for (int j = 0; j < N-1; j ++) {
+            if (before == board[j+1][i]) {
+                sum ++;
+            }
+            else {
+                if (sum > cMax) {
+                    cMax = sum;
+                }
+                before = board[j+1][i];
+                sum = 1;
+            }
+        }
+        if (sum > cMax) {
+            cMax = sum;
+        }
+    }
+    
+    return cMax; 
+}
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> board[i][j];
+        }
+    }
+
+    int max = 0;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            int cnt = change(i, j);
+            if (cnt > max) {
+                max = cnt;
+            }
+        }
+    }
+
+    cout << max;
+}

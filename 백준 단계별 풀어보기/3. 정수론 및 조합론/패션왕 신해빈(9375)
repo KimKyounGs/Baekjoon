@@ -1,0 +1,37 @@
+/*
+아이디어 :
+
+참고 : https://rujang.tistory.com/entry/%EB%B0%B1%EC%A4%80-9375%EB%B2%88-%ED%8C%A8%EC%85%98%EC%99%95-%EC%8B%A0%ED%95%B4%EB%B9%88-CC
+map : https://blockdmask.tistory.com/87
+*/
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+int N;
+map<string, int>::iterator iter;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int T;
+    cin >> T;
+    while(T--) {
+        map<string, int> m;
+        cin >> N;
+        for (int i = 0; i < N; i ++) {
+            string a, b;
+            cin >> a >> b;
+            m[b] ++;
+        }
+
+        int result = 1;
+        for (iter = m.begin(); iter != m.end(); iter ++) {
+            result *= iter->second + 1;
+        }
+
+        cout << result-1 << '\n';
+    }    
+}

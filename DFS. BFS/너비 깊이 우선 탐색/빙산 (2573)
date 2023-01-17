@@ -1,0 +1,98 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M;
+int graph[301][301];
+int visited[301][301];
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void BFS(int x, int y) {
+    queue <pair<int, int> > q;
+    q.push({x,y});
+    visited[x][y] = true;
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || ny < 0 || nx > N - 1 || ny > M - 1 || visited[nx][ny]) { // 범위 체크 및 방문 체크
+                continue;
+            }
+
+            // 원래 빙산이였던 곳이 0으로 바뀔 수 있기 때문에 원래 바다(0)인 곳과 빙산(1이상 인 곳)은 방문하였는가 안하였는가의 차이이다.
+            if (graph[nx][ny] == 0 && !visited[nx][ny]) { // 상하좌우중에 0을 만나면 -1 (방문하지 않은 곳이여야 함 !) 
+                if (graph[x][y] > 0) { // 최소 0까지
+                    graph[x][y] --;
+                }
+            }
+    
+            if (graph[nx][ny] > 0) {
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+            }
+        }
+    }
+}
+void DFS(int x, int y) {
+    visited[x][y] = true; // 1.방문처리
+
+    for (int i = 0; i < 4; i ++) { // 2.상하좌우
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        if (nx < 0 || ny < 0 || nx > N - 1 || ny > M - 1 || visited[nx][ny]) { // 범위 체크 및 방문 체크
+            continue;
+        }
+
+        // 원래 빙산이였던 곳이 0으로 바뀔 수 있기 때문에 원래 바다(0)인 곳과 빙산(1이상 인 곳)은 방문하였는가 안하였는가의 차이이다.
+        if (graph[nx][ny] == 0 && !visited[nx][ny]) { // 상하좌우중에 0을 만나면 -1 (방문하지 않은 곳이여야 함 !) 
+            if (graph[x][y] > 0) { // 최소 0까지
+                graph[x][y] --;
+            }
+        }
+
+        if (graph[nx][ny] > 0) {
+            DFS(nx, ny);
+        }
+    }
+
+}
+
+int main() {
+    cin >> N >> M;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < M; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    int result = 0, cnt = 0;
+    while (1) {
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < M; j ++) {
+                if (graph[i][j] > 0 && !visited[i][j]) {
+                    BFS(i, j);
+                    cnt ++;
+                }
+            }
+        }
+        result ++;
+        if (cnt == 0) {
+            cout << "0" << endl;
+            return 0;
+        }
+        else if (cnt > 1) {
+            cout << result-1 << endl;
+            return 0;
+        }
+        // 초기화
+        cnt = 0;
+        memset(visited, 0, sizeof(visited));
+    }
+}

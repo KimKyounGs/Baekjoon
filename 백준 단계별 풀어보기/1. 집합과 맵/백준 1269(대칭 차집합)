@@ -1,0 +1,54 @@
+/*
+아이디어 :
+
+set : https://blockdmask.tistory.com/79
+iter : https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=kks227&logNo=60208809639
+반복자 : https://eehoeskrap.tistory.com/263
+무효화 현상 : https://showmiso.tistory.com/20
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+
+int N, M;
+int result;
+set<int> A;
+set<int> B;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> N >> M;
+
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        A.insert(n);
+    }
+
+    for (int i = 0; i < M; i ++) {
+        int n;
+        cin >> n;
+        B.insert(n);
+    }
+
+    set<int>::iterator iter;
+    for (iter = A.begin(); iter != A.end(); iter ++) {
+        if (B.find(*iter) != B.end()) {
+            result ++;
+        }
+    }
+
+    for (iter = B.begin(); iter != B.end(); iter ++) {
+        if (A.find(*iter) != A.end()) {
+            result ++;
+        }
+    }
+
+    cout << N+M-result << '\n';
+}

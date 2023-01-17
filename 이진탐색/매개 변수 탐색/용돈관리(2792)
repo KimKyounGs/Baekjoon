@@ -1,0 +1,57 @@
+/*
+# 아이디어 
+금액을 찾는 것(K). 금액을 1원부터 10000원까지 for문으로 설정하고 N개를 전부다 확인하면 O(10000 * 100000)정도 걸린다. 따라서 O(log)시간이 걸리도록 해야한다.
+
+참고 : https://velog.io/@jh991012/%EB%B0%B1%EC%A4%80c-6236%EB%B2%88-%EC%9A%A9%EB%8F%88-%EA%B4%80%EB%A6%AC
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    vector<int> price;
+    int max = 0;
+    int sum = 0;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        if (n > max) {
+            max = n;
+        }
+        sum += n;
+        price.push_back(n);
+    }
+
+    int start = max;
+    int end = sum;
+    int result = 10001;
+    int mid = 0;
+    while(start <= end) {
+        mid = (start + end) / 2;
+
+        int cnt = 1;
+        int resentMoney = mid;
+        for (int i = 0; i < N; i ++) {
+            if (resentMoney - price[i] < 0) {
+                cnt ++;
+                resentMoney = mid;
+            }
+            resentMoney -= price[i];
+        }
+
+        // cout << "mid = " << mid << " start = " << start << " end = " << end << " cnt = "  << cnt <<'\n'; 
+        if (cnt > M) {
+            start = mid + 1;
+        }
+        else {
+            result = min(result,mid);
+            end = mid - 1;
+        }
+    }
+
+    cout << mid << '\n';
+	return 0;
+}

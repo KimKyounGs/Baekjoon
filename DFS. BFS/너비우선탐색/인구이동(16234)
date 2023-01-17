@@ -1,0 +1,98 @@
+// 아이디어 : 아직 못 품.
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, L, R;
+int graph[51][51];
+int visited[51][51];
+int locked[51][51];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+bool check; // 연합이 만들어진 유뮤에 대해서 체크.
+bool check2;
+
+int BFS(int x, int y, int dis) {
+    int sum = graph[x][y];
+    int cnt = 1;
+    visited[x][y] = dis;
+    
+    queue<pair<int, int>> q;
+    q.push({x,y});
+    
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 범위체크
+            if (nx < 0 || nx > N-1 || ny < 0 || ny > N-1) continue;
+
+            // 차이가 L이상 R이하면서 방문하지 않은 노드일 때 q.push
+            if (abs(graph[nx][ny]-graph[x][y]) >= L && abs(graph[nx][ny]-graph[x][y]) <= R) {
+                if (!visited[nx][ny] && !locked[nx][ny]) {
+                    check = true;
+                    check2 = true;
+                    visited[nx][ny] = dis;
+                    locked[nx][ny] = true;                    
+                    sum += graph[nx][ny];
+                    cnt ++;
+                    q.push({nx,ny});
+                }
+            }
+        }
+    }
+
+    return sum/cnt;
+}
+
+int main() {
+    cin >> N >> L >> R;
+    for (int i = 0; i < N; i ++) {
+        for(int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    
+    int result = 0;
+    while(1) {
+        int dis = 1; // distinction의 약자로 "구별하다"라는 뜻임. 같은 연합인지 아닌지를 구별하기 위해서 사용.
+        for (int i = 0; i < N; i ++) {
+            for(int j = 0; j < N; j ++) {
+                if(!visited[i][j]) {
+                    int newValue = BFS(i,j,dis);
+                    // 연합 평균 넣어주기.
+                    if (check2) {
+                        check2 = false;
+                        memset(locked, 0, sizeof(locked));
+                    }
+                    for (int a = 0; a < N; a ++) {
+                        for (int b = 0; b < N; b ++) {
+                            if (visited[a][b] == dis) {
+                                graph[a][b] = newValue;
+                            }
+                        }
+                    }
+                    dis++;
+                }
+            }
+        }
+        
+        // 연합이 만들어졌으면 다음날로 아니면 종료하기.
+        if (check) {
+            result ++;
+            check = false;
+            memset(visited, 0, sizeof(visited));
+        }
+        else {
+            cout << result << '\n';
+            return 0;
+        }
+    }
+
+}

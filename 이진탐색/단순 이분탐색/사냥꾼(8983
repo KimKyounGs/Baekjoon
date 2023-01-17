@@ -1,0 +1,50 @@
+// 참고 : https://imnotabear.tistory.com/400
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int M, N, L; // M : 사대의 수, N : 동물의 수, L : 사정거리
+vector <int> v; // 사대
+vector <pair <int, int> > animal;
+
+int main() {
+    cin >> M >> N >> L;
+    for (int i = 0; i < M; i ++) {
+        int s;
+        cin >> s;
+        v.push_back(s);
+    }
+    for (int i = 0; i < N; i ++) {
+        int a, b;
+        cin >> a >> b;
+        animal.push_back({a,b}); 
+    }
+    
+    sort(v.begin(),v.end()); 
+    
+    int result = 0;
+    
+    for (int i = 0 ; i < N; i ++) {
+        int start = 0;
+        int end = M-1;
+        while(start <= end) {
+            int mid = (start + end)/2;
+            int loc = abs(v[mid] - animal[i].first) + animal[i].second;
+
+            if (loc <= L) {
+                result ++;
+                break;
+            }
+            else {
+                if (animal[i].first >= v[mid]) {
+                    start = mid +1;
+                }
+                else {
+                    end = mid - 1;
+                }
+            }
+        }
+    }
+    
+    cout << result << endl;
+}

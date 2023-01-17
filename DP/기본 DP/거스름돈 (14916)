@@ -1,0 +1,39 @@
+/*
+아이디어 : 
+보면 좋은 곳 : https://hagisilecoding.tistory.com/26
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int dp[100001];
+
+int main() { 
+    int n;
+    cin >> n;
+    
+    dp[2] = 1;
+    dp[4] = 2;
+    dp[5] = 1;
+    for (int i = 6; i <= n; i ++) {
+        if (dp[i-2] != 0 && dp[i-5] != 0) {
+            dp[i] = min(dp[i-2]+1,dp[i-5]+1);
+        }
+        else if (dp[i-2] == 0 && dp[i-5] != 0){
+            dp[i] = dp[i-5] + 1;
+        }
+        else if (dp[i-2] != 0 && dp[i-5] == 0) {
+            dp[i] = dp[i-2] + 1;
+        }
+    }
+
+    if (dp[n] == 0) {
+        cout << -1 << '\n';
+    }
+    else {
+        cout << dp[n] << '\n';
+    }
+        
+    
+}

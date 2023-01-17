@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int F, S, G, U, D; // F : 총 층수, S : 강호가 있는 층, G : 스타트링크 층 수(가야할 층), U : 위로 가는 층수, D : 아래로 가는 층수 
+int graph[1000001];
+
+void BFS(int x) {
+    graph[x] = 1;
+    queue<int> q;
+    q.push(x);
+    while(!q.empty()) {
+        int x = q.front();
+        q.pop();
+
+        // 위로 올라가기.
+        if (x + U <= F) {
+            int nx = x + U;
+            if (graph[nx] == 0) {
+                graph[nx] = graph[x] + 1;
+                q.push(nx);
+            }
+        }
+        // 아래로 내려가기.
+        if (x - D >= 1) {
+            int nx = x - D;
+            if (graph[nx] == 0) {
+                graph[nx] = graph[x] + 1;
+                q.push(nx);
+            }
+        }
+    }
+}
+
+int main() {
+    cin >> F >> S >> G >> U >> D;
+
+    BFS(S);
+
+    if (graph[G] == 0) {
+        cout << "use the stairs" << '\n';
+    }   
+    else {
+        cout << graph[G] - 1 << '\n';
+    }
+
+    return 0;
+}

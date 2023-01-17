@@ -1,0 +1,33 @@
+/*
+아이디어 :
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int T;
+    cin >> T;
+    while(T--) {
+        int N, M;
+        cin >> N >> M;
+
+        unsigned long long result = 1;
+        if (N > M-N) N = M-N;
+
+        for (int i = M; i > M-N; i --) {
+            result *= i;
+        }
+        for (int i = 1; i <= N; i ++) {
+            result /= i;
+        }
+
+        cout << result << '\n';
+    }
+}

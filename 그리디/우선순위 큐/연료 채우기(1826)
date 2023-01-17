@@ -1,0 +1,50 @@
+// 참고
+// https://velog.io/@asdsa2134/%EB%B0%B1%EC%A4%80-1826-%EC%97%B0%EB%A3%8C-%EC%B1%84%EC%9A%B0%EA%B8%B0#%EC%BD%94%EB%93%9C
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+int fuel, Goal;
+priority_queue <int > pq;
+vector <pair<int, int> > v; // 위치 , 연료량
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int a,b;
+        cin >> a >> b;
+        v.push_back({a,b});
+    }
+    cin >> Goal >> fuel;
+
+    sort(v.begin(), v.end());
+    
+    int result = 0;
+    int idx = 0;
+    bool check = 0;
+    while(fuel < Goal) {
+        while (idx < N && fuel >= v[idx].first) {
+			pq.push(v[idx].second);
+			idx++;
+		}
+
+		if (pq.empty()) {
+			check = true;
+			break;
+		}
+
+		fuel += pq.top();
+		pq.pop();
+		result++;
+    }
+
+    if (check) {
+        cout << -1 << '\n';
+    }
+    else {
+        cout << result << '\n';
+    }
+
+    return 0;
+}

@@ -1,0 +1,106 @@
+/*
+# 아이디어
+
+참고 https://suri78.tistory.com/273
+
+나 빼고 다 천재인가 ?
+간단한 문제라고 생각했지만 내가 넘 어렵게 푼거 같다.
+그냥 그대로 dp로 풀면 된다고 생각해서 100 100 100 을 전부 초기화 시킬려고 하는 줄 알았다. 
+하지만 문제 풀이 보니깐 첫번째 조건과 두번째 조건의 값은 이미 정해져있으니 함수 값으로 리턴만 해주면 되기 때문에 굳이 초기화 해줄 필요가 없었다.
+쉽게 쉽게 생각하면 되는 문제였는데 나혼자만의 dp공포심? 때문에 어렵게 푼거 같다. 
+또 하나 배우고 가는 느낌이다.
+
+*/
+
+#include <iostream>
+
+int store[21][21][21];
+
+int solve(int a, int b, int c);
+
+int main(void)
+{
+
+
+	int a, b, c;
+	while (true)
+	{
+		std::cin >> a >> b >> c;
+		
+		if (a == -1 && b == -1 && c == -1)
+			break;
+
+		std::cout << "w(" << a << ", " << b << ", " << c << ") = " << solve(a, b, c) << '\n';
+	}
+}
+
+int solve(int a, int b, int c)
+{
+	if (a <= 0 || b <= 0 || c <= 0)
+		return 1;
+
+	if (a > 20 || b > 20 || c > 20)
+		return solve(20, 20, 20);
+
+	if (store[a][b][c])
+		return store[a][b][c];
+
+	if (a < b && b < c)
+	{
+		store[a][b][c] = solve(a, b, c - 1) + solve(a, b - 1, c - 1) - solve(a, b - 1, c);
+		return store[a][b][c];
+	}
+
+	store[a][b][c] = solve(a - 1, b, c) + solve(a - 1, b - 1, c) + solve(a - 1, b, c - 1) - solve(a - 1, b - 1, c - 1);
+	return store[a][b][c];
+}
+
+/*
+#include <bits/stdc++.h>
+
+using namespace std;
+
+long long dp[101][101][101];
+
+int main()
+{
+    // -50 ~ 0
+    for (int a = 0; a <= 100; a ++) {
+        for (int b = 0; b <= 100; b ++) {
+            for (int c = 0; c <= 100; c ++) {
+                if (a <= 50 || b <= 50 || c <= 50) dp[a][b][c] = 1;
+            }
+        }
+    }
+
+
+    // 1 ~ 70
+    for (int a = 51; a <= 70; a ++) {
+        for (int b = 51; b <= 70; b ++) {
+            for (int c = 51; c <= 70; c ++) {
+                if (a < b && b < c )  dp[a][b][c] = dp[a][b][c-1] + dp[a][b-1][c-1] - dp[a][b-1][c];
+                else dp[a][b][c] = dp[a-1][b][c] + dp[a-1][b-1][c] + dp[a-1][b][c-1] - dp[a-1][b-1][c-1];
+            }
+        }
+    }
+
+    // 71 ~ 100
+    for (int a = 71; a <= 100; a ++) {
+        for (int b = 71; b <= 100; b ++) {
+            for (int c = 71; c <= 100; c ++) {
+                dp[a][b][c] = dp[70][70][70];
+            }
+        }
+    }
+    
+    int a,b,c;
+    while(1) {
+        cin >> a >> b >> c;
+        if(a == -1 && b == -1 && c == -1) break;
+        printf("w(%d, %d, %d) = %lld\n", a, b, c, dp[a+50][b+50][c+50]);
+    }
+    
+    return 0;
+}
+
+*/

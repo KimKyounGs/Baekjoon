@@ -1,0 +1,53 @@
+/*
+# 아이디어 
+보석 개수를 이분 탐색으로 정해준다음 배정해주는 것이 포인트다. 그리고 문제에서 보석을 받지 못하는 학생이 있을 수도 있다고 했다. 그러니 cnt가 굳이 N이랑 같을 필요가 없다는 뜻이다. 그리고 보석의 개수가 mid 값의 배수이면 배수만큼 나눠주기만 하면 된다. 그렇지 않으면 한사람이 더 적은 양을 받게 해준다.
+
+즉 여기서 mid값은 최대로 나눠줄 수 있는 보석 개수이다.
+
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    vector<int> v;
+    for (int i = 0; i  < M; i ++) {
+        int n;
+        cin >> n;
+        v.push_back(n);
+    }
+
+    int start = 1;
+    int end = 1e9;
+    int result = 1e9+1;
+    while(start <= end) {
+        int mid = (start + end) / 2;
+
+        int cnt = 0;
+        for (int i = 0; i < M; i ++) {
+            if (v[i] % mid == 0) {
+                cnt += v[i] / mid;
+            }
+            else {
+                cnt += v[i] / mid + 1;
+            }
+        }
+        
+        if (cnt <= N) {
+            end = mid - 1;
+            result = min(result, mid);
+        }
+        else {
+            start = mid + 1;
+        }
+    }
+
+    cout << result << '\n';
+
+    
+	return 0;
+}

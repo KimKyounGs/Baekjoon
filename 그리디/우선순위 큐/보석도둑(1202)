@@ -1,0 +1,47 @@
+// https://www.acmicpc.net/problem/1202
+// 참조 : https://jaimemin.tistory.com/760 (풀이)
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, K;
+vector <pair <int, int>> jewel;
+vector <int> packWeigth;
+
+int main() {
+    cin >> N >> K;
+    
+    for (int i = 0 ; i < N; i ++) {
+        int M, V;
+        cin >> M >> V;
+        jewel.push_back({M,V});
+    }
+
+    for (int i = 0; i < K; i ++) {
+        int c;
+        cin >> c;
+        packWeigth.push_back(c);
+    }
+    
+    priority_queue <int> pq;
+    
+    sort(packWeigth.begin(), packWeigth.end()); // 가방 무게기준 오름차순
+    sort(jewel.begin(), jewel.end()); // 보석 무게기준 오름차순
+
+    long long sum = 0;
+    int iter = 0;
+    for (int i = 0; i < K; i ++) {
+        while(iter < N && packWeigth[i] >= jewel[iter].first) { // 제한된 가방무게(packWeigth[i])까지 보석 담기.
+            pq.push(jewel[iter++].second);
+        }
+
+        if (!pq.empty()) { // pq에서 가장 비싼 보석하나 더해주기.
+            sum += pq.top();
+            pq.pop();
+        }
+    }
+
+    cout << sum <<'\n';
+}

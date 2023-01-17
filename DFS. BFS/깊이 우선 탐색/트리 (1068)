@@ -1,0 +1,60 @@
+/* 
+# 아이디어
+리프 노드의 개수를 구하는 문제이다. 리프 노드는 노드 중 자식 노드가 없는 노드를 말하는 것이다. 한 노드를 삭제 시키는데 그 노드에 대해서 DFS를 실행해주고 비어 있거나 말거나 -1을 대입해준다. 그러면 나중에 비어있는가? 즉 리프 노드 개수를 셀 때 카운트가 되지 않는다. 그리고 삭제 노드를 가지고 있으면 erase()함수를 이용해서 그 삭제 노드를 지워준다. 
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, deleteNode;
+vector<int> v[51];
+
+void DFS(int x) {
+    if (v[x].empty()) {
+        v[x].push_back(-1);
+        return;
+    }
+    
+    for (int i = 0; i < v[x].size(); i ++) {
+        int nx = v[x][i];
+        if (!v[nx].empty()) {
+            DFS(nx);
+        }
+        else {
+            v[nx].push_back(-1);
+        }
+    }
+    v[x].front() = -1;
+}
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        if (n == -1) continue;
+        v[n].push_back(i);
+    }
+
+    cin >> deleteNode;
+
+    DFS(deleteNode);
+
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < v[i].size(); j ++) {
+            if (v[i][j] == deleteNode) {
+                v[i].erase(v[i].begin() + j);
+            } 
+        }
+    }
+
+    int result = 0;
+    for (int i = 0; i < N; i ++) {
+        if (v[i].empty()) {
+            result ++;
+        }
+    }
+
+    cout << result << '\n';
+
+}

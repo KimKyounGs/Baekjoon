@@ -1,0 +1,57 @@
+참조 : https://hydroponicglass.tistory.com/33
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+using namespace std;
+
+bool ascendingOrderByStartTime(const pair<int,int> &a, const pair<int,int> &b){
+	if(a.first==b.first){
+		return a.second<b.second;
+	}
+	return a.first<b.first;
+}
+// bool의 정렬은 a < b 가 거짓일 때 swap 해준다.
+
+struct ascendingOrderByEndTime{
+	bool operator()(const pair<int, int> &a, const pair<int, int> &b){
+		if(a.second==b.second){
+			return a.first>b.first;
+		}
+		return a.second>b.second;
+	}
+};
+// 구조체 안에서의 정렬은 a < b 가 참일 때 swap 해준다.
+
+int main(){
+	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+	vector<pair<int, int> > vec;
+	priority_queue<pair<int, int>, vector<pair<int,int> >, ascendingOrderByEndTime > pq;
+	
+	int N, S, T, cnt=1;
+	cin >> N;
+	vec.resize(N);
+	for(int i=0; i<N; i++){
+		cin >> S >> T;
+		vec[i]={S,T};
+	}
+	
+	sort(vec.begin(), vec.end(), ascendingOrderByStartTime);
+	pq.push(vec[0]);
+	for(int i=1; i<N; i++){
+		if(pq.top().second>vec[i].first){
+			pq.push(vec[i]);
+			cnt++;
+		} 
+        else {
+			pq.pop();
+			pq.push(vec[i]);
+		}
+	}
+	
+	cout << cnt;
+	return 0;
+}

@@ -1,0 +1,42 @@
+풀이 :https://jyukki97.github.io/2020-04-03-11509/
+https://javaiyagi.tistory.com/m/599?category=620712
+
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N = 0, result = 0;
+vector<int> H;
+
+int main() {
+	cin >> N;
+	for (int i = 0; i < N; i++) {
+		int h;
+		cin >> h;
+		H.push_back(h);
+	}
+
+	while (H.size() != 0) {
+		int maxs = 0;
+		for (int i = 0; i < H.size(); i++) {
+			if (maxs < H[i]) {
+				maxs = H[i];
+			}
+		}
+
+		int sizes = H.size();
+		int j = 0;
+
+		while (maxs != 0 && j != sizes - 1) {
+			if (maxs == H[j]) {
+				H.erase(H.begin() + j);
+			}
+			j++;
+			maxs--;
+		}
+		result++;
+	}
+	cout << result;
+}

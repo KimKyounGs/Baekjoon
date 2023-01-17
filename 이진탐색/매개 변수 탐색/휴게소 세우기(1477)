@@ -1,0 +1,65 @@
+/*
+# 아이디어 
+참으로도 오래걸린 문제이다. 공유기 설치문제랑 비슷하다고 보면 된다. 차이점은 이 문제는 고속도로 처음(0)부터 각각의 휴게소 사이 거리 그리고 고속도로 마지막(L)까지 그 사이에 휴게소를 거리가 되면 설치하는 것이다. 
+*이분 탐색을 통해 최대 휴게소 거리를 구하는 것이다.* 구할 떄 주의할 점이 있다. 첫 번째 예시를 보면 mid가 70으러 멈추는 경우가 있다. 그리고 휴게소 사이 거리가 210인 경우가 있는데 이 때 cnt 개수가 3이 증가가 된다. 이러면 휴게소가 세워진 곳에 또 휴게소가 세워진 경우가 되버린다. 즉 cnt가 필요 이상으로 증가해버린 꼴이다.
+그래서 if ((v[i] - prevRestArea)%mid == 0) cnt --; 이렇게 처리를 해줘야한다.
+
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M, L;
+vector<int> v;
+
+int main() {
+    cin >> N >> M >> L;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        v.push_back(n);
+    }
+
+    v.push_back(0);
+    v.push_back(L);
+    
+    sort(v.begin(), v.end());
+
+    int start = 1;
+    int end = L-1;
+
+    int result = 0;
+    
+    while(start <= end) {
+        int mid = (start + end)/2;
+
+        int cnt = 0;
+        int prevRestArea = v[0];
+        for (int i = 1; i <= N+1; i ++) {
+            if (v[i] - prevRestArea > mid) {
+                cnt += (v[i] - prevRestArea)/mid;
+                if ((v[i] - prevRestArea)%mid == 0) cnt --;
+            }
+            prevRestArea = v[i];
+        }
+
+        if (cnt <= M) {
+            end = mid - 1;
+            result = mid;
+            // cout << "result = " << result << ", cnt = " << cnt << '\n';
+
+        }
+
+        else {
+            start = mid + 1;
+        }
+
+        // cout << "start = " << start << ", end = " << end << '\n';
+    }
+
+    cout << result << '\n';
+
+    
+    return 0;
+}

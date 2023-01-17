@@ -1,0 +1,27 @@
+/*
+아이디어 : 
+보면 좋은 곳 : https://jow1025.tistory.com/183
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int graph[31][31];
+
+int main() { 
+    int n, k;
+    cin >> n >> k;
+    
+    graph[1][1] = 1;
+    graph[2][1] = 1;
+    graph[2][2] = 1;
+    for (int i = 3; i <= n ; i++) {
+        graph[i][1] = 1;
+        graph[i][i] = 1;
+        for (int j = 2; j <= i; j ++) {
+            graph[i][j] = graph[i-1][j-1] + graph[i-1][j];
+        }
+    }
+
+    cout << graph[n][k] << '\n';
+}

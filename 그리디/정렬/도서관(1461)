@@ -1,0 +1,88 @@
+참고 : https://inpages.tistory.com/134 
+문제 풀이 : https://octorbirth.tistory.com/439      https://doorrock.tistory.com/9
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+// 절대값을 씌우고 정렬하기.
+bool compare(int a, int b) {
+	return abs(a) > abs(b);
+}
+
+int N, M, sum = 0;
+vector <int> l(10001);
+vector <int> p(10001);
+vector <int> n(10001);
+
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	cin >> N >> M;
+	for (int i = 0; i < N; i ++) {
+		int a;
+		cin >> a;
+
+		l.push_back(a);
+		if (a > 0) {
+			p.push_back(a);
+		}
+		else if (a < 0) {
+			n.push_back(-a);
+		}
+	}
+
+	// 정렬.
+	sort(l.begin(), l.end(), compare);
+	sort(p.begin(), p.end(), compare);
+	sort(n.begin(), n.end(), compare);
+
+
+	// 음수인 경우
+	if (l[0] == -n[0]) {
+		sum += n[0];
+		for (int i = 0; i < M; i ++) {
+			n.erase(n.begin());
+			if (n.size() == 0) {
+				break;
+			}
+		}
+	}
+
+	else if (l[0] == p[0]) {
+		sum += p[0];
+		for (int i = 0; i < M; i ++) {
+			p.erase(p.begin());
+			if (p.size() == 0) {
+				break;
+			}
+		}		
+	}
+	
+	while (n.size() != 0) {
+		sum += n[0]*2;
+		for (int i = 0; i < M; i++) {
+			n.erase(n.begin());
+			if (n.size() == 0) {
+				break;
+			}
+		}
+	}
+
+	while (p.size() != 0) {
+		sum += p[0]*2;
+		for (int i = 0; i < M; i ++) {
+			p.erase(p.begin());
+			if ( p.size() == 0) {
+				break;
+			}	
+		}
+	}
+
+
+
+	cout << sum;
+	return 0;
+}

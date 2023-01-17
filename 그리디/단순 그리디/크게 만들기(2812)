@@ -1,0 +1,42 @@
+참조 : https://2pound2pound.tistory.com/215
+
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, K;
+string str;
+stack<char> s;
+int main() 
+{
+    cin >> N >> K;
+    cin >> str;
+
+    for (int i = 0; i < str.size(); i++) {
+        while (!s.empty() && K > 0 && s.top() < str[i]) {
+            --K;
+            s.pop();
+        }
+
+        s.push(str[i]);
+    }
+
+    if (K) {
+        while (K) {
+            s.pop();
+            --K;
+        }
+    }
+
+    stack<char> temp;
+    while (!s.empty()) {
+        temp.push(s.top());
+        s.pop();
+    }
+
+    while (!temp.empty()) {
+        printf("%c", temp.top());
+        temp.pop();
+    }
+}

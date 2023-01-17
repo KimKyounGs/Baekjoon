@@ -1,0 +1,50 @@
+/*
+아이디어 :
+
+set : https://blockdmask.tistory.com/79
+set.find() : https://leeminju531.tistory.com/26
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+
+int N, M;
+int cnt;
+vector<string> result;
+set<string> unhear;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> N >> M;
+
+    for (int i = 0; i < N; i ++) {
+        string temp;
+        cin >> temp;
+
+        unhear.insert(temp);
+    }
+    
+    for (int i = 0; i < M; i ++) {
+        string unsee;
+        cin >> unsee;
+
+        if (unhear.find(unsee) != unhear.end()) {
+            cnt ++;
+            result.push_back(unsee);
+        }
+    }
+
+    sort(result.begin(), result.end());
+
+    cout << cnt << '\n';
+    for (int i = 0; i < result.size(); i ++) {
+        cout << result[i] << '\n';
+    }
+
+}

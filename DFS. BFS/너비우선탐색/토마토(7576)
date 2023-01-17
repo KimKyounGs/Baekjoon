@@ -1,0 +1,75 @@
+// 아이디어 : 토마토(7569)를 먼저 풀어서 이 문제의 아이디어와 같다.
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M;
+int graph[1001][1001];
+bool visited[1001][1001];
+
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+
+int main() {
+    cin >> N >> M;
+    for (int i = 0; i < M; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    queue<pair<int, int>> q;
+    for (int i = 0; i < M; i ++) {
+        for (int j = 0; j < N; j ++) {
+            if (graph[i][j]== 1) {
+                q.push({i,j});
+                visited[i][j] = true;
+            }
+        }
+    }
+
+
+    bool check = false; // 처음부터 다 익어져 있을 수 있기 때문에 확인해주기.
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            // 범위 체크
+            if (nx < 0 || nx > M - 1 || ny < 0 || ny > N - 1) {
+                continue;
+            }
+            // 방문하지 않았다면 방문
+            if (!visited[nx][ny] && graph[nx][ny] == 0) {
+                check = true;                
+                graph[nx][ny] = graph[x][y] + 1;
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+            }
+        }
+    }
+
+    // 답 출력.
+    int result = 0;
+    for (int i = 0; i< M; i ++) {
+        for (int j = 0; j < N; j ++) {
+            if (graph[i][j] == 0) {
+                cout << -1 << '\n';
+                return 0;
+            }
+            result = max(result,graph[i][j]);
+        }
+    }
+
+
+    if (check) {
+        cout << result-1 << '\n';
+    }
+    else {
+        cout << 0 << '\n';
+    }
+    
+    return 0;
+}

@@ -1,0 +1,52 @@
+풀이 :   https://dheldh77.tistory.com/entry/%EB%B0%B1%EC%A4%80-2262%EB%B2%88-%ED%86%A0%EB%84%88%EB%A8%BC%ED%8A%B8-%EB%A7%8C%EB%93%A4%EA%B8%B0
+
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+//solution : 가장 큰 값부터 제거해나감
+int main(){
+    int n;
+    int sum = 0;
+    vector <int> v;
+    cin >> n;
+
+    for(int i = 0; i < n; i++){
+        int tmp;
+        cin >> tmp;
+        v.push_back(tmp);
+    }
+    
+
+    for(int i = 0; i < n-1; i++){
+        int size = n - i;
+        int max = 0;
+        int idx;
+        int dif;
+        
+        for(int j = 0; j < size; j++){
+            if(max < v[j]){ //가장 큰 값을 탐색
+                max = v[j];
+                idx = j;
+            }
+        }
+
+        if(idx == 0)
+            dif = abs(v[idx] - v[idx+1]); //제일 큰 수가 첫번째 인덱스일 때
+        else if(idx == size - 1) 
+            dif = abs(v[idx-1] - v[idx]); //제일 큰 수가 두번째 인덱스일 때
+        else{
+            int tmp_idx = (v[idx-1] > v[idx+1])? idx-1 : idx+1;
+            dif = abs(v[idx] - v[tmp_idx]); //가장 큰 값 양 옆의 값 중 차이가 적은 값 선택
+        }
+
+        sum += dif;
+
+        //가장 큰 값 삭제
+        for(int j = idx; j < size - 1; j++){
+            v[j] = v[j + 1];
+        }
+    }
+    cout << sum;
+}

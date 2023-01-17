@@ -1,0 +1,39 @@
+https://www.acmicpc.net/problem/13904
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+vector <pair <int, int>> v; // 웅찬이의 과제 담기.
+priority_queue<pair <int, int>, vector <pair <int, int>>, greater<pair<int, int>> > pq; // 점수가 낮은 순으로 정렬.
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int d, w;
+        cin >> d >> w;
+        v.push_back({d,w});
+    }
+
+    sort(v.begin(), v.end());
+
+    pq.push({v[0].second, v[0].first});
+    int sum = 0;
+    
+    for (int i = 1; i < N; i ++) {
+        if (pq.top().first <= v[i].second && pq.size() >= v[i].first) { // pq의 크기는 마감일을 안넘어야 한다. 
+            pq.push({v[i].second, v[i].first});
+            pq.pop();
+            continue;         
+        }
+        pq.push({v[i].second, v[i].first});
+    }    
+
+    while(!pq.empty()) {
+        sum += pq.top().first;
+        pq.pop();
+    }
+
+    cout << sum;
+}

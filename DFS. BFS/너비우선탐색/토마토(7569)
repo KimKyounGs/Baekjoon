@@ -1,0 +1,81 @@
+// 아이디어 : 먼저 익은 토마토(1)을 큐에 다 담고 BFS를 돌린다. 중간에 처음부터 다 익어져 있을 수 있기 때문에 check를 통해서 확인해주기.
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M, H;
+int graph[101][101][101];
+bool visited[101][101][101];
+
+int dx[] = {0, 0, 1, -1, 0, 0};
+int dy[] = {1, -1, 0, 0, 0, 0};
+int dz[] = {0, 0, 0, 0, 1, -1};
+
+int main() {
+    cin >> N >> M >> H;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < M; j ++) {
+            for (int z = 0; z < N; z ++) {
+                cin >> graph[i][j][z];
+            }
+        }
+    }
+
+    queue<pair<pair<int, int>, int>> q;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < M; j ++) {
+            for (int z = 0; z < N; z ++) {
+                if (graph[i][j][z] == 1) {
+                    q.push({{i,j},z});
+                    visited[i][j][z] = true;
+                }
+            }
+        }
+    }
+    bool check = false; // 처음부터 다 익어져 있을 수 있기 때문에 확인해주기.
+    while(!q.empty()) {
+        int x = q.front().first.first;
+        int y = q.front().first.second;
+        int z = q.front().second;
+        q.pop();
+        for (int i = 0; i < 6; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            int nz = z + dz[i];
+            // 범위 체크
+            if (nx < 0 || nx > H-1 || ny < 0 || ny > M-1 || nz < 0 || nz > N-1) {
+                continue;
+            }
+            // 방문하지 않았다면 방문
+            if (!visited[nx][ny][nz] && graph[nx][ny][nz] == 0) {
+                check = true;                
+                graph[nx][ny][nz] = graph[x][y][z] + 1;
+                q.push({{nx,ny},nz});
+                visited[nx][ny][nz] = true;
+            }
+        }
+    }
+
+    // 답 출력.
+    int result = 0;
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < M; j ++) {
+            for (int z = 0; z < N; z ++) {
+                if (graph[i][j][z] == 0) {
+                    cout << -1 << '\n';
+                    return 0;
+                }
+                result = max(result,graph[i][j][z]);
+            }
+        }
+    }
+
+    if (check) {
+        cout << result-1 << '\n';
+    }
+    else {
+        cout << 0 << '\n';
+    }
+    
+    return 0;
+}

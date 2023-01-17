@@ -1,0 +1,17 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+long long Square[81];
+
+int main() {   
+    int n;
+    cin >> n;
+    Square[0] = 1;
+    Square[1] = 1;
+    for (int i = 0; i < n-2; i ++) {
+        Square[i+2] = Square[i+1] + Square[i];
+    }
+
+    cout << (Square[n-2] + Square[n-1]) * 2 + Square[n-1] * 2 << '\n';
+}

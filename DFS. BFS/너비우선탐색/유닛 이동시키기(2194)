@@ -1,0 +1,75 @@
+/* 
+# 아이디어
+
+기본 BFS 문제랑 똑같지만 장애물이 있고 움직이는 객체가 크기를 가지고 있어 1.범위체크하는 것과 2.장애물이랑 겹치는가? 이것을 신경써주면 쉽게 풀리는 문제이다.
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M, A, B, K;
+int startX, startY, endX, endY;
+int graph[501][501];
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void BFS(int x, int y) {
+    queue<pair <int, int>> q;
+    q.push({x,y});
+    graph[x][y] = 1;
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 1. 왼쪽 제일 위의 한 점을 기준으로 범위 체크.
+            if (nx < 1 || nx + A-1> N || ny < 1 || ny + B-1 > M || graph[nx][ny]) continue;
+
+            // 2. 유닛의 크기가 장애물과 겹치는지 체크.
+            bool check = false;
+            for (int j = nx; j <= nx+A-1; j ++) {
+                for (int k = ny; k <= ny + B-1; k ++) {
+                    if (graph[j][k] == -1) {
+                        check = true;
+                        break;
+                    }
+                }
+                if (check) break;
+            }
+
+            if (!check) {
+                graph[nx][ny] = graph[x][y] + 1;    
+                q.push({nx,ny});   
+            }
+        }
+    }
+}
+
+int main() {
+    cin >> N >> M >> A >> B >> K;
+    for (int i = 0; i < K; i ++) {
+        int x, y;
+        cin >> x >> y;
+        graph[x][y] = -1;
+    }
+
+    cin >> startX >> startY;
+    cin >> endX >> endY;
+
+    BFS(startX, startY);
+
+    /*
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= M; j ++) {
+            cout << graph[i][j] << ' ';
+        }
+        cout << endl;
+    }
+    */
+    
+    cout << graph[endX][endY]-1 << '\n';
+}

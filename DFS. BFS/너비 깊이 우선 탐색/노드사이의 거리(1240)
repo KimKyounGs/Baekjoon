@@ -1,0 +1,67 @@
+/* 
+# 아이디어
+각 거리만큼 배열에 저장한 다음 더해주는 식으로 했음. 
+처음에 배열을 사용하지 않고 풀었는데 그러면 가지 않아도 되는 거리 또한 더해지게 된다. 
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M;
+vector<pair<int, int> > v[1001];
+bool visited[1001];
+int distances[1001];
+
+void BFS(int s) {
+    queue<int> q;
+    q.push(s);
+    visited[s] = true;
+
+    while(!q.empty()) {
+        int x = q.front();
+        q.pop();
+        for (int i = 0; i < v[x].size(); i ++) {
+            int nx = v[x][i].first;
+            int d = v[x][i].second;
+            
+            if (visited[nx]) continue;
+            
+            distances[nx] = distances[x] + d;
+            q.push(nx);
+            visited[nx] = true;
+        }
+    }
+}
+
+void DFS(int x) {
+    visited[x] = true;
+    
+    for (int i = 0; i < v[x].size(); i ++) {
+        int nx = v[x][i].first;
+        int d = v[x][i].second;
+
+        if (!visited[nx]) {
+            distances[nx] = distances[x] + d;
+            DFS(nx);
+        }
+    }
+}
+
+int main() {
+    cin >> N >> M;
+    for (int i = 0; i < N-1; i ++) {
+        int s,e,d;
+        cin >> s >> e >> d;
+        v[s].push_back({e,d});
+        v[e].push_back({s,d});
+    }
+    for (int i = 0; i < M; i ++) {
+        int s, e;
+        cin >> s >> e;
+        //BFS(s)
+        DFS(s);
+        cout << distances[e] << '\n';
+        memset(visited, 0, sizeof(visited));
+        memset(distances, 0, sizeof(distances));
+    }
+}

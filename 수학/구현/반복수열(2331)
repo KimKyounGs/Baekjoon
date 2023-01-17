@@ -1,0 +1,40 @@
+/*
+아이디어 : 
+구현 문제이다. 앞으로 나온숫자는 check에 true시켜주고 벡터 v에 넣어준다. 이미 나온 숫자가 다시 나오면 end에 그 숫자를 넣어주고 v.size()만큼 for문 돌려서 result ++ 해주다가 그 숫자가 나온다? 그러면 바로 종료시킨다.
+보면 좋은 곳 : https://jaimemin.tistory.com/946
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+bool check[300001];
+vector<int> v;
+
+int main() {
+    int A, P;
+    cin >> A >> P;
+
+    int end;
+    while(1) {
+        v.push_back(A);
+        check[A] = true;
+        int sum = 0;
+        while(A > 0) {
+            sum += pow(A%10,P);
+            A /= 10;
+        }
+        A = sum;
+        if (check[A]) {
+            end = A;
+            break;
+        }
+    }
+
+    int result = 0;
+    for (int i = 0; i < v.size(); i ++) {
+        if (v[i] == end) break;
+        result++;
+    }
+
+    cout << result << '\n';
+}

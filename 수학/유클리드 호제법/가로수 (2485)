@@ -1,0 +1,48 @@
+/*
+아이디어 : 심어진 가로수의 격차를 구하고, 그것들의 최대공약수를 구해준다.
+그리고 그 최대공약수만큼 거리를 유지해야한다.
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+int streetTrees[100001];
+
+int gcd(int a, int b)
+{
+    while (b > 0)
+    {
+        int tmp = a;
+        a = b;
+        b = tmp%b;
+    }
+    return a;
+}
+
+
+int main(){
+    cin >> N;
+    for (int i = 0; i < N; i++) {
+        cin >> streetTrees[i];
+    }
+
+    sort(streetTrees, streetTrees + N);
+    
+    int gcdNum = streetTrees[1] - streetTrees[0];
+    
+    for (int i = 1; i < N - 1; i ++) {
+        if (gcdNum > streetTrees[i+1] - streetTrees[i]) gcdNum = gcd(gcdNum,streetTrees[i+1] - streetTrees[i]);
+        else gcdNum = gcd(streetTrees[i+1] - streetTrees[i],gcdNum);
+    }
+
+    int result = 0;
+    for (int i = 0; i < N-1; i ++) {
+        int gap = streetTrees[i+1] - streetTrees[i];
+        result += gap/gcdNum - 1;
+    }
+
+    cout << result << '\n';
+    return 0;
+}

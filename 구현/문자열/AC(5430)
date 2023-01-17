@@ -1,0 +1,117 @@
+/*
+#아이디어
+
+파싱 : https://itguava.tistory.com/56
+덱 : https://travelbeeee.tistory.com/60
+
+처음 풀었을 때 시간초과가 났다. 그리고 이 게시판 글을 보고 이유를 알게되었다.
+https://www.acmicpc.net/board/view/25456
+
+그래서 left 라는 bool 변수를 사용해 배열 원소를 왼쪽에서 접근할 것인지 오른쪽에서 접근할 것인지 정했다.
+
+문제를 풀 때 시간복잡도에 있어서 먼저 생각하고 푸는게 역시 맞다.
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int T;
+
+int main() {
+    cin >> T;
+    while(T--) {
+        int n;
+        char command[100001];
+        string str;
+        deque<char> dq;
+        cin >> command;
+        cin >> n;
+        cin >> str;
+
+        for (int i = 0; i < str.size(); i ++) {
+            dq.push_back(str[i]);
+        }
+
+        dq.pop_front(); // [ 삭제
+        dq.pop_back(); // ] 삭제
+
+        // 남은 문자열 16,2,3,45
+
+        deque<int> res;
+        int carry = 1;
+        int num = 0;
+        
+        
+        for (int i = dq.size()-1; i >= 0; i --) {
+            if (dq[i] != ',')  {
+                num += (dq[i] - '0') * carry;
+                carry *= 10;
+            }
+            else {
+                res.push_front(num);
+                num = 0;
+                carry = 1;
+            }
+            
+            if (i == 0) {
+                res.push_front(num);
+            }
+        }
+        
+        /*
+        for (int i = 0; i < n; i ++) {
+            cout << res[i] << ' '; 
+        }
+        cout << endl;
+        */
+
+        bool err = false;
+        int len = strlen(command);
+        bool left = true;
+        
+        for (int i = 0; i < len; i ++) {
+            if (command[i] == 'R') {
+                left = !left;
+            }
+            else if (command[i] == 'D') {
+                if (res.empty()) {
+                    err = true;
+                    break;
+                }
+                else {
+                    if (left) res.pop_front();
+                    else res.pop_back();
+                }
+            }
+        }
+
+        
+        if (err) {
+            cout << "error" << '\n';
+        }
+        else {
+            cout << '['; 
+            if (left) {
+                for (int i = 0; i < res.size(); i ++) {
+                    if (i == res.size()-1) {
+                        cout << res[i];
+                        break;
+                    }
+                    cout << res[i] << ',';
+                }
+            }
+            else {
+                for (int i = res.size()-1; i >= 0; i --) {
+                    if (i == 0) {
+                        cout << res[i];
+                        break;
+                    }
+                    cout << res[i] << ',';
+                }
+            }
+            cout << ']';
+            cout << '\n';
+        }
+    }
+}

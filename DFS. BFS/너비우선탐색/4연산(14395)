@@ -1,0 +1,27 @@
+/* 
+# 아이디어
+
+참고 : https://yabmoons.tistory.com/72
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int s,t;
+
+void BFS(int s) {
+    queue<long long int, string> q;
+    
+}
+
+int main() {
+    cin >> s >> t;
+    if (s==t) {
+        cout << 0 << '\n';
+        return 0;
+    }
+    BFS(s);
+
+    cout << graph[t] << '\n';
+}

@@ -1,0 +1,43 @@
+/*
+# 아이디어
+
+참고 : https://gsmesie692.tistory.com/113?category=523232
+참고 : https://hyeo-noo.tistory.com/16
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int L[21], J[21];
+int dp[21][101];
+ 
+int main()
+{
+    int N;
+    cin >> N;
+    for (int i = 1; i <= N; i ++) {
+        cin >> L[i];
+    }
+    for (int i = 1; i <= N; i ++) {
+        cin >> J[i];
+    }
+
+    int result = 0;
+    
+    for(int i = 1; i <= N; i++){
+        for(int h = 0; h <= 100; h++){
+            // 인사 가능
+            if(h + L[i] < 100){
+                // max(인사 x,인사 o)
+                // 현재 잃은 체력이 아직 포함되지 않은 이전 최대 기쁨[h+Lost[i]]에 현재 인사의 기쁨을 더해서 비교
+                dp[i][h] = max(dp[i-1][h], dp[i-1][h+L[i]] + J[i]);
+            }
+            // 인사 불가능          원래 값, 이전 값 중 큰 값
+            else dp[i][h] = max(dp[i][h], dp[i-1][h]); 
+            
+            if(dp[i][h] > result) result = dp[i][h];
+        }
+    }
+    cout << result;
+}
+

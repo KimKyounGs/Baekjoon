@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M, fac1, fac2;
+vector <pair<int, int> > graph[10001];
+bool visited[10001];
+int Parent[10001];
+
+bool BFS(int fac1, double mid) {
+    bool check = 0;
+    queue <int> q;
+    q.push(fac1);
+    visited[fac1] = true;
+    while(!q.empty()) {
+        int x = q.front();
+        q.pop();
+        for (int i = 0; i < graph[x].size(); i ++) {
+            if (graph[x][i].second >= mid && !visited[graph[x][i].first]) {
+                if (graph[x][i].first == fac2) {
+                    return true;
+                }
+                else {
+                    q.push(graph[x][i].first);
+                    visited[graph[x][i].first] = true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
+int main() {
+    cin >> N >> M;
+    int maxs = 0;
+    for (int i = 0; i < M; i ++) {
+        int A, B, C;
+        cin >> A >> B >> C;
+
+        if (C > maxs) {
+            maxs = C;
+        }
+        
+        graph[A].push_back({B,C});
+        graph[B].push_back({A,C});
+    }
+    
+    cin >> fac1 >> fac2;
+
+    int start = 1;
+    int end = maxs;
+    int result = 0;
+    while (start <= end) {
+        int mid = (start+end)/2;
+
+        // 공장에서 다른 공장까지 도달할 수 있으면 check = 1;
+        bool check = BFS(fac1, mid);
+    
+        if (check) {
+            result = max(result, mid);
+            start = mid + 1;
+        }
+            
+        else {
+            end = mid - 1;
+        }
+        memset(visited, 0, sizeof(visited));
+    }
+
+    cout << result << '\n';
+    
+    return 0;
+}

@@ -1,0 +1,71 @@
+/*
+# 아이디어
+
+참고 : https://luv-n-interest.tistory.com/917
+
+이 문제는 타일 끼워 맞추는 문제인데, 개인적으로 타일 끼워넣는 문제는 손으로 직접 그려보면서 해답을 찾는 것이 도움이 될 것 같다.
+처음에 dp[i] = dp[i-1] + dp[i-2] * 3인줄 알았다. 하지만 중복 되는 것이 있다. 
+그 이유는 dp[i]기준으로 dp[i-3]에서 2*1 타일을 'ㅣ'모양으로 채워지면 다음 dp[i-2]에서 'll'모양으로 채워질 때 dp[i-1]일 때 겹치는 경우의 수가 나올 수 밖에 없다.
+그래서 dp[i] = dp[i-1] + dp[i-2] * 2하는게 좋다.
+
+이것도 문제인데 출력하는 방식 또한 문제이다.
+c++에서는 unsigned long long 보다 큰 양수를 표현하는 자료형은 없다. 그래서 문자형으로 풀어야한다.
+
+문자형으로 푸는 방식이나 입출력에 관해서는 참고 사이트에 들어가는 것이 좋다.
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string sum(string num1, string num2) {
+    string result;
+
+    reverse(num1.begin(), num1.end());
+    reverse(num2.begin(), num2.end());
+    
+    while (num1.length() < num2.length()) {
+        num1 += '0';
+    }
+    while (num1.length() > num2.length()) {
+        num2 += '0';
+    }
+
+    int carry = 0;
+    for (int i = 0; i < num1.length(); i ++) {
+        int n = (num1[i]-'0') + (num2[i]-'0') + carry;
+        if (n >= 10) carry = 1;
+        else carry = 0;
+
+        result.push_back(n%10+'0');
+    }
+
+    if (carry) result += '1';
+
+    reverse(result.begin(), result.end());
+    return result;
+}
+
+string dp[251];
+ 
+int main()
+{
+    dp[0] = "1";
+    dp[1] = "1";
+    dp[2] = "3";
+    dp[3] = "5";
+    
+    for (int i = 4; i <= 250; i ++) {
+        dp[i] = sum(dp[i-1], sum(dp[i-2], dp[i-2]));
+    }
+
+    int N;
+    while(1) {
+        cin >> N;
+        if (cin.eof() == true) {
+            break;
+        }
+        cout << dp[N] << '\n';
+    }
+
+}
+

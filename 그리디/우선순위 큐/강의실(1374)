@@ -1,0 +1,42 @@
+/*
+아이디어 : 
+
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+priority_queue<pair<int, int>, vector<pair <int, int> >, greater<pair<int, int>>> pq;
+vector<pair<int, int> > lecture;
+
+int main() {    
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int n,s,e;
+        cin >> n >> s >> e;   
+        lecture.push_back({s,e}); //{시작시간, 끝난시간}
+    }
+
+    sort(lecture.begin(), lecture.end());
+
+    int result = 1;
+    pq.push({lecture[0].second, lecture[0].first}); // {끝나는 시간, 시작 시간}
+    for (int i = 1; i < N; i ++) {
+        // 큐의 탑에 있는 시간(현재로써 가장 빨리 끝나는 시간)보다 시작시간이 더 빠르면 강의실이 하나 더 필요.
+        if(pq.top().first > lecture[i].first) {
+            pq.push({lecture[i].second, lecture[i].first});
+            result ++;
+            // cout << pq.top().first << ' ' << pq.top().second << '\n';
+        }
+        // 다음 강의시간으로 업데이트.
+        else {
+            pq.pop();
+            pq.push({lecture[i].second, lecture[i].first});
+        }
+    }
+
+    cout << result << '\n';
+    return 0;
+}

@@ -1,0 +1,42 @@
+/*
+# 아이디어
+
+백준 https://www.acmicpc.net/problem/17626 (Four Squares) 문제와 똑같은 문제이다.
+
+dp테이블을 채울 때 자기자신에 - 제곱수를 빼줄 때 가장 작은 값을 찾은 다음 거기다가 + 1 해주면 된다.
+
+ex
+이 문제는 탐색의 과정도 필요하다.
+아까 23을 다시 살펴보자
+23보다 작은 제곱수들을 다 보는 것이다.
+1, 4, 9, 16이 있으면 23에서 해당 값들을 뺀 값인
+dp[22], dp[19], dp[14], dp[7] 중에서
+가장 작은 값에 +1을 해준 값이 dp[23]이 된다.
+
+예를들어 dp[7]를 골랐다면
+23은 16 + 4 + 1 + 1 + 1로 5가 되는 것이고
+dp[22]를 골랐다면 9 + 9 + 4 + 1로 4가 되는 것이다.
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int dp[100001];
+ 
+int main()
+{
+    int N;
+    cin >> N;
+    
+    for (int i = 1; i <= N; i ++) {
+        int mins = 1e9;
+        for (int j = 1; j*j <= i; j ++) {
+            mins = min(mins, dp[i-j*j]);
+        }
+        dp[i] = mins + 1;
+    }
+
+    cout << dp[N] << '\n';
+}
+

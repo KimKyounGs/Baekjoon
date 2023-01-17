@@ -1,0 +1,30 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+
+int main() {
+	ios::sync_with_stdio(false);
+        cin.tie(NULL);
+
+        cin >> N;
+        priority_queue<int, vector<int>, greater<int>> pq;
+        for (int i = 0; i < N; i ++) {
+                int a;
+                cin >> a;
+                pq.push(a);
+        }
+
+        int result = 0;
+        for (int j = 0; j < N - 1; j ++) {
+                int a = 0;
+                for (int i = 0; i < 2; i ++) {
+                        a += pq.top();
+                        pq.pop();
+                }
+                result += a;
+                pq.push(a);
+        }
+        cout << result << '\n';
+}

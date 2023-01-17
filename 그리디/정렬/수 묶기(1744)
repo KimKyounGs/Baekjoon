@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, result = 0, zero = 0;
+vector <int> Psequence;
+vector <int> Nsequence;
+
+int main() {
+        ios::sync_with_stdio(false);
+        cin.tie(NULL);
+
+        cin >> N;
+        for (int i = 0; i < N; i ++) {
+               int n;
+               cin >> n;
+               if (n < 0) Nsequence.push_back(n);
+               else if (n == 0) zero ++;
+               else Psequence.push_back(n);
+        }
+
+        //////////// Psequnce ////////////
+        sort(Psequence.begin(), Psequence.end(), greater());
+
+
+        // 홀수일 때
+        if (Psequence.size() % 2 != 0) {
+                // 만약 size가 5면은 for문을 2번만 돌리고 마지막 sequence[sequencesize()-1] 원소는 그냥 더해주면 된다.
+                for (int i = 0; i < (Psequence.size()-1)/2; i ++) {
+                        // 두 원소 전부다 1일 때 더해주는 것이 더 큼
+                        if (Psequence[2*i] == 1 || Psequence[2*i+1] == 1) {
+                                result += Psequence[2*i] + Psequence[2*i+1];
+                                continue;
+                        }
+                        result += Psequence[2*i] * Psequence[2*i+1];
+                }
+                result += Psequence[Psequence.size()-1];
+        } 
+
+        //짝수일 때
+        else {
+                // 만약 size가 4면 for문을 2번만 돌리면 된다.
+                for (int i = 0; i < (Psequence.size())/2; i ++) {
+                        if (Psequence[2*i] == 1 || Psequence[2*i+1] == 1) {
+                                result += Psequence[2*i] + Psequence[2*i+1];
+                                continue;
+                        }
+                        result += Psequence[2*i] * Psequence[2*i+1];
+                }
+        }
+
+
+        ///////////// Nsequence //////////////
+        sort(Nsequence.begin(), Nsequence.end());
+
+        // 홀수일 때
+        if (Nsequence.size() % 2 != 0) {
+                // 만약 size가 5면은 for문을 2번만 돌리고 마지막 sequence[sequencesize()-1] 원소는 그냥 더해주면 된다.
+                for (int i = 0; i < (Nsequence.size()-1) /2; i ++) {
+                        result += Nsequence[2*i] * Nsequence[2*i+1];
+                }
+                if (zero == 0) {
+                        result += Nsequence[Nsequence.size()-1];
+                }
+        } 
+
+        //짝수일 때
+        else {
+                // 만약 size가 4면 for문을 2번만 돌리면 된다.
+                for (int i = 0; i < (Nsequence.size()) /2; i ++) {
+                        result += Nsequence[2*i] * Nsequence[2*i+1];
+                }
+        }
+
+        cout << result << '\n';
+}

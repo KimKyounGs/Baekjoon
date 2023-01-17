@@ -1,0 +1,34 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, K;
+int SensorLocation[10001];
+
+int main() {
+   	ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+	cin >> N >> K;
+
+	for (int i = 0; i < N; i ++) {
+		cin >> SensorLocation[i];
+	}
+
+	sort(SensorLocation, SensorLocation + N);
+
+	int gap[10001];
+
+	for (int i = 0; i < N-1; i ++) {
+		gap[i] = abs(SensorLocation[i+1] - SensorLocation[i]);
+	}
+
+	sort(gap, gap + N-1);
+
+	int sum = 0;
+	for (int i = 0; i < N-K; i ++) {
+		sum += gap[i];
+	}
+
+	cout << sum << endl;
+}

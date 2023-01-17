@@ -1,0 +1,100 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M;
+// graph[x][y][0] = 치즈 유무, 치즈가 있을 때 graph[x][y][1] = 치즈가 실내온도의 공기와 접촉 횟수
+int graph[101][101][3]; 
+bool visited[101][101];
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void DFS(int x, int y) {
+    visited[x][y] = true;
+
+    for (int i = 0; i < 4; i ++) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        // 범위체크 및 방문체크
+        if (nx < 0 || ny < 0 || nx > N-1 || ny > M-1 || visited[nx][ny]) {
+            continue;
+        }
+
+        // 치즈가 있으면 그 치즈의 공기 접촉 횟수 ++;
+        if (graph[nx][ny][0] == 1) {
+            graph[nx][ny][1] ++;
+        }
+
+        if (graph[nx][ny][0] == 0) {
+            DFS(nx,ny);
+        }
+    }
+}
+
+int main() {
+    cin >> N >> M;    
+    for (int i = 0; i < N; i ++) {
+        int max = 0;
+        for (int j = 0; j < M; j ++) {
+            cin >> graph[i][j][0];
+            if (graph[i][j][0] == 1) {
+                if (j > max) {
+                    graph[i][max][2] = 0;
+                    max = j;
+                    graph[i][j][2] = 1;
+                }
+            }
+        }
+    }
+
+    int result = 0;
+    while(1) {
+        int check = 0;
+        // DFS or BFS
+        for (int i = 0; i < N; i ++) {
+            int skip = 0;
+            bool first = 0;
+            for (int j = 0; j < M; j ++) {
+                if (graph[i][j][0] == 0 && !visited[i][j] && skip == 0) {
+                    DFS(i,j);
+                }
+                if (graph[i][j][0] == 1) {
+                    check ++;
+                    if (!first) {
+                        skip = 1;
+                        first = 1;
+                    }
+                    
+                    if (graph[i][j][2] == 1) {
+                        skip = 0;
+                    }
+                }
+            }
+        }
+        
+        if (check == 0) {
+            cout << result << endl;
+            return 0;
+        }
+        
+        result ++;
+        int cnt = 0;
+        // 치즈 녹이기.
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < M; j ++) {
+                if (graph[i][j][1] >= 1) {
+                    if (graph[i][j][1] >= 2) {
+                        cnt ++;
+                        graph[i][j][0] = 0;
+                    }
+                    graph[i][j][1] = 0;
+                }
+            }
+        }
+
+        memset(visited, 0, sizeof(visited));
+    }
+    
+}

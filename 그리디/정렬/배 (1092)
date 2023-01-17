@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M;
+
+vector<int> crane, box;
+vector<int>::iterator iter;
+
+int main() {
+	cin >> N;
+	for (int i = 0; i < N; i ++) {
+		int x;
+		cin >> x;
+		crane.push_back(x);
+	}
+	cin >> M;
+	for (int i = 0; i < M; i ++) {
+		int x;
+		cin >> x;
+		box.push_back(x);
+	}
+	sort(crane.begin(), crane.end(), greater<>());
+	sort(box.begin(), box.end(), greater<>());
+
+	if (crane[0] < box[0]) {
+		cout << -1;
+		return 0;
+	}
+	int count = 0, result = 0;
+	while (count != M) {
+		for (int i = 0; i < N; i ++) {
+			for (iter = box.begin(); iter != box.end(); iter ++) {
+				if (crane[i] >= (*iter)) {
+					box.erase(iter);
+					count ++;
+					break;
+				}
+			}
+		}
+		result ++;
+	}
+	cout << result;
+}

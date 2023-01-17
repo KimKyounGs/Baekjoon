@@ -1,0 +1,108 @@
+/* 
+# 아이디어
+waterHeight변수가 루프마다 +1 해지는거에 따라서 temp배열을 변경시켜준다. graph배열을 입력 받을 때 가장 큰 값을 maxHeight에 저장해주고
+
+waterHeight변수가 maxHeight와 같아지면 루프를 종료시킨다.
+
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int graph[101][101];
+int temp[101][101];
+int N;
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+bool DFS(int x, int y) {
+    if (temp[x][y] == 0) {
+        return false;
+    }
+
+    temp[x][y] = 0;
+    
+    for (int i = 0; i < 4; i ++) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        if (nx < 0 || nx > N-1 || ny < 0 || ny > N-1) continue;
+
+        if (temp[nx][ny] == 0) continue;
+
+        DFS(nx,ny);
+    }
+    return true;
+}
+
+bool BFS(int x, int y) {
+    if (temp[x][y] == 0) {
+        return false;
+    }
+
+    temp[x][y] = 0;
+
+    queue <pair<int, int>> q;
+    q.push({x,y});
+
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || nx > N-1 || ny < 0 || ny > N-1) continue;
+    
+            if (temp[nx][ny] == 0) continue;
+
+            q.push({nx,ny});
+            temp[nx][ny] = 0;
+        }
+    }
+    
+    return true;
+}
+
+int main() {
+    int maxHeight = 0;
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+            maxHeight = max(maxHeight,graph[i][j]);
+        }
+    }
+
+    int maxs = 0;
+    int waterHeight = 0;
+    while(1) {
+        int cnt = 0;
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < N; j ++) {
+                if (graph[i][j] <= waterHeight) {
+                    temp[i][j] = 0;
+                }
+                else {
+                    temp[i][j] = graph[i][j];
+                }
+            }
+        }
+
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < N; j ++) {
+                if (BFS(i,j)) {
+                    cnt ++;
+                }
+            }
+        }
+
+        maxs = max(cnt, maxs);
+        if (waterHeight == maxHeight) break;
+        waterHeight ++;
+    }
+    cout << maxs << '\n';
+}

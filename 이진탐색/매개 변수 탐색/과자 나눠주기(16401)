@@ -1,0 +1,46 @@
+/*
+# 아이디어 
+N의 범위와 M의 범위 그리고 과자 길이만 봐도 O(log)로 풀어야 된다. 처음에는 작은 단위의 과자까지 분해해보면서 어려움을 느꼈지만, 생각해보니 가장 큰 길이만 구하기만 하면 나머지 작은 조각들은 알아서 1로 쪼개든 2로 쪼개든 상관이 없다. 그러면 가장 큰 길이만 구하면 되는데 문제는 과자 길이가 1부터 10억까지 주어진다. for문으로 순차 탐색을 진행하면 분명 시간초과가 걸리 것이다. O(log) 방식인 이진 탐색을 이용해서 풀면 해결이 가능하다. 
+*/
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+    vector<int> snack;
+    for (int i = 0; i < M; i ++) {
+        int s;
+        cin >> s;
+        snack.push_back(s);
+    }
+
+    int start = 0;
+    int end = 1e9;
+    int result = 0;
+    while(start <= end) {
+        int mid = (start + end) / 2;
+
+        int cnt = 0;
+        if (mid == 0) {
+            break;
+        }
+        for (int i = 0; i < M; i ++) {
+            cnt += snack[i] / mid;
+        }
+
+        if (cnt >= N) {
+            start = mid + 1;
+            result = max(result, mid);
+        }
+        else {
+            end = mid - 1;
+        }
+    }
+
+    cout << result << '\n';
+    
+	return 0;
+}

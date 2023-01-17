@@ -1,0 +1,42 @@
+// 참고 : https://m.blog.naver.com/iambigman97/221860065921
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+vector<int> v;
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        v.push_back(n);
+    }
+
+    int left = 0;
+    int right = N-1;
+    int result1 = v[right];
+    int result2 = v[left];
+    int gap = abs(v[right] + v[left]);
+    
+    while (left < right) {
+        int nextGap = v[left] + v[right];
+
+        if (abs(nextGap) < gap) {
+            gap = abs(nextGap);
+            result1 = v[right];
+            result2 = v[left];
+        }
+
+        if (nextGap > 0) {
+            right --;
+        }
+        else {
+            left ++;
+        }
+        
+    }
+
+    cout << result2 << " " << result1 << endl;
+}

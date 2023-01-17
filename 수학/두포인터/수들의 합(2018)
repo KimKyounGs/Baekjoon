@@ -1,0 +1,39 @@
+/*
+아이디어 :
+처음에 DP문제인줄 알았는데, dp테이블만들 때 점화식이 성립이 안된다. 그 이유는 dp[i]을 채울 때 원래 있던 dp테이블을 참고해야하는데 dp[i]마다 조건이 다 다르기(연속되었기 때문이다.) 떄문에 사용을 못한다.
+
+결국 알고리즘 분류를 보니 두 포인터 알고리즘이였다.....
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() { 
+    int N;
+    cin >> N;
+
+    int start = 1;
+    int end = 1;
+
+    int result = 0;
+    while(start <= end) {
+        int sum = 0;
+        for (int i = start; i <= end; i ++) {
+            sum += i;
+        }
+
+        if (sum == N) {
+            result ++;
+            start ++;
+            end ++;
+        }
+        else if (sum > N) {
+            start ++;
+        }
+        else {
+            end ++;
+        }
+    }
+
+    cout << result << '\n';
+}

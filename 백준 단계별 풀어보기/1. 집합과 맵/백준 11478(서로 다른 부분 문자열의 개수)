@@ -1,0 +1,35 @@
+/*
+아이디어 :
+
+참고 : https://scarlettb.tistory.com/113
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+
+string str;
+set<int> A;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    string s;
+    cin >> s;
+ 
+    set<string> set;
+ 
+    string str = "";
+    for (int i = 0; i < s.size(); i++) {
+        for (int j = i; j < s.size(); j++) {
+            str += s[j];
+            set.insert(str);
+        }
+        str = "";
+    }
+ 
+    cout << set.size();
+}

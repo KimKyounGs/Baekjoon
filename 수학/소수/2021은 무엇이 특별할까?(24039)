@@ -1,0 +1,57 @@
+/*
+아이디어 :
+보면 좋은 곳 : https://donggoolosori.github.io/2020/10/16/eratos/
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+int primeNum[10001];
+
+void Eratos()
+{
+    // primeNum 배열 초기화
+    for (int i = 2; i <= N; i++)
+    {
+        primeNum[i] = i;
+    }
+
+    for (int i = 2; i <= sqrt(N); i++)
+    {
+        // primeNum[i] 가 0이면 이미 소수가 아니므로 continue
+        if (primeNum[i] == 0) {
+            continue;
+        }
+        // i*k (k<i) 까지의 수는 이미 검사했으므로 j는 i*i 부터 검사해준다.
+        for (int j = i * i; j <= N; j += i) {
+            primeNum[j] = 0;
+        }
+    }
+}
+
+int main() { 
+    cin >> N;
+
+    Eratos();
+    int first = 2;
+    int second = 3;
+    
+    if (first * second > N) {
+        cout << first * second << '\n';
+        return 0;
+    }
+    
+    for (int i = 4; i <= N; i ++) {
+        if (primeNum[i] != 0) {
+            first = second;
+            second = primeNum[i];
+
+            if (first * second > N) {
+                cout << first * second << '\n';
+                break;
+            }
+        }
+    }
+    return 0;
+}

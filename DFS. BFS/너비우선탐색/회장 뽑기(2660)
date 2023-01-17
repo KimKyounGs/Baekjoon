@@ -1,0 +1,80 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N; // 회원의 수
+vector <int> graph[51];
+int number[51];
+bool visited[51];
+
+void BFS(int x) {
+    visited[x] = true;
+    queue<int> q;
+    q.push(x);
+    while(!q.empty()) {
+        int x = q.front();
+        q.pop();
+        for (int i = 0; i < graph[x].size(); i ++) {
+            int nx = graph[x][i];
+            if (visited[nx]) {
+                continue;
+            }
+            else {
+                q.push(nx);
+                visited[nx] = true;
+                number[nx] = number[x] + 1;
+            }
+        }
+    }
+}
+
+int main() {
+    cin >> N;
+    while(1) {
+        int a, b;
+        cin >> a >> b;
+        if (a == -1 && b == -1) {
+            break;
+        }
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
+
+    int score[51] = {0,}; // 각 점수가 들어가 있음.
+    for (int i = 1; i <= N; i ++) {
+        number[i] = 0;
+        BFS(i);
+        int max = 0;
+        for (int i = 1; i <= N; i ++) {
+            if(number[i] > max) {
+                max = number[i];
+            }
+        }
+        score[i] = max;
+        memset(visited, 0, sizeof(visited));
+        memset(number, 0, sizeof(number));
+    }
+
+    // 가장 점수가 낮은 사람 구하기.
+    int min = 100;
+    int cnt = 0;
+    for (int i = 1; i <= N; i ++) {
+        if (score[i] < min) {
+            min = score[i];
+            cnt = 0;
+        }
+        if (score[i] == min){
+            cnt ++;
+        }
+    }
+
+
+    // 답 출력 
+    cout << min << " " << cnt << '\n';
+    for (int i = 1; i <= N; i ++) {
+        if (score[i] == min) {
+            cout << i << ' ';
+        }
+    }
+    return 0;
+}
