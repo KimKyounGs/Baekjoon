@@ -1,0 +1,108 @@
+/*
+아이디어 : 
+
+시간초가 났었던 문제인데, 연합군의 값을 고쳐줄 때 시간초가 문제가 있었던 것 같다. 
+처음에는 이중포문을 사용했지만, 하나의 큐를 만들어서 visited 되었던 것들을 넣어주고 값을 변경해주었다.
+*/
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int N, L, R;
+int graph[51][51];
+bool visited[51][51];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+bool check; // 연합이 만들어진 유뮤에 대해서 체크.
+
+void InitVisited() {
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            if (visited[i][j]) visited[i][j] = false;
+        }
+    }
+}
+
+void BFS(int x, int y) {
+    int sum = graph[x][y];
+    int cnt = 1;
+    visited[x][y] = true;
+    
+    queue<pair<int, int>> q,nq;
+    q.push({x,y});
+    nq.push({x,y});
+    
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 범위체크
+            if (nx < 0 || nx > N-1 || ny < 0 || ny > N-1 || visited[nx][ny]) continue;
+
+            // 차이가 L이상 R이하면서 방문하지 않은 노드일 때 q.push
+            if (abs(graph[nx][ny]-graph[x][y]) >= L && abs(graph[nx][ny]-graph[x][y]) <= R) {
+                check = true;
+                visited[nx][ny] = true;               
+                sum += graph[nx][ny];
+                cnt ++;
+                q.push({nx,ny});
+                nq.push({nx,ny});
+            }
+        }
+    }
+
+    int newValue = sum/cnt;
+    
+    while (nq.empty() == 0)
+    {
+        int x = nq.front().first;
+        int y = nq.front().second;
+        nq.pop();
+        graph[x][y] = newValue;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> N >> L >> R;
+    for (int i = 0; i < N; i ++) {
+        for(int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    
+    int result = 0;
+    while(1) {
+        int dis = 1; // distinction의 약자로 "구별하다"라는 뜻임. 같은 연합인지 아닌지를 구별하기 위해서 사용.
+        for (int i = 0; i < N; i ++) {
+            for(int j = 0; j < N; j ++) {
+                if(!visited[i][j]) {
+                    BFS(i,j);
+                }
+            }
+        }
+        
+        // 연합이 만들어졌으면 다음날로 아니면 종료하기.
+        if (check) {
+            result ++;
+            check = false;
+            InitVisited();
+            // memset(visited, 0, sizeof(visited));
+        }
+        else {
+            cout << result << '\n';
+            return 0;
+        }
+    }
+
+}

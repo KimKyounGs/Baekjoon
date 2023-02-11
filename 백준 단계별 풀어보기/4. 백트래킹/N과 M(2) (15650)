@@ -1,0 +1,51 @@
+/*
+아이디어 : 
+
+
+*/
+#include <iostream>
+#include <vector>
+#define MAX 8
+
+using namespace std;
+
+int arr[MAX]; //주어진 숫자
+bool visited[MAX]; //방문, 중복 방지
+vector<int> vec; //출력할 수열
+int cnt;
+int N, M;
+
+void Print()
+{
+	for (int i = 0; i < vec.size(); i++)
+		cout << vec[i] << ' ';
+	cout << '\n';
+	return;
+}
+
+void DFS(int num, int cnt)
+{
+    if(cnt == M)
+    {
+        for(int i = 0; i < M; i++)
+            cout << arr[i] << ' ';
+        cout << '\n';
+        return;
+    }
+    for(int i = num; i <= N; i++)
+    {
+        if(!visited[i])
+        {
+            visited[i] = true;
+            arr[cnt] = i;
+            DFS(i+1,cnt+1);
+            visited[i] = false;
+        }
+    }
+}
+
+
+int main() {
+	cin >> N >> M;
+    DFS(1,0);
+}

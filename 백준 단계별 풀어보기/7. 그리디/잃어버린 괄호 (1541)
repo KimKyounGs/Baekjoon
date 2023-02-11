@@ -1,0 +1,70 @@
+/*
+아이디어 :
+문제 : https://www.acmicpc.net/problem/1541
+
+예제 1번을 보고 처음에 "어? 왜 -35가 나오지..?" 했었다.
+한참을 보다가 -가 나오면 무조건 다 빼주면 된다는 결론을 내리고 코드를 짰다.
+처음에는 배열을 쓸려고 했는데 친구가 스택을 사용해보라고 했다.
+확실히 스택을 사용하니 더 좋은 코드가 나왔고. 계산 하는 부분을 함수로 처리하니 더욱 괜찮은 코드가 나왔다.
+
+참고 : https://scarlettb.tistory.com/64
+코드가 깔끔해서 가져왔음.
+
+*/
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+string str;
+stack<char> num;
+int result;
+
+bool check = false; // false면 더하고 true면 빼기.
+bool subCheck = false; // 뻬기가 나왓는가 ?
+
+void calculate() {
+    int mul = 1;
+    if (!check) {
+        while(!num.empty()) {
+            result += (num.top() - '0') * mul;
+            num.pop();
+            mul *= 10;
+        }
+    }
+
+    else {
+        while(!num.empty()) {
+            result -= (num.top() - '0') * mul;
+            num.pop();
+            mul *= 10;
+        }
+
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> str;
+    int len = str.length();   
+    
+    for (int i = 0; i < len; i ++) {
+        // 부호인경우
+        if (str[i] == '-' || str[i] == '+') {
+            calculate();
+            if(str[i] == '-' && !subCheck) {
+                subCheck = true;
+                check = !check;
+            }
+        }
+        // 숫자인 경우
+        else {
+            num.push(str[i]);
+        }
+    }
+    calculate();
+
+    cout << result << '\n';
+}

@@ -1,0 +1,40 @@
+/*
+아이디어 : 
+
+참고 : https://cryptosalamander.tistory.com/55
+*/
+#include <iostream>
+#include <vector>
+#define MAX 8
+
+using namespace std;
+
+int arr[MAX]; //주어진 숫자
+bool visited[MAX]; //방문, 중복 방지
+vector<int> vec; //출력할 수열
+int cnt;
+int N, M;
+
+
+void DFS(int cnt)
+{
+    if(cnt == M)
+    {
+        for(int i = 0; i < M; i++) {
+            cout << arr[i] << ' ';
+        }
+        cout << '\n';
+        return;
+    }
+    for(int i = 1; i <= N; i++)
+    {
+        arr[cnt] = i;
+        DFS(cnt+1);
+    }
+}
+
+
+int main() {
+	cin >> N >> M;
+    DFS(0);
+}
