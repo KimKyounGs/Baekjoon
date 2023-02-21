@@ -1,46 +1,64 @@
 /*
 # 아이디어 
 N의 범위와 M의 범위 그리고 과자 길이만 봐도 O(log)로 풀어야 된다. 처음에는 작은 단위의 과자까지 분해해보면서 어려움을 느꼈지만, 생각해보니 가장 큰 길이만 구하기만 하면 나머지 작은 조각들은 알아서 1로 쪼개든 2로 쪼개든 상관이 없다. 그러면 가장 큰 길이만 구하면 되는데 문제는 과자 길이가 1부터 10억까지 주어진다. for문으로 순차 탐색을 진행하면 분명 시간초과가 걸리 것이다. O(log) 방식인 이진 탐색을 이용해서 풀면 해결이 가능하다. 
+
+
+// 23년 2월 21일
+// 참고 : https://codingnotes.tistory.com/174
+
+맞았던 문제인데 재체점으로 틀렸었다.
+
+왜 틀렸는지는 정확하게 모르겠지만, 아마도 원래 코드에서
+if (mid == 0) break;
+mid 값이 0인 상태에서 바로 break를 해서 그런 것 같다.
+
+이 문제를 해결하기 위해서 start값을 0에서 1로 바꿨다.
+
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
+int M, N;
+int sum;
+
 int main() {
-    int N, M;
-    cin >> N >> M;
+    cin >> M >> N;
     vector<int> snack;
-    for (int i = 0; i < M; i ++) {
+    for (int i = 0; i < N; i ++) {
         int s;
         cin >> s;
+        sum += s;
         snack.push_back(s);
     }
 
-    int start = 0;
+    int start = 1;
     int end = 1e9;
     int result = 0;
     while(start <= end) {
-        int mid = (start + end) / 2;
+        int mid = (start + end + 1) / 2;
 
-        int cnt = 0;
-        if (mid == 0) {
-            break;
-        }
-        for (int i = 0; i < M; i ++) {
+        long long cnt = 0;
+        
+        for (int i = 0; i < N; i ++) {
             cnt += snack[i] / mid;
         }
 
-        if (cnt >= N) {
+        if (cnt >= M) {
             start = mid + 1;
             result = max(result, mid);
         }
+            
         else {
             end = mid - 1;
         }
     }
 
     cout << result << '\n';
-    
+
+
 	return 0;
 }

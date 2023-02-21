@@ -1,42 +1,63 @@
-/* 
-# 아이디어
+/*
+# 아이디어 
 
-참고 : https://cryptosalamander.tistory.com/58
-대표적인 백트래킹 문제이다.
-너무 어려웠다..
+23.02.21
+
+재채점해서 틀린 문제이다.
+
+이 문제에 질문 게시판을 보니깐 오버플로우 문제인거 같았다.
+(게시판 링크 : https://www.acmicpc.net/board/view/110762)
+
+오버플로우가 난 지점을 확인해보면 cnt에 mid/v[i]값을 더해줄 때이다.
+cnt에 들어갈 최대값을 생각해보자.
+v[i]값들이 다 1이라고 하고, mid값은 최대(10^9) * 10^9라고 생각해보면, cnt에 값이 최대 10^9 * 10^9 * 100000(N최대값)이 될 수 있다. long long으로 표현 가능한 정수는 넘어버린다. (이렇게까지는 아니지만...)
+
+그래서 해결법
+1. cnt에 unsigend long long 해주기. (그냥 unsigend 붙어서 더 큰 정수 표현가능하게 가능)
+2. for문 안에 if (cnt > M) break; 해주기. (미리 차단해주기.)
 */
+
 #include <iostream>
-#define MAX 15
+#include <vector>
+#include <algorithm>
+
 using namespace std;
 
-int col[MAX];
-int N, total = 0;
+vector <long long> v; // 심사대에서 심사를 하는데 걸리는 시간.
+int N, M;
 
-bool check(int level)
-{
-    for(int i = 0; i < level; i++)
-        if(col[i] == col[level] || abs(col[level] - col[i]) == level - i)// 대각선이거나 같은 라인
-            return false;
-        //col[i]가 의미하는 것이 X좌표, i가 의미하는것이 Y좌표이므로 차이가 일정하다면 대각선에 있다고 볼 수 있다.
-    return true;
-}
+int main() {
+    cin >> N >> M;
+    for (int i = 0; i < N; i ++) {
+        int time;
+        cin >> time;
+        v.push_back(time);
+    }
 
-void nqueen(int x)
-{
-    if(x == N)
-        total++;
-    else
-    {
-        for(int i = 0; i < N; i++)
-        {
-            col[x] = i; // 해당 위치에 퀸을 배치
-            if(check(x)) // 유효하다면 다음행의 퀸 배치, 유효하지않다면 다른 위치로 퀸 배치 변경
-                nqueen(x+1);
+    sort(v.begin(), v.end());
+    
+    long long start = 1;
+    long long end = v[N-1] * M; 
+    long long result =v[N-1] * M;
+    while(start <= end) {
+        long long mid = (start + end) / 2;
+
+        unsigned long long cnt = 0; // 심사받는 사람 수.
+        for (int i = 0; i < N; i++) {
+            //if (cnt > M) break;
+            cnt += mid/v[i];
+        }
+
+        // 심사받는 사람 수가 더 많으면, 평균 시간을 단축.
+        if (cnt >= M) {
+            result = min(result,mid);
+            end = mid - 1;
+        }
+        // 심사받는 사람 수가 더 작다면, 평균 시간을 늘림.
+        else {
+            start = mid + 1;
         }
     }
-}
-int main() {
-    cin >> N;
-    nqueen(0);
-    cout << total;
+    
+    cout << result << endl;
 }

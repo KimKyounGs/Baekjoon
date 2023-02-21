@@ -1,0 +1,100 @@
+/* 
+# 아이디어
+
+// 23년 2월 19일
+시간이 많이 걸린 문제이다. 
+백트래킹을 조금 이해한 것 같다.
+
+https://cryptosalamander.tistory.com/60
+쫌더 깔끔하게 구현해놔서 가져왔음.
+*/
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int N;
+int Max = -1000000001, Min = 1000000001;
+vector<int> operand;
+int operators[4];
+
+void DFS(int cnt, int sum) {
+    if (cnt == N) {
+        if (Max < sum) Max = sum;
+        if (Min > sum) Min = sum;
+        return;
+    }
+
+    for (int j = 0; j < 4; j ++) {
+        if (operators[j] > 0) {
+            if (j == 0) { 
+                sum += operand[cnt]; 
+                operators[j] --;
+                //cout << "cnt = " << cnt <<  " sum = " << sum << " +" << '\n';
+                DFS(cnt + 1, sum);
+                operators[j] ++;
+                sum -= operand[cnt];
+                //cout << "끝나고 cnt = " << cnt <<  " sum = " << sum << " +" << '\n';
+            }
+            else if (j == 1) {
+                sum -= operand[cnt]; 
+                operators[j] --;
+                //cout << "cnt = " << cnt << " sum = " << sum << " -" << '\n';
+                DFS(cnt + 1, sum);
+                operators[j] ++;
+                sum += operand[cnt];
+                //cout << "끝나고 cnt = " << cnt << " sum = " << sum << " -" << '\n';
+            }
+            else if (j == 2) {
+                sum *= operand[cnt]; 
+                operators[j] --;
+                //cout << "cnt = " << cnt << " sum = " << sum << " *" << '\n';
+                DFS(cnt + 1, sum);
+                operators[j] ++;
+                if (sum < 0) {
+                    int nSum = abs(sum);
+                    nSum /= operand[cnt];
+                    sum = -nSum;
+                }
+                else {
+                    sum /= operand[cnt];
+                }
+                //cout << "끝나고 cnt = " << cnt << " sum = " << sum << " *" << '\n';
+            }
+            else {
+                if (sum < 0) {
+                    int nSum = abs(sum);
+                    nSum /= operand[cnt];
+                    sum = -nSum;
+                }
+                else {
+                    sum /= operand[cnt];
+                }
+                operators[j] --;
+                //cout << "cnt = " << cnt << " sum = " << sum << " /" << '\n';
+                DFS(cnt + 1, sum);
+                operators[j] ++;
+                sum *= operand[cnt];
+                //cout << "끝나고 cnt = " << cnt << " sum = " << sum << " /" << '\n';
+            }
+        }
+
+    }
+}
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        operand.push_back(n);
+    }
+    for (int i = 0; i < 4; i ++) {
+        int n;
+        cin >> n;
+        operators[i] += n;
+    }
+
+    DFS(1, operand[0]);
+    cout << Max << ' ' << Min << '\n';
+}
