@@ -1,7 +1,9 @@
 /*
 # 아이디어 
 
+23.3.4
 누적합 설명서 : https://book.acmicpc.net/algorithm/prefix-sum
+
 */
 #include <iostream>
 
