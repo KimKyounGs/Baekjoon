@@ -1,0 +1,32 @@
+/*
+# 아이디어 
+
+누적합 개념을 이해했다면 쉽게 풀 수 있다.
+*/
+#include <iostream>
+
+using namespace std;
+
+int N, K;
+int sum[100001];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> N >> K;
+    for (int i = 1; i <= N; i ++) {
+        int n;
+        cin >> n;
+        sum[i] = sum[i-1] + n;
+    }
+    
+    int Max = -1000001;
+    
+    for (int i = 1, j = K; i <= N-K+1; i ++, j ++) {
+        // cout << sum[j] - sum [i-1] << '\n'; 
+        if (Max < sum[j] - sum [i-1]) Max = sum[j] - sum [i-1];
+    }
+
+    cout << Max << '\n';
+}
