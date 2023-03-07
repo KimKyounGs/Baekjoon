@@ -1,0 +1,70 @@
+/*
+# 아이디어 
+
+23.3.7
+
+누적합을 이용해야 100점 받을 수 있는 문제이다.
+기존에 일차원배열로 누적합을 저장했다면, 이 문제는 알파뱃 개수만큼 이차원배열을 만들어서 나올 때 마다 해당 알파뱃이 나오면 +1을 해주는 방식으로 코드를 작성했다.
+예시를 보면 이해가 될 것이다.
+s e u n g j a e h w a n g
+
+0 0 0 . . . 1 1 1 1 2 2 2
+0 0 0
+0 0 0
+0 0 0 
+0 1 1
+0 0 0 
+0 0 0 
+. . .
+. . .
+1 1 1
+0 0 0
+0 0 1
+. . .
+. . .
+
+*/
+#include <iostream>
+
+using namespace std;
+
+int q;
+string S;
+int sum[200001][26];
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
+    cin >> S;
+    int len = S.length();
+    for (int i = 1; i <= len; i++) {
+        int n = S[i-1] - 'a';
+        for (int j = 0; j < 26; j ++) {
+            if (j == n)  {
+                sum[i][j] = sum[i-1][j] + 1;
+            }
+            else sum[i][j] = sum[i-1][j];
+        }
+    }
+
+    
+    /* 확인용
+    for (int i = 1; i <= len; i ++) {
+        for (int j = 0; j < 26; j ++) {
+            cout << sum[i][j] << ' ';
+        }
+        cout << endl;
+    }
+    */
+
+    cin >> q;
+    while(q--) {
+        int l, r;
+        char a;
+        cin >> a >> l >> r;
+        cout << sum[r+1][a-'a'] - sum[l][a-'a'] << '\n';
+    }
+    
+}
