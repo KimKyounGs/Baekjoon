@@ -1,0 +1,51 @@
+/*
+아이디어 : 
+
+23.3.9
+
+누적합 문제인데, 조금 신경써야 할 부분이 있었다.
+다양한 방식으로 누적합하는 것을 배움.
+
+참고 : https://hagisilecoding.tistory.com/123
+*/
+
+#include <iostream>
+
+using namespace std;
+
+int N,M;
+int sum[1025][1025];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+    cin >> N >> M;
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            int n;
+            cin >> n;
+            sum[i][j] = sum[i - 1][j] + sum[i][j - 1] + n - sum[i - 1][j - 1]; 
+        }
+    }
+
+    
+    /* 확인용.
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            cout << sum[i][j] << ' ';
+        }
+        cout << '\n';
+    }
+    */
+    
+    while(M--) {
+        int x1, y1, x2, y2;
+        cin >> x1 >> y1 >> x2 >> y2;
+
+        cout << sum[x2][y2]-sum[x1-1][y2]-sum[x2][y1-1]+sum[x1-1][y1-1] << '\n';
+    }
+    
+    return 0;
+}

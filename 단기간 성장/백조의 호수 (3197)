@@ -1,0 +1,135 @@
+/*
+아이디어 : 
+
+23.3.8
+
+문제 이해는 쉬운데 시간초과가 나오는 문제이다. 
+밑에 링크에 나온대로 문제를 풀었다.
+간단하게 말하면 visited초기화 대신 많은 queue를 써서 이미 방문한 곳은 다시 방문안하는 방법이다.
+참고 : https://yabmoons.tistory.com/64
+*/
+
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+int R, C;
+bool Find = false;
+pair<int, int> swanPos;
+
+char graph[1501][1501];
+bool visited[1501][1501];
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+queue<pair<int, int>> waterQueue, nextWaterQueue, swanQueue, nextSwanQueue;
+
+void Swan_BFS()
+{
+    while (swanQueue.empty() == 0 && Find == false)
+    {
+        int x = swanQueue.front().first;
+        int y = swanQueue.front().second;
+        swanQueue.pop();
+ 
+        for (int i = 0; i < 4; i++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+ 
+            if (nx >= 0 && ny >= 0 && nx < R && ny < C)
+            {
+                if (visited[nx][ny] == false)
+                {
+                    if (graph[nx][ny] == '.')
+                    {
+                        visited[nx][ny] = true;
+                        swanQueue.push(make_pair(nx, ny));
+                    }
+                    else if (graph[nx][ny] == 'L')
+                    {
+                        visited[nx][ny] = true;
+                        Find = true;
+                        break;
+                    }
+                    else if (graph[nx][ny] == 'X')
+                    {
+                        visited[nx][ny] = true;
+                        nextSwanQueue.push(make_pair(nx, ny));
+                    }
+                }
+            }
+        }
+    }
+}
+ 
+void Water_BFS()
+{
+    while (waterQueue.empty() == 0)
+    {
+        int x = waterQueue.front().first;
+        int y = waterQueue.front().second;
+        waterQueue.pop();
+ 
+        for (int i = 0; i < 4; i++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+ 
+            if (nx >= 0 && ny >= 0 && nx < R && ny < C)
+            {
+                if (graph[nx][ny] == 'X')
+                {
+                    graph[nx][ny] = '.';
+                    nextWaterQueue.push(make_pair(nx, ny));
+                }
+            }
+        }
+    }
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+    cin >> R >> C;
+    for (int i = 0; i < R; i ++) {
+        for (int j = 0; j < C; j ++) {
+            cin >> graph[i][j];
+            if (graph[i][j] != 'X') waterQueue.push(make_pair(i, j));    
+            if (graph[i][j] == 'L')
+            {
+                swanPos.first = i;
+                swanPos.second = j;
+            }
+        }
+    }
+
+    int result = 0;
+    swanQueue.push({swanPos.first, swanPos.second});
+    visited[swanPos.first][swanPos.second] = true;
+
+    while(!Find) {
+        Swan_BFS();
+        if (!Find)
+        {
+            Water_BFS();
+            waterQueue = nextWaterQueue;
+            swanQueue = nextSwanQueue;
+    
+            while (nextWaterQueue.empty() == 0) nextWaterQueue.pop();
+            while (nextSwanQueue.empty() == 0) nextSwanQueue.pop();
+            result++;
+        }
+    }
+    cout << result << '\n';
+    
+    
+    return 0;
+}
