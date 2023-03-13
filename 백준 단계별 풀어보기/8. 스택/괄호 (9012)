@@ -1,0 +1,46 @@
+/*
+아이디어 : 
+
+23.3.13
+
+스택에 괄호 하나씩 넣어주면서 s.top()이 ( 이고 새로 들어오는 괄호가 )이면 상쇄시켜준다.(s.pop())
+
+*/
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+int T;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+    cin >> T;
+
+    while(T --) {
+        string str;
+        stack<int> s;
+        cin >> str;
+        int len = str.length();
+
+        bool check = false;
+        int cnt = 0;
+        s.push(str[0]);
+        for (int i = 1; i < len; i ++) {
+            if (!s.empty() && s.top() == '(' && str[i] == ')') {
+                s.pop();
+            }
+            else {
+                s.push(str[i]);
+            }
+        }
+
+        if (s.empty()) cout << "YES" << '\n';
+        else cout << "NO" << '\n';
+    }
+
+
+}

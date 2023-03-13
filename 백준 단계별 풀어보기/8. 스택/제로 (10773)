@@ -1,0 +1,38 @@
+/*
+아이디어 : 
+
+
+
+*/
+#include <iostream>
+#include <algorithm>
+#include <stack>
+
+using namespace std;
+
+int N;
+stack<int> s;
+
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        if (n != 0) s.push(n);
+        else s.pop();
+    }
+
+    int result = 0;
+    while(!s.empty()) {
+        result += s.top();
+        s.pop();
+    }
+
+    cout << result << '\n';
+
+}

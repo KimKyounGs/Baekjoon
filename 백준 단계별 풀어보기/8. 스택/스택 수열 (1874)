@@ -13,6 +13,9 @@
 3 4 5
 
 1 2 5 3 4
+
+
+구현만 잘하면 쉬운문제이다.
 */
 #include <iostream>
 #include <stack>
