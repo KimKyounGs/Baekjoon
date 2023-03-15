@@ -1,67 +1,77 @@
 /*
 아이디어 : 
 
+10 3
+2 9 5
 
-1부터 n까지에 수에 대해 차례로 [push, push, push, push, pop, pop, push, push, pop, push, push, pop, pop, pop, pop, pop] 연산을 수행하면 수열 [4, 3, 6, 8, 7, 5, 2, 1]을 얻을 수 있다.
+1 2 3 4 5 6 7 8 9 10
+
+3 4 5 6 7 8 9 10 1 -- > 0
 
 
 
-4 3 6 8 7 5 2 1
 
-
-
-3 4 5
-
-1 2 5 3 4
 */
 #include <iostream>
-#include <stack>
-#include <vector>
+#include <deque>
 
 using namespace std;
 
-int n;
-vector<char> v;
+int N, M;
+deque<int> dq;
 
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 	cout.tie(0);
 
-    cin >> n;
-
-    int cnt = 1;
-    stack<int> s;
-    
-    for (int i = 0; i < n; i ++) {
-        int num;
-        cin >> num;
-
-        // 현재 스택에 들어가 있는 수가 num보다 작으면 스택에 넣어주기.
-        if (num >= cnt) {
-            for (; cnt <= num; cnt ++) {
-                v.push_back('+');
-                s.push(cnt);
-            }
-            s.pop();
-            v.push_back('-');
-        } 
-        else {
-            if (s.top() == num) {
-                s.pop();
-                v.push_back('-');
-            } 
-            else {
-                cout << "NO" << '\n';
-                return 0;
-            }
-        }
+    cin >> N >> M;
+    for (int i = 1; i <= N; i ++) {
+        dq.push_back(i);
     }
 
-    for (int i = 0; i < v.size(); i ++) {
-        cout << v[i] << '\n';
-    }
-        
+    int result =0;
+	while(M--){
+		int num;
+		cin >> num;
 
+        int left, right;
+		for(int i=0; i<dq.size(); i++){
+			
+			if(dq[i] == num){
+				left = i;
+				right = dq.size()-i;
+				break;
+				
+			}
+		}
+		
+		if(left<=right){
+			while(1){
+				if(dq.front()==num) break;
 
+				dq.push_back(dq.front());
+				dq.pop_front();
+				result++;
+				
+			}
+			dq.pop_front();
+		}
+		
+		else{
+			result++;
+			while(1){
+				if(dq.back()==num) break;
+	
+				dq.push_front(dq.back());
+				dq.pop_back();
+				result++;
+				
+			}
+			dq.pop_back();
+		}
+
+	}
+	
+	cout << result << '\n';
 }
