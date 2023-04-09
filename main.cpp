@@ -1,77 +1,45 @@
 /*
-아이디어 : 
+아이디어 :
 
-10 3
-2 9 5
-
-1 2 3 4 5 6 7 8 9 10
-
-3 4 5 6 7 8 9 10 1 -- > 0
-
-
-
-
+냅색문제 : https://chanhuiseok.github.io/posts/improve-6/
 */
 #include <iostream>
-#include <deque>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <vector>
 
 using namespace std;
 
-int N, M;
-deque<int> dq;
+int w[101]; // 무게
+int v[101]; // 가치
+int dp[101][100001];
+
+int N, K; // 물품의 수 N, 준서가 버틸 수 있는 무게 K
 
 int main() {
+
 	ios::sync_with_stdio(0);
 	cin.tie(0);
-	cout.tie(0);
 
-    cin >> N >> M;
-    for (int i = 1; i <= N; i ++) {
-        dq.push_back(i);
-    }
-
-    int result =0;
-	while(M--){
-		int num;
-		cin >> num;
-
-        int left, right;
-		for(int i=0; i<dq.size(); i++){
-			
-			if(dq[i] == num){
-				left = i;
-				right = dq.size()-i;
-				break;
-				
-			}
-		}
-		
-		if(left<=right){
-			while(1){
-				if(dq.front()==num) break;
-
-				dq.push_back(dq.front());
-				dq.pop_front();
-				result++;
-				
-			}
-			dq.pop_front();
-		}
-		
-		else{
-			result++;
-			while(1){
-				if(dq.back()==num) break;
-	
-				dq.push_front(dq.back());
-				dq.pop_back();
-				result++;
-				
-			}
-			dq.pop_back();
-		}
-
+	cin >> N >> K;
+	for (int i = 1; i <= N; i++) {
+		cin >> w[i] >> v[i];
 	}
-	
-	cout << result << '\n';
+
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= K; j++) {
+			if (j - w[i] >= 0) { // i번째 물건을 넣을 수 있다면?
+				dp[i][j] = max(dp[i-1][j], dp[i - 1][j - w[i]] + v[i]);
+                // 넣지 않을 때와 넣었을 때, 둘 중 더 큰 것으로 초기화
+			}
+            else{ // i번째 물건을 넣을 수 없다면, 배낭 용량은 같고 넣지 않았을 때의 값으로 초기화
+                dp[i][j] = dp[i-1][j];
+            }
+		}
+	}
+
+	cout << dp[N][K];
+
+	return 0;
 }

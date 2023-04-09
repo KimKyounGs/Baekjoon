@@ -1,0 +1,52 @@
+/*
+아이디어 :
+
+즉 ! 우리는, 없애야 하는 전깃줄의 최소 갯수를 구해야 하는데, 이는 반대로 생각해보면, 연결할 수 있는 가장 많은 전깃줄의 갯수를 구하더라도 이를 통해서 정답을 도출해 낼 수가 있다.
+
+출처 : https://yabmoons.tistory.com/572
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+int cnt;
+vector<pair<int, int>> v;
+int wire[101];
+int dp[101];
+
+
+int main() {
+    cin >> n;
+    for (int i = 0; i < n; i ++) {
+        int x, y;
+        cin >> x >> y;
+        v.push_back({x,y});
+    }
+
+    sort(v.begin(), v.end());
+
+    int Max = 0;
+    for (int i = 0; i < n; i ++) {    
+        dp[i] = 1;
+        for (int j = 0; j < n; j ++) {
+            if (v[i].second > v[j].second) {
+                dp[i] = max(dp[i], dp[j] + 1);
+            }
+        }
+        Max = max(Max, dp[i]);
+    }
+    
+    /*
+    for (int i = 0; i < n; i ++) {    
+        cout << dp[i] << ' ';
+    }
+    */
+
+    cout << n-Max << '\n';
+    
+    return 0;
+}

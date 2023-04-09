@@ -1,8 +1,6 @@
 /*
 아이디어 :
-1. 빨간 노드의 개수를 구하기.
-2. 빨간 노드끼리 연결되면 합치기
-3. 각 노드의 자식 개수 구하기.
+
 
 */
 #include <iostream>
@@ -11,63 +9,86 @@
 using namespace std;
 
 int N;
+int result = 0;
 vector<int> graph[100001];                
-int Parent[100001];
-vector<int> black;
+int parent[100001];
+int sum[100001];
 string color;
 
 int Find_Parent(int A) {
-    if (A == Parent[A]) {
+    if (A == parent[A]) {
         return A;
     }
-    return Parent[A] = Find_Parent(Parent[A]);
+    return parent[A] = Find_Parent(parent[A]);
 }
 
 void Union(int A, int B) {
     A = Find_Parent(A);
     B = Find_Parent(B);
     // A가 부모 B가 자식.
-    Parent[B] = A;
+    parent[B] = A;
 }
 
-void Search(int x) {
-    for (int i = 0; i < graph[x].size(); i++) {
-        int nx = graph[x][i];
-        
-        if (Parent[nx] == 0) continue;
-
-        else {
-            Union(nx,x);
+void Search(int u) {
+    for (int i = 0; i < graph[u].size(); i ++) {
+        int nu = graph[u][i];
+        if (parent[nu] == 0 && color[nu-1] == 'R') {
+            parent[nu] = nu;
+            Union(u,nu);
+            Search(nu);
         }
     }
 }
 
-
 int main() {
     cin >> N;
-    for (int i = 0; i < N; i ++) {
+    for (int i = 0; i < N-1; i ++) {
         int s, e;
         cin >> s >> e;
         graph[s].push_back(e);
         graph[e].push_back(s);
     }
     cin >> color;
-    int len = color.length();
-    int idx = 0;
-    for (int i = 0; i < len; i ++) {
-        if (color[i] == 'R') {
-            Parent[i+1] = i+1;
-        }
-        else {
-            black.push_back(i);
+
+    for (int i = 1; i <= N; i++) {
+        if (parent[i] == 0 && color[i-1] == 'R') {
+            parent[i] = i;
+            Search(i);
         }
     }
 
+    /*
+    for (int i = 1; i <= N; i++) {
+        cout << parent[i] << ' ';
+    }
+    */
+    
     for (int i = 0; i < N; i ++) {
         if (color[i] == 'R') {
-            Search(i+1);
+            sum[parent[i+1]] ++; 
         }
     }
+
+    /*
+    cout << "\n---sum---" << '\n';
+    for (int i = 1; i <= N; i ++) {
+        cout << sum[i] << ' ';
+    }
+    cout << "\n---sum---" << '\n';
+    */
+    
+    for (int i = 0; i < N; i ++) {
+        if (color[i] == 'B') {
+            for (int j = 0; j < graph[i+1].size(); j ++) {
+                if (color[graph[i+1][j]-1] == 'R') {
+                    result += sum[parent[graph[i+1][j]]];
+                }
+            }
+        }
+    }
+    
+    cout << result << '\n';
+
     
     return 0;
 }

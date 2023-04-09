@@ -1,0 +1,47 @@
+/*
+아이디어 :
+
+LIS 설명 : https://chanhuiseok.github.io/posts/algo-49/
+LIS 응용문제로 가장 긴 증가하는 수열에다가 가장 긴 감소하는 수열을 합친 것이다.
+
+*/
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int N;
+int arr[1001];
+int dp[1001];
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        cin >> arr[i];
+    }
+
+    for (int k = 0; k < N; k++){
+	    dp[k] = 1;
+        for (int i = 0; i < k; i++){
+            if(arr[i] < arr[k]){
+                 dp[k] = max(dp[k], dp[i] + 1);
+            }
+        }
+    }
+
+    for (int k = 0; k < N; k++){
+        for (int i = 0; i < k; i++){
+            if(arr[i] > arr[k]){
+                 dp[k] = max(dp[k], dp[i] + 1);
+            }
+        }
+    }
+
+    int maxs = 0;
+    for (int i = 0; i < N; i ++) {
+        maxs = max(maxs, dp[i]);
+    }
+
+    cout << maxs << '\n';
+    return 0;
+}
