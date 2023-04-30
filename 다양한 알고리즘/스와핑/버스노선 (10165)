@@ -1,0 +1,60 @@
+/*
+아이디어 :
+
+스위핑 ~
+https://blog.naver.com/PostView.naver?blogId=kks227&logNo=220907708368&redirect=Dlog&widgetTypeCall=true&directAccess=false
+
+참고 : https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=pasdfq&logNo=221251549101
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N, M;
+vector<pair<pair<int, int>, int>> route;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+    cin >> N;
+    cin >> M;
+    for (int i = 0; i < M; i ++) {
+        int s, e;
+        cin >> s >> e;
+
+        if (s < e) route.push_back({{s, e}, i + 1});
+        else {
+            route.push_back({{s-N, e}, i + 1});
+            route.push_back({{s, e+N}, i + 1});
+        }
+    }
+
+    sort(route.begin(), route.end(), [](auto &a, auto &b) {
+        if (a.first.first != b.first.first) return a.first.first < b.first.first;
+        return a.first.second > b.first.second;
+    });
+
+    
+    vector<int> result = {route.front().second};
+
+    int present = 0; 
+    for (int i = 1; i < route.size(); i ++) {
+        if (route[present].first.second < route[i].first.second) {
+            result.push_back(route[i].second);
+            present = i;
+        }
+    }
+
+    sort(result.begin(), result.end());
+    result.erase(unique(result.begin(), result.end()), result.end());
+
+    for (int i = 0; i < result.size(); i ++) {
+        cout << result[i] << ' ';
+    }
+
+	return 0;
+}
