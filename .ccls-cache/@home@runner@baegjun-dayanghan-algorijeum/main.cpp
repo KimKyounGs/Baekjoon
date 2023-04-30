@@ -1,6 +1,6 @@
 /*
 아이디어 :
-무난한 DP문제이다.
+굳
 */
 
 #include <iostream>
