@@ -1,6 +1,6 @@
 /*
 아이디어 :
-굳ㅇㄴㄹㄴㅇ
+굳ㅇㄴㄹㄴㅇdsad
 */
 
 #include <iostream>
