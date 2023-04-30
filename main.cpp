@@ -1,6 +1,6 @@
 /*
 아이디어 :
-굳
+굳ㅇㄴㄹㄴㅇ
 */
 
 #include <iostream>
