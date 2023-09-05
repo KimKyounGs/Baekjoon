@@ -1,0 +1,40 @@
+/*
+아이디어 : 
+
+정렬문제이다.
+
+sort함수를 사용하여 O(NlogN)으로 풀었다.
+
+앞에 있는 요소를 기준으로 정렬된다. (n > i > name) 이렇게 기준 가치가 정해진다.
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+vector<pair<pair<int, int>, string>> v;
+
+int main() {
+    cin >> N;
+
+    for (int i = 0; i < N; i ++) {
+        int n;
+        string name;
+        cin >> n;
+        cin >> name;
+
+        v.push_back({{n, i}, name});
+    }
+
+    sort(v.begin(), v.end());
+
+    for (int i = 0; i < N; i ++) {
+        cout << v[i].first.first << ' ' << v[i].second << '\n';
+    }
+
+    return 0;
+}

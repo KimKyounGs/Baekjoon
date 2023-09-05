@@ -1,0 +1,32 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+vector<double> v;
+
+int main() {
+    cin >> N;
+
+    double maxs = 0;
+
+    for (int i = 0; i < N; i ++) {
+        double n;
+        cin >> n;
+        v.push_back(n);
+        maxs = max(maxs, n);
+    }
+
+    double sum = 0;
+    for (int i = 0; i < N; i ++) {
+
+        sum += v[i]/maxs*100;
+    }
+
+    cout << sum / N << '\n';
+   
+    
+    return 0;
+}

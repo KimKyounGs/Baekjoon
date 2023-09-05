@@ -1,32 +1,69 @@
+/*
+아이디어 : 
+
+
+*/
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <queue>
 
 using namespace std;
 
-string N;
+int N;
+queue<int> q;
 
 int main() {
-    while(1) {
-        cin >> N;
-
-        if (N == "0") {
-            break;
-        }
-
-        int start = 0;
-        int end = N.length() - 1;
-        bool check = false;
-        
-        while(start < end) {
-            if (N[start] != N[end]) check = true;
-            start ++;
-            end --;
-        }
-
-        if (check) cout << "no" << '\n';
-        else cout << "yes" << '\n';
-    }
+    cin >> N;
     
+    for (int i = 0; i < N; i ++) {
+        string s;
+        cin >> s;
+        
+        if (s == "push") {
+            int n;
+            cin >> n;
+
+            q.push(n);
+        }
+        else if (s == "front") {
+            if (!q.empty()) {
+                cout << q.front() << '\n';
+            }
+            else {
+                cout << -1 << '\n';
+            }
+        }
+        else if (s == "pop") {
+            if (!q.empty()) {
+                cout << q.front() << '\n';
+                q.pop();
+            }
+            else {
+                cout << -1 << '\n';
+            }
+        }
+        else if (s == "size") {
+            cout << q.size() << '\n';
+        }
+        else if (s == "empty") {
+            if (!q.empty()) {
+                cout << 0 << '\n';
+            }
+            else {
+                cout << 1 << '\n';
+            }
+        }
+        else if (s == "back") {
+            if (!q.empty()) {
+                cout << q.back() << '\n';
+            }
+            else {
+                cout << -1 << '\n';
+            }
+        }
+    }
+
     return 0;
 }
