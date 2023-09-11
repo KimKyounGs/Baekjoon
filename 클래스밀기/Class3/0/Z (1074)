@@ -1,0 +1,53 @@
+/*
+아이디어 : 
+
+짝수만 찾으면 홀 수는 찾아지는 규칙.
+
+다이나믹.
+
+아니였다.
+
+분할정복이였다.
+참고 : https://hagisilecoding.tistory.com/14
+
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+
+using namespace std;
+
+int N, r, c, result;
+
+void DivC(int x, int y, int size){
+    if(c==x && r==y){ 
+        // 찾으려는 열과 행이 일치하면 
+        cout << result;
+        return;
+    }
+    else if (c < x + size && r < y + size && c >= x && r >= y){
+        //찾으려는 열과 행이 4분면안에 있을 경우
+        DivC(x, y, size / 2);
+        DivC(x + size / 2, y, size / 2);
+        DivC(x, y + size / 2, size / 2);
+        DivC(x + size / 2, y + size / 2, size / 2);
+    }
+    else { 
+        // 없다면 숫자 카운트 -> 정사각형 넓이
+        result += size * size;
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+    cin >> N >> r >> c;
+    DivC(0, 0, pow(2, N));
+    
+}
