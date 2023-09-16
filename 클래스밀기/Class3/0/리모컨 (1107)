@@ -1,0 +1,58 @@
+/*
+아이디어 : 
+
+0 1 2 3 4 5 6 7 8 9 10 11 12 ... 500000
+
+1. 고장난 번호가 포함된 숫자는 0, 나머지는 1로 초기화 한다.
+2. 1으로 시작해서 + - BFS를 시작한다. --> 변수가 생길 것 같은데 일단 진행.
+
+
+참고 : https://blog.naver.com/occidere/221354997206
+
+브르투포스 문제인지 모르고 그래프로 접근함.
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+#include <cstring>
+#define MIN(a,b) (a<b ? a : b)
+
+
+using namespace std;
+
+int min_cnt = 0x3f3f3f3f, num_int;
+int btn_set[10] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+
+void find(string num) {
+    for(int i=0;i<10;i++) {
+	    if(btn_set[i]) {
+	        string tmp_num = num + to_string(i);
+	        min_cnt = MIN(min_cnt, abs(num_int - stoi(tmp_num)) + tmp_num.length());
+
+    	    if(tmp_num.length() < 6) {
+	    	    find(tmp_num);
+	        }
+	    }
+    }
+}
+
+int main() {
+    int n, k;
+    scanf("%d%d", &num_int, &n);
+    min_cnt = MIN(min_cnt, abs(100 - num_int));
+
+    for(int i=0;i<n;i++) {
+    	scanf("%d", &k);
+	    btn_set[k] = 0;
+    }
+
+    if(n<10) {
+	    find("");
+    }
+
+    printf("%d", min_cnt);
+}
