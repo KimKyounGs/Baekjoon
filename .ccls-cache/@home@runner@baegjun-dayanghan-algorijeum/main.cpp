@@ -12,35 +12,40 @@
 
 using namespace std;
 
-int N, M;
-int parent[101];
+int N, S;
+int result;
+vector<int> v;
+// -7 -3 -2 5 8
+// 
 
-int find_root(int x) {
-    if (x == parent[x]) return x;
-    return parent[x] = find_root(parent[x]);
-}
+void DFS(int start, int sum) {
+    if (start == N) return ;
 
-void union_root(int x, int y) {
-    x = find_root(x);
-    y = find_root(y);
-
-    if (x != y) {
-        parent[y] = x;
+    if (sum + v[start] == S) {
+        //cout << "result ++ : " << start << '\n';
+        result ++;
     }
-}
 
+    //cout << start << " : " << sum << ' ' << sum+v[start] << '\n';
+
+    DFS(start + 1, sum);
+    DFS(start + 1, sum + v[start]);
+    
+}
 
 int main() {
     ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	cout.tie(NULL);
 
-    cin >> N >> M;
-
-    for (int i = 0; i < M; i ++) {
-        int x, y;
-        cin >> x >> y;
+    cin >> N >> S;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        v.push_back(n);
     }
 
+    DFS(0, 0);
     
+    cout << result << '\n';
 }    
