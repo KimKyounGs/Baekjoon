@@ -12,24 +12,10 @@
 
 using namespace std;
 
-int N, S;
-int result;
-vector<int> v;
-// -7 -3 -2 5 8
-// 
+int N, M;
+int graph[51][51];
 
-void DFS(int start, int sum) {
-    if (start == N) return ;
-
-    if (sum + v[start] == S) {
-        //cout << "result ++ : " << start << '\n';
-        result ++;
-    }
-
-    //cout << start << " : " << sum << ' ' << sum+v[start] << '\n';
-
-    DFS(start + 1, sum);
-    DFS(start + 1, sum + v[start]);
+void DFS() {
     
 }
 
@@ -38,14 +24,12 @@ int main() {
 	cin.tie(NULL);
 	cout.tie(NULL);
 
-    cin >> N >> S;
+    cin >> N >> M;
     for (int i = 0; i < N; i ++) {
-        int n;
-        cin >> n;
-        v.push_back(n);
+        for (int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+        }
     }
-
-    DFS(0, 0);
     
-    cout << result << '\n';
+    
 }    

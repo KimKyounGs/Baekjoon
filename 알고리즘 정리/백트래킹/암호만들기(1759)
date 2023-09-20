@@ -1,0 +1,65 @@
+/*
+아이디어 : 
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+#include <cstring>
+
+using namespace std;
+
+int L, C;
+char arr[16];
+bool visited[16];
+char vowel[] = {'a', 'e', 'i', 'o', 'u'};
+string str;
+
+void DFS(int cnt, int start) {
+    if (cnt == L) {
+        int voCnt = 0;
+        int conCnt = 0;
+        for (int i = 0; i < L; i ++) {
+            if (str[i] == vowel[0] || str[i] == vowel[1] || str[i] == vowel[2] || str[i] == vowel[3] || str[i] == vowel[4]) {
+                voCnt ++;
+            }
+            else {
+                conCnt ++;
+            }
+        }
+
+        if (voCnt >= 1 && conCnt >= 2) {
+            cout << str << '\n';
+        }
+        return ;
+    }
+
+    for (int i = start; i < C; i ++) {
+        if (visited[i] == false) {
+            visited[i] = true;
+            str.push_back(arr[i]);
+            DFS(cnt + 1,i + 1);
+            visited[i] = false;
+            str.pop_back();
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+    cin >> L >> C;
+    
+    for (int i = 0; i < C; i ++) {
+        cin >> arr[i];
+    }
+
+    sort(arr, arr + C);
+
+    DFS(0, 0);
+}    

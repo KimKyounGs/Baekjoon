@@ -1,0 +1,62 @@
+ /*
+아이디어 : 
+
+ex) N = 4
+
+x 0 0 0
+x 0 0 0
+x 0 0 0
+x 0 0 0
+
+x는 처음에 들어가는 DFS문 칸 0은 경우의 수로 채워지는 칸.
+
+참고 : https://cryptosalamander.tistory.com/58
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+#include <cstring>
+
+using namespace std;
+
+int N;
+int arr[16];
+int result;
+
+bool check(int end) {
+    for (int i = 0; i < end; i ++) {
+        if (arr[i] == arr[end] || abs(arr[end] - arr[i]) == end - i) return false;
+    }
+    return true;
+}
+
+void DFS(int x) {
+    if (x == N) {
+        result ++;
+    }
+    else {
+        for (int i = 0; i < N; i ++) {
+            arr[x] = i;
+            if (check(x)) {
+                DFS(x + 1);
+            }
+        }
+    }
+    
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
+    cin >> N;
+
+    DFS(0);
+
+    cout << result << '\n';
+}    
