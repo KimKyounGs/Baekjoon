@@ -18,37 +18,22 @@ index를 고려해야지 경우의 수의 중복이 안 일어난다.
 
 using namespace std;
 
-int N, M;
-int result = 1e9;
-vector<pair<int, int>> house;
-vector<pair<int, int>> chicken;
+int N;
+int result = 0;
 vector<pair<int, int>> v;
-bool visited[51];
+bool visited[9];
 
-void DFS(int cnt, int index) {
-    if (cnt == M) {
-        int sum = 0;
-        int len = house.size();
-        for (int i = 0; i < len; i ++) {
-            int mins = 1e9;
-            for (int j = 0; j < M; j ++) {
-                mins = min(mins, abs(house[i].first - v[j].first) + abs(house[i].second - v[j].second));
-            }
-            sum += mins;
-        }
-        result = min(result, sum);
-        return ;
+void DFS(int cnt, int sum, int rS, int rW) {
+    if (cnt == N) {
+        result = max(result, sum);
+        return;
     }
 
-    else {
-        for (int i = index; i < chicken.size(); i ++) {
-            if (visited[i] == false) {
-                visited[i] = true;
-                v.push_back({chicken[i].first, chicken[i].second});
-                DFS(cnt + 1, i);
-                visited[i] = false;
-                v.pop_back();
-            }
+    for (int i = 0; i < N; i ++) {
+        if (visited[i] == false) {
+            rS -= v[i].second;
+            rW -= v[i].first;
+            
         }
     }
 }
@@ -57,23 +42,15 @@ int main() {
     ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	cout.tie(NULL);
-
-    cin >> N >> M;
+    
+    cin >> N;
     for (int i = 0; i < N; i ++) {
-        for (int j = 0; j < N; j ++) {
-            int n;
-            cin >> n;
-            if (n == 1) {
-                house.push_back({i,j});
-            }
-            if (n == 2) {
-                chicken.push_back({i,j});
-            }
-        }
-    }
-
-    DFS(0, 0);
-
-    cout << result << '\n';
+        int s,w;
+        cin >> s >> w;
+        v.push_back({s,w});
+    }    
+    
+    DFS(0, 0, v[0].first, v[0].second);
+    
     
 }    
