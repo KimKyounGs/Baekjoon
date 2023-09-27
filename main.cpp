@@ -25,10 +25,12 @@ void DFS(int cnt, int sum, int rS, int rW) {
     }
 
     for (int i = 0; i < N; i ++) {
-        if (visited[i] == false) {
+        if (visited[i] == false && v[i].first >= 0) {
             rS -= v[i].second;
-            rW -= v[i].first;
-            
+            v[i].first -= rW;
+            if (rS >= 0) {
+                
+            }
         }
     }
 }
