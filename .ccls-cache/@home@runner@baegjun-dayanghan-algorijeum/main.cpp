@@ -1,5 +1,8 @@
 /*
-아이디어 : 
+아이디어 :
+
+참고 : https://gamedoridori.tistory.com/51
+queue는 생각해봤지만 적용할 생각은 못했다.
 
 */
 
@@ -14,18 +17,31 @@
 using namespace std;
 
 int N;
-int cnt = 0;
-queue<int> q;
+vector<long long> v;
 
-void BFS() {
-    for (int i = 0; i < 10; i ++) {
-        if (q.empty()) {
-            q.push(i);
-        }
-        else {
-            
+void DFS(int target) {
+    queue<long long> q;
+    for (int i = 0; i <= 9; i ++) {
+        q.push(i);
+        v.push_back(i);
+    }
+    while(!q.empty()) {
+        long long num = q.front();
+        int last = num % 10;
+        q.pop();
+        for (int i = 0; i < last; i ++) {
+            long long nNum = num * 10 + i;
+            q.push(nNum);
+            v.push_back(nNum);
         }
     }
+    if (target >= v.size()) {
+        cout << -1;
+    }
+    else {
+        cout << v[target];
+    }
+    
 }
 
 int main() {
@@ -34,6 +50,8 @@ int main() {
 	cout.tie(NULL);
         
     cin >> N;
+
+    DFS(N);
+    return 0;
     
-    BFS();
 }
