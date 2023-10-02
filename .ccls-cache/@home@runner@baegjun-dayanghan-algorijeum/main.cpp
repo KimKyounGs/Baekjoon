@@ -1,9 +1,7 @@
 /*
 아이디어 :
 
-참고 : https://gamedoridori.tistory.com/51
-queue는 생각해봤지만 적용할 생각은 못했다.
-
+2 3 5 7 
 */
 
 #include <iostream>
@@ -17,41 +15,63 @@ queue는 생각해봤지만 적용할 생각은 못했다.
 using namespace std;
 
 int N;
-vector<long long> v;
+vector<int> v;
 
-void DFS(int target) {
-    queue<long long> q;
-    for (int i = 0; i <= 9; i ++) {
-        q.push(i);
-        v.push_back(i);
-    }
-    while(!q.empty()) {
-        long long num = q.front();
-        int last = num % 10;
-        q.pop();
-        for (int i = 0; i < last; i ++) {
-            long long nNum = num * 10 + i;
-            q.push(nNum);
-            v.push_back(nNum);
+bool isPrime2(int n) {
+	for (int i = 2; i <= sqrt(n); i++) {//2~n의 제곱근까지
+		if (n%i == 0) {//i가 n의 약수라면 소수가 아니므로 false return
+			return false;
+		}
+	}
+	//2 ~ n-1까지 약수가 없다면 소수이므로, true return
+	return true;
+}
+
+void DFS(int n) {
+    queue<int> q;
+    for (int i = 2; i <= 9; i ++) {
+        if (isPrime2(i)) {
+            q.push(i);
         }
     }
-    if (target >= v.size()) {
-        cout << -1;
+
+    for (int i = 1; i < n; i ++) {
+        int len = q.size();
+        //cout << "len : " << len << '\n';
+        while(len--) {
+            //cout << "i = " << i << '\n';
+            int num = q.front() * 10;
+            //cout << num << '\n';
+            q.pop();
+            for (int j = 0; j <= 9; j ++) {
+                int nNum = num + j;
+                if (isPrime2(nNum)) {
+                    q.push(nNum);
+                }
+            }
+        }
     }
-    else {
-        cout << v[target];
+
+    while(!q.empty()) {
+        v.push_back(q.front());
+        q.pop();
     }
-    
+
 }
 
 int main() {
     ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
 	cout.tie(NULL);
-        
-    cin >> N;
 
+    cin >> N;
+    
     DFS(N);
-    return 0;
+
+    sort(v.begin(), v.end());
+
+    for (int i = 0; i < v.size(); i ++) {
+        cout << v[i] << '\n';
+    }
     
 }
