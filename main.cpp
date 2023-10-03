@@ -1,7 +1,7 @@
 /*
 아이디어 :
 
-2 3 5 7 
+
 */
 
 #include <iostream>
@@ -14,49 +14,70 @@
 
 using namespace std;
 
+int T;
 int N;
-vector<int> v;
+vector<char> v;
 
-bool isPrime2(int n) {
-	for (int i = 2; i <= sqrt(n); i++) {//2~n의 제곱근까지
-		if (n%i == 0) {//i가 n의 약수라면 소수가 아니므로 false return
-			return false;
-		}
-	}
-	//2 ~ n-1까지 약수가 없다면 소수이므로, true return
-	return true;
-}
-
-void DFS(int n) {
-    queue<int> q;
-    for (int i = 2; i <= 9; i ++) {
-        if (isPrime2(i)) {
-            q.push(i);
+void DFS(int cnt) {
+    if (cnt == N-1) {
+        /*
+        for (int i = 0; i < v.size(); i ++) {
+            cout << v[i] << ' ';
         }
-    }
-
-    for (int i = 1; i < n; i ++) {
-        int len = q.size();
-        //cout << "len : " << len << '\n';
-        while(len--) {
-            //cout << "i = " << i << '\n';
-            int num = q.front() * 10;
-            //cout << num << '\n';
-            q.pop();
-            for (int j = 0; j <= 9; j ++) {
-                int nNum = num + j;
-                if (isPrime2(nNum)) {
-                    q.push(nNum);
+        cout << '\n';
+        */
+        stack<int> s;
+        s.push(1);
+        for (int i = 0; i < N-1; i ++) {
+            // i + 1이 수열의 값.
+            if (v[i] == '+') {
+                s.push(i+2);
+            }
+            else if (v[i] == '-') {
+                s.push(-(i+2));
+            }
+            else if (v[i] == ' ') {
+                int temp = s.top();
+                if (temp < 0) {
+                    temp = (-temp)*10 + i + 2;
+                    temp = -temp;
                 }
+                else {
+                    temp = temp*10 + i + 2;
+                }
+                s.pop();
+                s.push(temp);
             }
         }
+        int sum = 0;
+        while(!s.empty()) {
+            sum += s.top();
+            s.pop();
+        }
+
+        // 정답.
+        if (sum == 0) {
+            cout << '1';
+            for (int i = 0; i < N-1; i ++) {
+                cout << v[i] << i+2;
+            }
+            cout << '\n';
+        }
+        
+        return;
     }
 
-    while(!q.empty()) {
-        v.push_back(q.front());
-        q.pop();
-    }
+    v.push_back(' ');
+    DFS(cnt + 1);
+    v.pop_back();
 
+    v.push_back('+');
+    DFS(cnt + 1);
+    v.pop_back();
+
+    v.push_back('-');
+    DFS(cnt + 1);
+    v.pop_back();
 }
 
 int main() {
@@ -64,14 +85,11 @@ int main() {
 	cin.tie(NULL);
 	cout.tie(NULL);
 
-    cin >> N;
-    
-    DFS(N);
+    cin >> T;
 
-    sort(v.begin(), v.end());
-
-    for (int i = 0; i < v.size(); i ++) {
-        cout << v[i] << '\n';
+    while(T--) {
+        cin >> N;
+        DFS(0);
+        cout << '\n';
     }
-    
 }
