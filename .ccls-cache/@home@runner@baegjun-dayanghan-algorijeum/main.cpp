@@ -14,70 +14,56 @@
 
 using namespace std;
 
-int T;
 int N;
-vector<char> v;
+char graph[7][7];
+bool isResult = false;
 
-void DFS(int cnt) {
-    if (cnt == N-1) {
-        /*
-        for (int i = 0; i < v.size(); i ++) {
-            cout << v[i] << ' ';
-        }
-        cout << '\n';
-        */
-        stack<int> s;
-        s.push(1);
-        for (int i = 0; i < N-1; i ++) {
-            // i + 1이 수열의 값.
-            if (v[i] == '+') {
-                s.push(i+2);
-            }
-            else if (v[i] == '-') {
-                s.push(-(i+2));
-            }
-            else if (v[i] == ' ') {
-                int temp = s.top();
-                if (temp < 0) {
-                    temp = (-temp)*10 + i + 2;
-                    temp = -temp;
-                }
-                else {
-                    temp = temp*10 + i + 2;
-                }
-                s.pop();
-                s.push(temp);
-            }
-        }
-        int sum = 0;
-        while(!s.empty()) {
-            sum += s.top();
-            s.pop();
-        }
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
 
-        // 정답.
-        if (sum == 0) {
-            cout << '1';
-            for (int i = 0; i < N-1; i ++) {
-                cout << v[i] << i+2;
+void Back(int cnt) {
+    if (cnt == 3) {
+        bool check = false; // 학생을 발견하면 false에서 true
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < N; j ++) {
+                if (graph[i][j] == 'T' && !check) {
+                    for (int z = 0; z < 4; z ++) {
+                        int mul = 1;
+                        while(1) {
+                            int nx = i + dx[z] * mul;
+                            int ny = j + dy[z] * mul;
+
+                            // 범위 체크
+                            if (nx < 0 || nx > N-1 || ny < 0 || ny > N-1) break;
+                            // 장애물 체크
+                            if (graph[nx][ny] == 'O') break;
+
+                            if (graph[nx][ny] == 'S') {
+                                check = true;
+                                break;
+                            }
+                            mul ++;
+                        }
+                    }
+                }
             }
-            cout << '\n';
         }
-        
-        return;
+        // 전부 숨을 수 있는 경우의 수 발견.
+        if (check == false) {
+            isResult = true;
+        }
+        return ;
     }
 
-    v.push_back(' ');
-    DFS(cnt + 1);
-    v.pop_back();
-
-    v.push_back('+');
-    DFS(cnt + 1);
-    v.pop_back();
-
-    v.push_back('-');
-    DFS(cnt + 1);
-    v.pop_back();
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            if (graph[i][j] == 'X') {
+                graph[i][j] = 'O';
+                Back(cnt + 1);
+                graph[i][j] = 'X';
+            }
+        }
+    }
 }
 
 int main() {
@@ -85,11 +71,20 @@ int main() {
 	cin.tie(NULL);
 	cout.tie(NULL);
 
-    cin >> T;
+    cin >> N;
 
-    while(T--) {
-        cin >> N;
-        DFS(0);
-        cout << '\n';
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    Back(0);
+
+    if (isResult == true) {
+        cout << "YES" << '\n';
+    }
+    else {
+        cout << "NO" << '\n';
     }
 }
