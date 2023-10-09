@@ -1,0 +1,82 @@
+/*
+아이디어 :
+
+DFS문제를 잘 다루면 별 어렵지 않게 풀 수 있다고 생각한다.
+DFS()함수에서 이 코드가 있다.
+
+if (cnt == R*C-1) {
+    result = R*C-1;
+}
+
+이 코드는 예를들어 
+3 3
+ABC
+DEF
+GHI
+라는 예시가 있으면 
+왼쪽 상단부터시작하여 모든 구간을 지날 수 있기 때문에 result값을 갱신하는 if문을 만날 수 없다.
+그래서 만들어줬다. ㅇㅇ
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+
+using namespace std;
+
+int R, C;
+int result = 0;
+char graph[21][21];
+bool visited[21][21];
+bool alphabet[26];
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+
+void DFS(int x, int y, int cnt) {
+    if (cnt == R*C-1) {
+        result = R*C-1;
+    }
+
+    for (int i = 0; i < 4; i ++) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        if (nx < 0 || ny < 0 || nx > R-1 || ny > C-1 || visited[nx][ny]) continue;
+        
+        if (alphabet[graph[nx][ny] - 'A']) {
+            //cout << nx << ' ' << ny << ' ' << cnt << '\n';
+            result = max(result, cnt);
+        }
+        else {
+            alphabet[graph[nx][ny] - 'A'] = true;
+            visited[x][y] = true;
+            DFS(nx, ny, cnt + 1);
+            alphabet[graph[nx][ny] - 'A'] = false;
+            visited[x][y] = false;
+        }
+    }
+}
+
+int main() { 
+    ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+    
+    cin >> R >> C;
+
+    for (int i = 0; i < R; i ++) {
+        for (int j = 0; j < C; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    visited[0][0] = true;
+    alphabet[graph[0][0]-'A'] = true;
+    DFS(0, 0, 0);
+
+    cout << result + 1 << '\n';
+}
