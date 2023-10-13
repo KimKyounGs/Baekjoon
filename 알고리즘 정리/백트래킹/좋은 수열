@@ -1,25 +1,26 @@
  /*
  아이디어 :
 
- 
+참고
+ https://lu-coding.tistory.com/74
 
  */
 
- #include <iostream>
- #include <vector>
- #include <algorithm>
- #include <queue>
- #include <stack>
- #include <cmath>
- #include <cstring>
- #include <deque>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
 
- using namespace std;
+using namespace std;
 
- int N;
- string result;
+int N;
+string result;
 
- bool Check(int n) {
+bool Check(int n) {
      result.push_back(n+'0');
      int len = result.length();
 
@@ -30,7 +31,7 @@
              return false;
          }
      }
-     
+
      result.pop_back();
      return true;
  }
@@ -51,12 +52,12 @@
  }
 
 
- int main() { 
-     ios_base::sync_with_stdio(false);
-     cin.tie(NULL);
-     cout.tie(NULL);
+int main() { 
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
      cin >> N;
 
      DFS(0);
- }
+}
