@@ -1,62 +1,24 @@
  /*
  아이디어 :
 
- 
 
  */
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#define INF 1e9
 
- #include <iostream>
- #include <vector>
- #include <algorithm>
- #include <queue>
- #include <stack>
- #include <cmath>
- #include <cstring>
- #include <deque>
+using namespace std;
 
- using namespace std;
-
- int N;
- string result;
-
- bool Check(int n) {
-     result.push_back(n+'0');
-     int len = result.length();
-
-     for (int i = 1; i <= len/2; i ++) {
-         if (result.substr(len - i, i) == result.substr(len - 2 * i, i)) 
-         {
-             result.pop_back();
-             return false;
-         }
-     }
-     
-     result.pop_back();
-     return true;
- }
-
- void DFS(int cnt) {
-     if (cnt == N) {
-         cout << result << '\n';
-         exit(0);
-     }
-
-     for (int i = 1; i <= 3; i ++) {
-         if (Check(i)) {
-             result.push_back(i+'0');
-             DFS(cnt + 1);
-             result.pop_back();
-         }
-     }
- }
-
-
- int main() { 
-     ios_base::sync_with_stdio(false);
-     cin.tie(NULL);
-     cout.tie(NULL);
-
-     cin >> N;
-
-     DFS(0);
- }
+int main() { 
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
+    
+}
