@@ -36,7 +36,7 @@ void Rotate(int idx, bool flag) {
 
 void DFS(int cnt) {
     if (cnt == K) {
-        
+        //good
         
         return;
     }
