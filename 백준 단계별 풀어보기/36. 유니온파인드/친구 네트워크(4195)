@@ -1,0 +1,85 @@
+/*
+아이디어 : 
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <cmath>
+#include <cstring>
+#include <map>
+
+using namespace std;
+
+int T;
+int parent[200001];
+int friendNum[200001];
+
+int Find(int x) {
+    if (x == parent[x]) return x;
+    return parent[x] = Find(parent[x]);
+}
+
+void Union(int x, int y) {
+    x = Find(x);
+    y = Find(y);
+
+    if (x != y) {
+        if (x < y) {
+            parent[y] = x;
+            friendNum[x] += friendNum[y];
+        }
+        else {
+            parent[x] = y;
+            friendNum[y] += friendNum[x];
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> T;
+
+    while(T --) {
+        int F;
+        int cnt = 0;
+        map<string, int> m;
+        map<string, int> ::iterator it;
+
+        for (int i = 0; i < 200001; i ++) {
+            parent[i] = i;
+            friendNum[i] = 1;
+        }
+
+        cin >> F;
+
+        for (int i = 0; i < F; i ++) {
+            string name1, name2;
+            cin >> name1 >> name2;
+
+            it = m.find(name1);
+            if (it == m.end()) {
+                m[name1] = ++cnt;
+                a = cnt;
+            }
+            else a = it->second;
+
+            it = m.find(name2);
+            if (it == m.end()) {
+                m[name2] = ++cnt;
+                b = cnt;
+            }
+            else b = it->second;
+
+            Union(a, b);
+            int root = Find(a);
+            cout << friendNum[root] << '\n';
+        }
+    }
+    return 0;
+}    
