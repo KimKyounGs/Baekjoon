@@ -90,6 +90,7 @@ int Blue(int idx) {
     }
     else return 0;
 
+    cout << "Blue enter" << '\n';
     int mul = 1;
     while(true) 
     {

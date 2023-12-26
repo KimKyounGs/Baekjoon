@@ -1,0 +1,123 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+int graph[21][21][2]; // graph[x][y][0] = 물고기 크기, graph[x][y][1] = 먹을 수 있는 물고기인지 여부 체크
+int temp[21][21];
+int sharkSize = 2; // 아기 상어 크기
+int sharkCnt = 0;
+int sharkX, sharkY; // 아기 상어 위치 
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+bool visited[21][21];
+
+void BFS(int x, int y) {
+    graph[x][y][0] = 0;
+    visited[x][y] = true;
+    queue <pair<int, int> > q;
+    q.push({x, y});
+
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 범위 및 방문 체크
+            if (nx < 0 || ny < 0 || nx > N - 1 || ny > N - 1 || visited[nx][ny]) {
+                continue;
+            }
+
+            // 아기 상어가 자기보다 큰 사이즈의 물고기는 건너 가지도 못함.
+            if (graph[nx][ny][0] > sharkSize) {
+                continue;
+            }
+
+            // 아기 상어가 물고기랑 크기가 같기만 하면 지나갈 수는 있음.
+            else {
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+                graph[nx][ny][0] = graph[x][y][0] + 1;
+                if (temp[nx][ny] < sharkSize && temp[nx][ny] != 0) { // 아기 상어가 물고기 보다 크다면 먹을 수 있음
+                    graph[nx][ny][1] = 1; // 먹을 수 있는 물고기는 1로 표시
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> temp[i][j];
+            if (temp[i][j] == 9) {
+                sharkX = i;
+                sharkY = j;
+            }
+        }
+    }
+
+    int result = 0;
+
+    while (1) {
+        // 그래프 초기화
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < N; j ++) {
+                graph[i][j][0] = temp[i][j];
+                if (graph[i][j][1] == 1) {
+                    graph[i][j][1] = 0;
+                }
+            }
+        }
+
+        // 먹을 수 있는 물고기 탐색
+        BFS(sharkX, sharkY);
+
+        int check = 0, min = 999999999;
+        int minx = 0, miny = 0;
+        // 물고기 먹으러 가기.
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < N; j ++) {
+                if (graph[i][j][1] == 1 && graph[i][j][0] < min) {
+                    min = graph[i][j][0]; // 최솟값 설정.
+                    check ++; // 먹을 물고기가 있다는 것을 체크.
+                    minx = i;
+                    miny = j;
+                }
+            }
+        }
+
+        // 먹을 물고기가 있으면
+        if (check > 0) {
+            result += graph[minx][miny][0]; 
+            sharkCnt ++; 
+            // 아기 상어 자리 체인지
+            temp[sharkX][sharkY] = 0;
+            temp[minx][miny] = 9;
+            // 아기 상어 위치 초기화
+            sharkX = minx;
+            sharkY = miny;
+        }
+
+        // 더 이상 먹을 물고기가 없으면 종료.
+        else {
+            cout << result << endl;
+            return 0;
+        }    
+
+        // 아기 상어 사이
+        if (sharkCnt == sharkSize) {
+            sharkSize ++;
+            sharkCnt = 0;
+        }
+        // 방문 초기화
+        memset(visited, 0, sizeof(visited));
+    }
+
+}

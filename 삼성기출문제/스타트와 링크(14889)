@@ -1,0 +1,66 @@
+/*
+# 아이디어 
+
+*/
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int N, mins = 1e9;
+int graph[21][21];
+bool visited[21];
+
+
+void DFS(int cnt, int pos) {
+    if (cnt == N/2) {
+        int team1 = 0;
+        int team2 = 0;
+
+        /*
+        for (int i = 0; i < 6; i ++) {
+            cout << visited[i] << ' ';
+        }
+        cout << '\n';
+        */
+
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < N; j ++) {
+                if (visited[i] && visited[j]) team1 += graph[i][j];
+                if (!visited[i] && !visited[j]) team2 += graph[i][j];
+            }
+        }
+
+        int result = abs(team1 - team2);
+        if (result < mins) {
+            mins = result;
+        }
+
+        return;
+    }
+
+    for (int i = pos; i < N-1; i ++) {
+        if (!visited[i]) {
+            visited[i] = true;
+            DFS(cnt + 1, i + 1);
+            visited[i] = false;
+        }
+    }
+}
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    DFS(0, 0);
+    cout << mins << '\n';
+    return 0;
+}

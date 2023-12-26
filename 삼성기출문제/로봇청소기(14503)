@@ -1,0 +1,89 @@
+// 
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M;
+int graph[51][51];
+
+int turnLeft(int lookAt) {
+    // 북->서
+    if (lookAt == 0) {
+        return 3;
+    }
+    // 동->북
+    else if (lookAt == 1) {
+        return 0;
+    }
+    // 남->동
+    else if (lookAt == 2) {
+        return 1;
+    }
+    // 서->남
+    else if (lookAt == 3) {
+        return 2;
+    }
+}
+
+int result;
+void Search(int x, int y, int lookAt) {
+    int turnCnt = 0;
+
+    while(1) {
+        // 1. 현재 위치를 청소한다.
+        if (graph[x][y] == 0) {
+            graph[x][y] = 2;
+            result ++;
+        }
+        // 2. 현재 위치에서 현재 방향을 기준으로 왼쪽방향부터 차례대로 탐색을 진행한다.
+
+        // 그 방향으로 회전하기
+        int lookAt = turnLeft(lookAt);
+        turnCnt ++;
+
+        int nx, ny;
+        // 회전하고 그 방향으로 갈 준비하기.
+        if (lookAt == 0) nx = x - 1, ny = y; // 북
+        else if (lookAt == 1) nx = x, ny = y + 1; // 동
+        else if (lookAt == 2) nx = x + 1, ny = y; // 남
+        else if (lookAt == 3) nx = x, ny = y - 1; // 서
+
+        // 청소가 안된 곳이면 이동하기.
+        if (graph[nx][ny] == 0) {
+            x = nx;
+            y = ny;
+            turnCnt = 0;
+        }
+
+        // 네 방향 모두 청소가 이미 되어있거나 벽인 경우.
+        if (turnCnt == 4) {
+            if (lookAt == 0) nx = x + 1, ny = y; // 북
+            else if (lookAt == 1) nx = x, ny = y - 1; // 동
+            else if (lookAt == 2) nx = x - 1, ny = y; // 남
+            else if (lookAt == 3) nx = x, ny = y + 1; // 서
+
+            // 뒤쪽이 바로 벽이라서 후진을 못하면
+            if (graph[nx][ny] == 1) break;
+            else {
+                x = nx;
+                y = ny;
+                turnCnt = 0;
+            }
+        }
+    }
+}
+
+int main() {
+    cin >> N >> M;
+    int startX,startY, lookAt;
+    cin >> startX >> startY >> lookAt;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < M; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    Search(startX, startY, lookAt);
+
+    cout << result << '\n';
+}
