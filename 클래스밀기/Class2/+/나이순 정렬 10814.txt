@@ -5,7 +5,7 @@
 
 sort함수를 사용하여 O(NlogN)으로 풀었다.
 
-앞에 있는 요소를 기준으로 정렬된다. (n > i > name) 이렇게 기준 가치가 정해진다.
+앞에 있는 요소를 기준으로 정렬된다. (n(나이) > i(들어온 순서) > name(이름)) 이렇게 기준 가치가 정해진다.
 
 */
 
@@ -16,7 +16,7 @@ sort함수를 사용하여 O(NlogN)으로 풀었다.
 using namespace std;
 
 int N;
-vector<pair<pair<int, int>, string>> v;
+vector<pair<pair<int, int>, string>> v; //  회원 수를 저장할 벡터. <<나이, 들어온 순서>, 이름>
 
 int main() {
     cin >> N;
