@@ -1,6 +1,11 @@
 /*
 아이디어 :
 
+밀고 땅기고 하는 구현이 빡셌다.
+합치는 과정에서 합쳐지면 j-- ㅐ을
+
+반례 처리.
+https://www.acmicpc.net/board/view/128093
 
 */
 #include <iostream>
@@ -19,7 +24,7 @@ int N;
 int result;
 vector<vector<int>> graph;
 
-void Slide(vector<vector<int>> v, int dir)
+void Slide(vector<vector<int>> &v, int dir)
 {
     switch(dir)
         {
@@ -51,9 +56,10 @@ void Slide(vector<vector<int>> v, int dir)
                 for (int i = 0; i < N; i ++) {
                     for (int j = N-1; j >= 0; j--) {
                         if (v[i][j] != 0) {
-                            if (j - 1 > 0 && v[i][j-1] == v[i][j]) {
+                            if (j - 1 >= 0 && v[i][j-1] == v[i][j]) {
                                 v[i][j] *= 2;
                                 v[i][j-1] = 0;
+                                j--;
                             }
                         }
                     }
@@ -82,7 +88,9 @@ void Slide(vector<vector<int>> v, int dir)
                 }
 
                 // Debug
+                 /*
                 cout << "동쪽으로 슬라이드" << '\n';
+                
                 for (int i = 0; i < N; i ++) {
                     for (int j = 0; j < N; j++) {
                         cout << v[i][j] << ' ';
@@ -90,6 +98,7 @@ void Slide(vector<vector<int>> v, int dir)
                     cout << '\n';
                 }
                 cout << '\n';
+                */
                 break;
             }
 
@@ -124,6 +133,7 @@ void Slide(vector<vector<int>> v, int dir)
                             if (j + 1 < N && v[i][j+1] == v[i][j]) {
                                 v[i][j] *= 2;
                                 v[i][j+1] = 0;
+                                j++;
                             }
                         }
                     }
@@ -152,7 +162,9 @@ void Slide(vector<vector<int>> v, int dir)
                 }
 
                 // Debug
+                /*
                 cout << "서쪽으로 슬라이드" << '\n';
+                
                 for (int i = 0; i < N; i ++) {
                     for (int j = 0; j < N; j++) {
                         cout << v[i][j] << ' ';
@@ -160,10 +172,11 @@ void Slide(vector<vector<int>> v, int dir)
                     cout << '\n';
                 }
                 cout << '\n';
+                */
                 break;
             }
 
-            // 남
+            // 북
             case 2 : {
                 // 1. 땡기기
                 for (int i = 0; i < N; i ++) {
@@ -194,6 +207,7 @@ void Slide(vector<vector<int>> v, int dir)
                             if (j + 1 < N && v[j+1][i] == v[j][i]) {
                                 v[j][i] *= 2;
                                 v[j+1][i] = 0;
+                                j++;
                             }
                         }
                     }
@@ -222,7 +236,9 @@ void Slide(vector<vector<int>> v, int dir)
                 }
 
                 // Debug
-                cout << "남쪽으로 슬라이드" << '\n';
+                /*
+                cout << "북쪽으로 슬라이드" << '\n';
+                
                 for (int i = 0; i < N; i ++) {
                     for (int j = 0; j < N; j++) {
                         cout << v[i][j] << ' ';
@@ -230,6 +246,7 @@ void Slide(vector<vector<int>> v, int dir)
                     cout << '\n';
                 }
                 cout << '\n';
+                */
                 break;
             }
 
@@ -261,9 +278,10 @@ void Slide(vector<vector<int>> v, int dir)
                 for (int i = 0; i < N; i ++) {
                     for (int j = N-1; j >= 0; j--) {
                         if (v[j][i] != 0) {
-                            if (j - 1 > 0 && v[j-1][i] == v[j][i]) {
+                            if (j - 1 >= 0 && v[j-1][i] == v[j][i]) {
                                 v[j][i] *= 2;
                                 v[j-1][i] = 0;
+                                j--;
                             }
                         }
                     }
@@ -290,9 +308,11 @@ void Slide(vector<vector<int>> v, int dir)
                         }
                     }
                 }
-
+                
                 // Debug
-                cout << "북쪽으로 슬라이드" << '\n';
+                /*
+                cout << "남쪽으로 슬라이드" << '\n';
+                
                 for (int i = 0; i < N; i ++) {
                     for (int j = 0; j < N; j++) {
                         cout << v[i][j] << ' ';
@@ -300,6 +320,7 @@ void Slide(vector<vector<int>> v, int dir)
                     cout << '\n';
                 }
                 cout << '\n';
+                */
                 break;
             }
 
@@ -309,24 +330,50 @@ void Slide(vector<vector<int>> v, int dir)
         }
 }
 
+/*
+동 동 동 동 동
+
+0 4 4 32
+4 0 2 64
+8 8 0 0
+0 16 64 4
+
+*/
+vector<int> debugV;
 void DFS(vector<vector<int>> v, int cnt) 
 {
-    if(cnt == N)
+    if(cnt == 5)
     {
         for(int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                result = max(result, v[i][j]);
+                //cout << v[i][j] << ' ';
+                if (result < v[i][j]) {
+                    result = v[i][j];
+                    //cout << result << '\n';
+                    /*
+                    for (int z = 0; z < debugV.size(); z ++) {
+                        cout << debugV[z] << ' ';
+                    }
+                    cout << '\n';
+                    */
+                }
             }
+            //cout << '\n';
         }
         return;
     }
-
+    vector<vector<int>> tempV;
+    tempV.assign(v.size(), vector<int>(v.size())); // 벡터 크기 할당.
+    copy(v.begin(), v.end(), tempV.begin()); // 벡터 복사
+    
     for (int i = 0; i < 4; i ++) {
-        vector<vector<int>> temp;
-        temp.assign(v.size(), vector<int>(v.size())); // 벡터 크기 할당.
-        copy(v.begin(), v.end(), temp.begin()); // 벡터 복사
-        Slide(temp, i);
-        DFS(temp, cnt + 1);
+        //cout << "cnt : " << cnt << " i : " << i << '\n';
+        debugV.push_back(i);
+        Slide(v, i);
+        DFS(v, cnt + 1);
+        debugV.pop_back();
+        v.assign(tempV.size(), vector<int>(tempV.size())); // 벡터 크기 할당.
+        copy(tempV.begin(), tempV.end(), v.begin()); // 벡터 복사
     }
 }
 
@@ -344,6 +391,13 @@ int main()
     }
 
     DFS(graph, 0);
-    
+    /*
+    Slide(graph, 2);
+    Slide(graph, 0);
+    Slide(graph, 3);
+    Slide(graph, 1);
+    Slide(graph, 2);
+    */
+    cout << result << '\n';
     return 0;
 }
