@@ -1,0 +1,55 @@
+/*
+아이디어 :
+
+비용을 최소로 맨 오른쪽 도시로 가기 위해서는 "비용이 가장 낮은 곳에서 최대한 많은 주유를 해야함"
+
+시간 복잡도 : 이 코드에서 시간복답도는 for문에 따라 결정되기 때문에 O(N)이 걸린다.
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#define INF 1e9
+
+using namespace std;
+
+int N;
+vector<int> distanceV;
+vector<int> priceV;
+
+
+int main()
+{
+    cin >> N;
+
+    // 입력
+    for (int i = 0; i < N - 1; i++) {
+        int n;
+        cin >> n;
+        distanceV.push_back(n);
+    }
+    
+    for (int i = 0; i < N; i++) {
+        int n;
+        cin >> n;
+        priceV.push_back(n);
+    }
+
+    // 도시의 개수가 최대 10만, 거리는 최대 10억, 리터당 가격 또한 10억 -> 최대 10만 * 10억 * 10억이기 때문에 long long으로 선언.
+    long long min = priceV[0];
+    long long result = distanceV[0] * min; 
+
+    // 거리를 이동하면서 최소값으로 주유할 수 있는 곳을 변수에 계속 저장. 
+    for (int i = 1; i < N-1; i ++) {
+        min = (min < priceV[i]) ? min : priceV[i];
+        result += min * distanceV[i];
+    }
+
+
+    cout << result << '\n';
+    return 0;
+}
