@@ -1,0 +1,77 @@
+/*
+아이디어 :
+
+"자릿수가 가장 큰 문자가 숫자가 제일 커야한다." 라는 생각을 많이 하지만
+"나온 알파벳의 계수가 가장 높은 것에 높은 숫자를 준다."
+
+ex)
+ABB
+BB
+BB
+BB
+BB
+BB
+BB
+BB
+BB
+BB
+
+A = 100
+B = 11*10 = 110
+
+그러면 B에 9를 대입해야함.
+
+따라서 알파벳의 계수를 계산하고 숫자를 부여한다.
+
+시간복잡도 : O(N)
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N;
+int result;
+vector<string> words;
+vector<int> alphabet(26);
+
+int main()
+{
+    cin >> N;
+    for (int i = 0; i < N; i++) {
+        string word;
+        cin >> word;
+        words.push_back(word);
+
+        // 입력받는 단어에서 알파벳하나당 자릿수를 계산.
+        // ex) GCF -> G += 100, C += 10, F += 1
+        int len = word.length();
+        for (int j = 0; j < len; j++) { 
+            alphabet[word[j]-'A'] += pow(10, len-j-1);
+        }
+    }
+
+    // 알파벳의 계수를 내림차순으로 정렬.
+    sort(alphabet.begin(), alphabet.end(), greater<int>());
+
+    // 숫자 계산.
+    for (int i = 0; i <= 9; i++) {
+        result += alphabet[i] * (9-i);
+    }
+
+    cout << result << '\n';
+
+
+    
+    return 0;
+}

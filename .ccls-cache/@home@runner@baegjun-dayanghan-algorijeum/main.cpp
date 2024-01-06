@@ -1,20 +1,11 @@
 /*
 아이디어 :
 
-"자릿수가 가장 큰 문자가 숫자가 제일 커야한다."
+주어진 방법은 곱하거나 더하기 두 가지가 있다.
 
-ex)
-GCF
-ACDEB
-A = 9
-C = 8
-G = 7
-D = 6
-E = 5
-F = 4
-B = 3
--> 784 + 98653 = 99437
 
+양수면 큰 숫자끼리 곱하기. 
+음수면큰 숫자끼리 곱해서 플러스로 만들기. or 0이랑 곱해서 없애기.
 
 
 */
@@ -26,6 +17,7 @@ B = 3
 #include <cmath>
 #include <cstring>
 #include <deque>
+#include <map>
 #define INF 1e9
 #define endl '\n'
 
@@ -33,17 +25,18 @@ using namespace std;
 
 int N;
 int result;
-vector<string> words;
-vector<pair<int, char>> v;
-int alphabet[26];
+vector<int> v;
 
 int main()
 {
     cin >> N;
-    for (int i = 0; i < N; i++) {
-        
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        v.push_back(n);
     }
 
+    
     
     return 0;
 }
