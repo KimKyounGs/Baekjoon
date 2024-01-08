@@ -1,11 +1,33 @@
 /*
 아이디어 :
 
-"특정숫자까지 합으로 구할 수 있으면 특정숫자보다 낮은 숫자도 합으로 구할 수 있음"
-ex) 3 4 5 6 
--> 3 + 4 + 5 + 6 = 18 >> 18까지는 3,4,5,6 조합으로 구할 수 있음. 하지만 19는 안됨.
 
-시간복잡도 : O(NlogN)
+
+회의실 배정 -> 끝나는 시간을 기준으로 정렬하고 최적의 해를 도출했다.
+
+희의실 배정 -> 한 강의실에 대해서 얼마나 많이 배정을 할 수 있다. -> 한 강의실에서 최대한 많이 넣으면, 결국 최소한으로 강의실을 구할 수 있다.
+
+한 강의실에 최대한 많은 강의를 배정하면 (끝나는 시간을 기준으로 정렬했을 때) -> 최소한의 강의실을 구할 수 있다.(x)
+
+
+
+강의실 배정 -> 시작 시간을 기준으로 정렬하고 최적의 해를 도출한다.
+
+
+
+3
+1 3
+2 4
+3 5
+
+1 3 -> 3 5
+2 4
+
+2개의 강의실. -> 이중포문 -> 
+
+시간복잡도 -> O(N^2) -> 1초 넘어간다.
+시간복잡도 -> O(NlogN) -> 1초 안넘김.
+
 */
 #include <iostream>
 #include <vector>
@@ -22,40 +44,27 @@ ex) 3 4 5 6
 using namespace std;
 
 int N;
-int result = 0;
-int sum = 0;
-vector<int> v;
+int result;
+vector<pair<int, int>> v;
+priority_queue<int> pq;
 
 int main()
 {
     cin >> N;
     for (int i = 0; i < N; i ++) {
-        int n;
-        cin >> n;
-        v.push_back(n);
+        int s,e;
+        cin >> s >> e;
+        v.push_back({s,e});
     }
 
     sort(v.begin(), v.end());
 
-    // 가장 작은 수가 1보다 크면 종료.
-    if (v[0] > 1) {
-        cout << 1 << endl;
-        return 0;
-    } 
-
-    bool check;
-    for (int i = 0; i < N; i ++) {
-            sum += v[i];
-            if (sum + 1 < v[i+1]) {
-                    cout << sum + 1 << '\n';
-                    return 0;
-            }
-            if (i == N - 1) check = true;
-    }
-
-    // 전부 돌았을 때까지도 종료 안됐을 경우
-    if (check) {
-        cout << sum + 1 << '\n';
+    int start = v[0].first;
+    int end = v[0].second;
+    int cnt = 1;
+    
+    while(cnt == N) {
+        
     }
     
     return 0;
