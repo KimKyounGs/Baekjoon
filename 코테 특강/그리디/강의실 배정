@@ -51,7 +51,7 @@ int main()
     }
 
     sort(v.begin(), v.end());
-    
+
     // 첫 번째 수업의 종료 시간을 pq 에 삽입
     pq.push(v[0].second);
 
@@ -65,8 +65,8 @@ int main()
             pq.pop();
         }
     }
-    
+
     cout << pq.size() << endl;
-    
+
     return 0;
 }
