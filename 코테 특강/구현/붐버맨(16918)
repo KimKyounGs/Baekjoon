@@ -1,0 +1,85 @@
+/*
+# 아이디어 
+
+구현중에서 시뮬레이션 유형.
+
+생각해야할 것.
+1. 3초뒤에 터지는 폭탄을 생각.
+2. 상하좌우로 터지는 것 생각.
+*/
+
+#include <iostream>
+
+using namespace std;
+
+int R, C, N;
+int graph[201][201];
+
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1, 0, 0};
+
+void Simulation(int times) {
+    if (times == 1) return;
+
+    if (times % 2 == 0) {
+        for (int i = 0; i < R; i ++) {
+            for (int j = 0; j < C; j ++) {
+                if (graph[i][j] == -1) {
+                    graph[i][j] = times;
+                }
+            }
+        } 
+    }
+    else {
+        for (int i = 0; i < R; i ++) {
+            for (int j = 0; j < C; j ++) {
+                if (graph[i][j] == times-3) {
+                    graph[i][j] = -1;
+                    for (int z = 0; z < 4; z ++) {
+                        int nx = i + dx[z];
+                        int ny = j + dy[z];
+                        // 범위 체크
+                        if (nx < 0 || ny < 0 || nx > R-1 || ny > C-1 || graph[nx][ny] == times-3) continue;
+                        graph[nx][ny] = -1;
+                    }
+                }
+            }
+        } 
+    }
+    /*
+    for (int i = 0; i < R; i ++) {
+        for (int j = 0; j < C; j ++) {    
+            cout << graph[i][j];
+        }
+        cout << '\n';
+    }
+    cout << '\n';
+    */
+}
+
+int main() {
+    cin >> R >> C >> N;
+
+    for (int i = 0; i < R; i ++) {
+        for (int j = 0; j < C; j ++) {
+            char c;
+            cin >> c;
+            if (c == '.') graph[i][j] = -1;
+            else graph[i][j] = 0;
+        }
+    }
+
+    for (int i = 0; i < N; i ++) {
+        Simulation(i+1); 
+    }
+
+    for (int i = 0; i < R; i ++) {
+        for (int j = 0; j < C; j ++) {    
+            if (graph[i][j] == -1) cout << '.';
+            else cout << 'O';
+        }
+        cout << '\n';
+    }
+
+
+}

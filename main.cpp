@@ -3,22 +3,6 @@
 
 
 
-회의실 배정 -> 끝나는 시간을 기준으로 정렬하고 최적의 해를 도출했다.
-
-희의실 배정 -> 최대한 많은 회의를 배정을 할 수 있다.
-강의실 배정 -> 회의실 배정 아이디어를 이용하여 한 강의실에 최대한 많은 강의를 넣으면, 결국 최소한으로 강의실을 구할 수 있다.
-
-But 반례 존재
-한 강의실에 최대한 많은 강의를 배정하면 (끝나는 시간을 기준으로 정렬했을 때) -> 최소한의 강의실을 구할 수 있다.(x)
-
-단순하게 시작 시간을 기준으로 정렬하고 "강의가 끝나고 최대한 빨리 시작하는 다음 강의를 시작한다"라는 아이디어를 통해 최적의 해를 도출한다.
-
-이 문제에서 고려할 점은 시간문제이다.
-
-아무런 생각없이 구현했다가는 O(N^2)가 걸린다.
-
-그래서 우선순위 큐를 사용하여 끝나는 시간을 큐에 저장하여, O(1)의 시간복잡도로 시간을 줄인다.
-
 */
 #include <iostream>
 #include <vector>
@@ -34,39 +18,11 @@ But 반례 존재
 
 using namespace std;
 
-int N;
-int result;
-bool check[200000];
-vector<pair<int, int>> v;
-priority_queue< int, vector<int>, greater<int> > pq;
 
 int main()
 {
 
-    cin >> N;
-    for (int i = 0; i < N; i ++) {
-        int s,e;
-        cin >> s >> e;
-        v.push_back({s,e});
-    }
-
-    sort(v.begin(), v.end());
     
-    // 첫 번째 수업의 종료 시간을 pq 에 삽입
-    pq.push(v[0].second);
-
-    // 필요한 강의실 탐색
-    for(int i=1; i<N; ++i){
-        // i 번째 수업의 종료 시간을 pq 에 삽입
-        pq.push(v[i].second);
-        // top 의 종료 시간보다 i 번째 수업이 늦게 시작한다면, 같은 강의실에서 진행 가능
-        if (pq.top() <= v[i].first){
-            // 기존의 top 은 제거
-            pq.pop();
-        }
-    }
-    
-    cout << pq.size() << endl;
     
     return 0;
 }
