@@ -1,128 +1,94 @@
 /*
-아이디어 :
+아이디어 : 
 
-0 2
-3 4
-5 6
-7 8
-4 4 4 1 3 3 3 2
+#18111 : Mincraft
 
-5 0 0 0 3 0
+최우선으로 생각해야 하는 것은 시간이다. 
+같은 높이로 맞추는 방법은 2가지이다.
+
+하나의 높이를 기준으로 2가지 일을 한다.
+
+1. 현재 기준의 높이보다 높은 경우
+2. 현재 기준의 높이보다 작은 경우
+
+
+구현할 리스트를 정리 -> 대충 시간복잡도를 계산을 해봅니다.
+-> ㅇㅋ? -> 실행
+-> No... -> 다른 구현할 방법을 찾기.
+
 */
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <queue>
-#include <stack>
-#include <cmath>
-#include <cstring>
-#include <deque>
-#include <map>
-#define INF 1e9
-#define endl '\n'
 
 using namespace std;
 
-int N, M, K;
-int x,y;
-int graph[21][21];
-int dice[6];
-int idx = 1; // 윗면 인덱스
+int N, M, B;
+int graph[501][501];
+vector<int> v;
 
-void Dice(int dir) {
-    
-}
+int main() {
+    cin >> N >> M >> B;
 
-int Dice() {
-    if (idx == 1) {
-        return 6;
-    }
-    else if (idx == 2) {
-        return 5; 
-    }
-    else if (idx == 3) {
-        return 4;
-    }
-    else if (idx == 4) {
-        return 3;
-    }
-    else if (idx == 5) {
-        return 2;
-    }
-    else if (idx == 6) {
-        return 1;
-    }
-}
-
-void Simulation(int dir) {
-    int nx, ny;
-    switch(dir) {
-        // 동
-        case 1 : {
-            nx = x;
-            ny = y + 1;
-            if (nx < 0 || ny > N-1 || ny < 0 || ny > M-1) {
-                return;
-            }
-            break;
-        }
-        // 서
-        case 2 : {
-            nx = x;
-            ny = y - 1;
-            if (nx < 0 || ny > N-1 || ny < 0 || ny > M-1) {
-                return;
-            }
-            break;
-        }
-        // 북
-        case 3 : {
-            nx = x - 1;
-            ny = y;
-            if (nx < 0 || ny > N-1 || ny < 0 || ny > M-1) {
-                return;
-            }
-            break;
-        }
-        // 남
-        case 4 : {
-            nx = x + 1;
-            ny = y;
-            if (nx < 0 || ny > N-1 || ny < 0 || ny > M-1) {
-                return;
-            }
-            break;
-        }
-    }
-    Dice(dir);
-    cout << "Debug = " << idx << '\n';
-    int dIdx = Dice();
-    if (graph[nx][ny] == 0) {
-        graph[nx][ny] = dice[dIdx-1];
-    }
-    else {
-        dice[dIdx-1] = graph[nx][ny];
-        graph[nx][ny] = 0;
-    }
-    cout << dice[idx-1] << endl;
-    x = nx;
-    y = ny;
-}
-
-int main()
-{
-    cin >> N >> M >> x >> y >> K;
-    for (int i = 0; i < N; i ++) {
+    for (int i = 0; i < N; i ++)  {
         for (int j = 0; j < M; j ++) {
             cin >> graph[i][j];
+            v.push_back(graph[i][j]);
         }
     }
 
-    for (int i = 0; i < K; i ++) {
-        int n;
-        cin >> n;
-        Simulation(n);
+    int minTime = 1e9;
+    int maxHeight = 0;
+
+    // cnt변수는 기준 높이. ex) cnt = 233->233만큼의 높이로 땅고르기 작업을 한다. 
+    // 256 * 500 * 500 <= 10억
+    for (int cnt = 0; cnt <= 256; cnt ++) {
+        int time = 0;
+        int block = B;
+        bool check = true;
+        for (int i = 0; i < N; i ++)  {
+            for (int j = 0; j < M; j ++) {
+                // 2. 현재 기준의 높이보다 작은 경우
+                if (cnt > graph[i][j]) {
+                    // 높이의 차만큼 시간을 더하기.
+                    time += (cnt - graph[i][j]);
+                    block -= cnt - graph[i][j];
+                }
+
+                // 1. 현재 기준의 높이보다 높은 경우
+                else if (cnt < graph[i][j]) {
+                    time += (graph[i][j] - cnt)*2;
+                    block += graph[i][j] - cnt;
+                }
+            }
+        }
+
+
+        // 블럭의 개수가 필요한 정도보다 적다면 아웃.
+        if (block < 0) check = false;
+
+        // Debug
+        //cout << cnt << ' ' << check << ' ' << time << '\n';
+
+        if (check) {
+            if (time < minTime) {
+                minTime = time;
+                maxHeight = cnt;
+            }
+
+
+            // 답이 여러개인 경우에는 
+            if (time == minTime) {
+                if (maxHeight < cnt) {
+                    maxHeight = cnt;
+                }
+            }
+        }
     }
-    
+
+    cout << minTime << ' ' << maxHeight << '\n';
+
     return 0;
 }

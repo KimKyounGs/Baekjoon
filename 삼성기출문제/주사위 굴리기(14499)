@@ -1,0 +1,100 @@
+/*
+아이디어 :
+
+문제 자체는 쉬운데, 주사위를 굴렸을 때 어떻게 변하는지에 대해서 많이 고민함.
+
+https://donggoolosori.github.io/2020/11/09/boj-14499/
+여기서 주사위 변화에 대해서 알려줌.
+또한 dx[dir-1],dy[dir-1] 이렇게 하는 것도 한수 배움.
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, K;
+int x,y;
+int graph[21][21];
+// 동 서 북 남
+int dx[] = {0, 0, -1, 1};
+int dy[] = {1, -1, 0, 0};
+vector<int> dice(7);
+
+void Dice(int dir) {
+    switch(dir) {
+        // 동쪽으로 굴리기
+        case 1: 
+            {
+                dice = {0, dice[4], dice[2], dice[1], dice[6], dice[5], dice[3]};
+                break;
+            }
+        // 서쪽으로 굴리기
+        case 2:
+            {
+                dice = {0, dice[3], dice[2], dice[6], dice[1], dice[5], dice[4]};
+                break;
+            }
+
+        // 북쪽으로 굴리기
+        case 3:
+            {
+                dice = {0, dice[5], dice[1], dice[3], dice[4], dice[6], dice[2]};
+                break;
+            }
+        // 남쪽으로 굴리기
+        case 4:
+            {
+                dice = {0, dice[2], dice[6], dice[3], dice[4], dice[1], dice[5]};
+                break;
+            }
+    }
+}
+
+void Simulation(int dir) {
+    int nx = x + dx[dir-1];
+    int ny = y + dy[dir-1];
+
+    if (nx < 0 || nx > N - 1 || ny < 0 || ny > M - 1) return;
+    // 주사위 위치하는 칸 이동
+    x = nx;
+    y = ny;
+    // 명령에 따라 주사위 굴리기
+    Dice(dir);
+    if (graph[nx][ny] == 0) {
+        graph[nx][ny] = dice[6];
+    }
+    else {
+        dice[6] = graph[nx][ny];
+        graph[nx][ny] = 0;
+    }
+
+    cout << dice[1] << endl;
+}
+
+int main()
+{
+    cin >> N >> M >> x >> y >> K;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < M; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    for (int i = 0; i < K; i ++) {
+        int n;
+        cin >> n;
+        Simulation(n);
+    }
+
+    return 0;
+}
