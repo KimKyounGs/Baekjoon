@@ -11,6 +11,11 @@
 1. 현재 기준의 높이보다 높은 경우
 2. 현재 기준의 높이보다 작은 경우
 
+
+구현할 리스트를 정리 -> 대충 시간복잡도를 계산을 해봅니다.
+-> ㅇㅋ? -> 실행
+-> No... -> 다른 구현할 방법을 찾기.
+
 */
 
 #include <iostream>
@@ -33,24 +38,26 @@ int main() {
             v.push_back(graph[i][j]);
         }
     }
-    
 
     int minTime = 1e9;
     int maxHeight = 0;
-    
+
+    // cnt변수는 기준 높이. ex) cnt = 233->233만큼의 높이로 땅고르기 작업을 한다. 
+    // 256 * 500 * 500 <= 10억
     for (int cnt = 0; cnt <= 256; cnt ++) {
         int time = 0;
         int block = B;
         bool check = true;
         for (int i = 0; i < N; i ++)  {
             for (int j = 0; j < M; j ++) {
-                // 1. 현재 기준의 높이보다 높은 경우
+                // 2. 현재 기준의 높이보다 작은 경우
                 if (cnt > graph[i][j]) {
+                    // 높이의 차만큼 시간을 더하기.
                     time += (cnt - graph[i][j]);
                     block -= cnt - graph[i][j];
                 }
 
-                // 2. 현재 기준의 높이보다 작은 경우
+                // 1. 현재 기준의 높이보다 높은 경우
                 else if (cnt < graph[i][j]) {
                     time += (graph[i][j] - cnt)*2;
                     block += graph[i][j] - cnt;
@@ -70,7 +77,9 @@ int main() {
                 minTime = time;
                 maxHeight = cnt;
             }
-            
+
+
+            // 답이 여러개인 경우에는 
             if (time == minTime) {
                 if (maxHeight < cnt) {
                     maxHeight = cnt;
@@ -80,6 +89,6 @@ int main() {
     }
 
     cout << minTime << ' ' << maxHeight << '\n';
-    
+
     return 0;
 }
