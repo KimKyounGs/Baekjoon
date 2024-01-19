@@ -1,6 +1,8 @@
 /*
 아이디어 :
 
+
+
 */
 #include <iostream>
 #include <vector>
@@ -18,6 +20,29 @@ using namespace std;
 
 int N, L;
 int graph[101][101];
+bool visite[101][101];
+int result;
+
+void Solution() 
+{
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            if (abs(graph[i][j]-graph[i][j]) == 1) {
+                // 왼쪽에 경사로
+                bool left = false;
+                if (j - L >= 0) {
+                    
+                }
+
+                // 오른쪽에 경사로
+                bool right = false;
+            }
+            else {
+                break;
+            }
+        }
+    }
+}
 
 int main()
 {
@@ -28,7 +53,7 @@ int main()
         }
     }
 
-    
+    Solution();
 }
 
 

@@ -1,0 +1,114 @@
+/*
+아이디어 :
+
+
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int w, h;
+int graph[51][51];
+
+int dx[] = {1, -1, 0, 0, 1, -1, 1, -1};
+int dy[] = {0, 0, 1, -1, 1, -1, -1, 1};
+
+bool DFS(int x, int y) {   
+    // 방문체크 and 땅이냐 바다냐 ?
+    if (!graph[x][y]) {
+        return false;
+    }
+
+    // 범위체크
+    if (x < 0 || x > h-1 || y < 0 || y > w-1) {
+        return false;
+    }
+
+    // 방문체크해주기.
+    graph[x][y] = 0;
+
+    // 방향 넣어서 DFS해주기.
+    for (int i = 0; i < 8; i ++) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        DFS(nx,ny);
+    }
+
+    return true;
+}
+
+bool BFS(int x, int y) {
+    // 방문체크 and 땅이냐 바다냐 ?
+    if (!graph[x][y]) {
+        return false;
+    }
+
+    graph[x][y] = 0;
+    queue<pair<int, int> > q;
+    q.push({x,y});
+
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 8; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || nx > h-1 || ny < 0 || ny > w-1) {
+                continue;
+            }
+
+            if (graph[nx][ny]) {
+                q.push({nx,ny});
+                graph[nx][ny] = 0;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    while(1) {
+        cin >> w >> h;
+
+        if (!w && !h) {
+            break;
+        }
+
+        for (int i = 0; i < h; i ++) {
+            for (int j = 0; j < w; j ++) {
+                cin >> graph[i][j];
+            }
+        }
+
+        int result = 0;
+        for (int i = 0; i < h; i ++) {
+            for (int j = 0; j < w; j ++) {
+                if (BFS(i,j)) {
+                    result ++;
+                }
+            }
+        }
+        cout << result << '\n';
+        memset(graph, 0, sizeof(graph));
+    }
+
+
+
+
+    return 0;
+} 
