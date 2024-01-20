@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N, M, K, counts = 1;
+int graph[101][101];
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void bfs (int y, int x) {
+    queue <pair<int, int>> q;
+    q.push({y,x});
+    graph[y][x] = 0;
+
+
+    while(!q.empty()) {
+        int y = q.front().first;
+        int x = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int ny = y + dy[i];
+            int nx = x + dx[i];
+            if (nx >= 1 && nx <= M && ny >= 1 && ny <= N && graph[ny][nx] == 1) {
+                q.push({ny,nx});
+                graph[ny][nx] = 0;
+                counts ++;
+            }
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> N >> M >> K;
+
+    for (int i = 0; i < K; i ++) {
+            int r, c;
+            cin >> r >> c;
+            graph[r][c] = 1;
+    }
+
+    int maxs = 0;
+
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= M; j ++) {
+            if (graph[i][j] == 1) {
+                bfs(i,j);
+                maxs = max(counts,maxs);
+                counts = 1;
+            }
+        }
+    }
+
+    cout << maxs << '\n';
+    return 0;
+}

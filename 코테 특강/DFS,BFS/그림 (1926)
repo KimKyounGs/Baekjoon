@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int n, m, maxs = 0, compare = 1;
+int graph[501][501];
+
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+bool bfs(int x, int y) {
+    if (graph[x][y] == 0) {
+        return false;
+    }
+    queue <pair<int, int>> q;
+    q.push({x,y});
+    graph[x][y] = 0;
+    while(!q.empty()) {
+        x = q.front().first;
+        y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (graph[nx][ny] == 0 || nx < 0 || nx > n || ny  < 0 || ny > m ) {
+                continue;
+            }
+            compare ++;
+            q.push({nx, ny});
+            graph[nx][ny] = 0;
+        }
+    }
+    return true;
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> n >> m;
+    for (int i = 0; i < n; i ++) {
+        for (int j = 0; j < m; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    int counts = 0;
+    for (int i = 0; i < n; i ++) {
+        for (int j = 0; j < m; j ++) {
+            if (bfs(i,j)) {
+                counts ++;
+                maxs = max(compare,maxs);
+            }
+            compare = 1;
+        }
+    }
+
+    cout << counts << '\n' << maxs << '\n';
+    return 0;
+}
