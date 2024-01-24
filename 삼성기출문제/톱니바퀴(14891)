@@ -1,0 +1,113 @@
+/*
+아이디어 :
+
+덱큐를 이용해서 문제를 풀었다.
+동시에 바뀐다는 점을 유의해서 v을 이용해서 한번에 처리.
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int K;
+int result;
+deque<int> dq[4];
+
+void Rotate(int type, int flag) {
+    // 시계 : 0 -> 1, 7 -> 0, 
+    if (flag == 1) {
+        int temp = dq[type].back();
+        dq[type].pop_back();
+        dq[type].push_front(temp);
+    }
+
+    // 반시계
+    else {
+        int temp = dq[type].front();
+        dq[type].pop_front();
+        dq[type].push_back(temp);
+    }
+}
+
+int main()
+{
+    for (int i = 0; i < 4; i ++) {
+        for (int j = 0; j < 8; j ++) {
+            int n;
+            scanf("%1d", &n);
+            dq[i].push_back(n);
+        }
+    }
+
+    cin >> K;
+
+    for (int i = 0; i < K; i ++) {
+        vector<pair<int, int>> v;
+        int a, b;
+        cin >> a >> b;
+
+        v.push_back({a-1,b});
+        // dq[2] = 오른쪽, dp[6] = 왼쪽
+        // a 왼쪽
+        int temp = a;
+        int temp2 = b;
+        while(temp != 1) {
+            if (temp-2 >= 0 && dq[temp-1][6] != dq[temp-2][2]) {
+                v.push_back({temp-2, temp2 *= -1});
+                temp --;
+            }
+            else {
+                 break;
+            }
+        }
+        temp = a;
+        temp2 = b;
+        // a 오른쪽   
+        while(temp != 4) {
+            if (temp <= 3 && dq[temp-1][2] != dq[temp][6]) {
+                v.push_back({temp, temp2 *= -1});
+                temp ++;
+            }
+            else {
+                 break;
+            }
+        }
+
+        for (int j = 0; j < v.size(); j ++) {
+            Rotate(v[j].first, v[j].second);
+        }
+
+        /*
+        for (int j = 0; j < 4; j ++) {
+            deque<int> tempDq = dq[j];
+
+            while(!tempDq.empty()) {
+                cout << tempDq.front();
+                tempDq.pop_front();
+            }
+            cout << endl;
+        }
+        cout << endl;
+        */
+    }
+
+    for (int i = 0; i < 4; i ++) {
+        if (dq[i][0] == 1) {
+            result += pow(2, i);
+        }
+    }
+
+    cout << result << '\n';
+}
+
+
