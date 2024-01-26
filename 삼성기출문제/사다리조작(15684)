@@ -3,9 +3,10 @@
 
 https://dingcoding.tistory.com/85 참고함
 
-내 Slide() 함수는 check()함수에 비해 시간이 더 걸림. 
-처음에 순열로 사다리를 뽑았지만 조합으로 사다리를 뽑음. -> 할 때 for (int i = idx; i <= H; i ++, idx2 = 1)에서
-idx2 = 1이 중요함. 이렇게 해야지만 모든 경우의수를 빼먹지 않고 돌림. 이중ㅁ
+1. 내 Slide() 함수는 check()함수에 비해 시간이 더 걸림. 
+
+2. 처음에 순열로 사다리를 뽑았지만 조합으로 사다리를 뽑음. -> 할 때 for (int i = idx; i <= H; i ++, idx2 = 1)에서
+idx2 = 1이 중요함. 이렇게 해야지만 모든 경우의수를 빼먹지 않고 돌림. 이중포문에서는 이렇게 조합을 사용.
 
 */
 #include <iostream>
@@ -98,7 +99,7 @@ int main()
         cin >> a >> b;
         graph[a][b] = true;
     }
-    
+
     /*
     for (int i = 1; i <= H; i ++) {
         for (int j = 1; j < N; j++) {
@@ -109,7 +110,7 @@ int main()
 
     Slide();
     */
-    
+
     for (int i = 0; i <= 3; i++) {
         targetCnt = i;
         DFS(0, 1, 1);
@@ -122,7 +123,7 @@ int main()
     }
 
     cout << -1 << endl;
-    
+
 }
 
 

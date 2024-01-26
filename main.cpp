@@ -1,7 +1,12 @@
 /*
 아이디어 :
 
+https://dingcoding.tistory.com/85 참고함
 
+1. 내 Slide() 함수는 check()함수에 비해 시간이 더 걸림. 
+
+2. 처음에 순열로 사다리를 뽑았지만 조합으로 사다리를 뽑음. -> 할 때 for (int i = idx; i <= H; i ++, idx2 = 1)에서
+idx2 = 1이 중요함. 이렇게 해야지만 모든 경우의수를 빼먹지 않고 돌림. 이중포문에서는 이렇게 조합을 사용.
 
 */
 #include <iostream>
@@ -18,20 +23,106 @@
 
 using namespace std;
 
-int N, M, K;
+int N, M, H;
+int result = INF, targetCnt;
 bool graph[31][11];
+
+/*
+int Slide() {
+    int cnt = 0;
+    for (int i = 1; i <= N; i ++) {
+        int nowX = 1;
+        int nowY = i;
+        while(nowX != H+1) {
+            if (graph[nowX][nowY]) {
+                nowY ++;
+                nowX ++;
+            }
+            else if (nowY-1 >= 1 && graph[nowX][nowY-1]) {
+                nowY --;
+                nowX ++;
+            }
+            else {
+                nowX ++;
+            }
+        }
+
+        if (nowY == i) {
+            cnt ++;
+        }
+        // cout << "i = " << i << " nowY = " << nowY << endl;
+    }
+    return cnt;
+}
+*/
+
+bool check() {
+    for (int i = 1; i <= N; i++) {
+        int start = i;
+        for (int j = 1; j <= H; j++) {
+            if (start+1 <= N && graph[j][start] == true) {
+                start++;
+            }
+            else if (start-1 >=1 && graph[j][start-1] == true) {
+                start--;
+            }
+        }
+        if (start != i) return false;
+    }
+    return true;
+}
+
+void DFS(int cnt, int idx, int idx2) {
+    if (targetCnt == cnt) {
+        if (check()) {
+            result = cnt;
+        }
+        return;
+    }
+
+    for (int i = idx; i <= H; i ++, idx2 = 1) {
+        for (int j = idx2; j < N; j ++) {
+            if (graph[i][j] || graph[i][j - 1] || graph[i][j + 1]) continue;
+            graph[i][j] = true;
+            DFS(cnt + 1, i, j);
+            graph[i][j] = false;
+        }
+    }
+}
 
 int main()
 {
-    cin >> N >> M >> K;
+    cin >> N >> M >> H;
 
     for (int i = 0; i < M; i ++) {
         int a, b;
         cin >> a >> b;
-        graph[b][a] = true;
+        graph[a][b] = true;
+    }
+    
+    /*
+    for (int i = 1; i <= H; i ++) {
+        for (int j = 1; j < N; j++) {
+            cout << graph[i][j] << ' ';
+        }
+        cout << endl;
     }
 
-    // 
+    Slide();
+    */
+    
+    for (int i = 0; i <= 3; i++) {
+        targetCnt = i;
+        DFS(0, 1, 1);
+
+
+        if (result != INF) {
+            cout << result << endl;
+            return 0;
+        }
+    }
+
+    cout << -1 << endl;
     
 }
 
