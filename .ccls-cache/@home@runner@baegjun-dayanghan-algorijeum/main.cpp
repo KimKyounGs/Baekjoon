@@ -1,12 +1,12 @@
 /*
 아이디어 :
 
-참고 
-https://velog.io/@skyepodium/%EB%B0%B1%EC%A4%80-15685-%EB%93%9C%EB%9E%98%EA%B3%A4-%EC%BB%A4%EB%B8%8C
+벡터에서 erase을 사용해서 충분한 양분을 흡수 못한 나무를 없애려고 했지만 out of bound 떴다.
+이유는 v.size()로 나무를 저장해둔 인덱스를 접근하는데 도중에 사이즈를 줄여버리면 문제가 발생한다.
+쫌 복잡하다.
+그래서 temp벡터로 충분한 양분을 얻은 나무를 넣어주고 다시 v벡터로 넣어줌.
 
-문제 자체를 이해를 못했던 문제.
-결국 사이트를 보게 되었고 무슨 느낌으로 풀어야 되는지 보고 넘겼다.
-너무 복잡한 문제.. 다시는 보기싫다.
+시간은 N이 10이여서 아무리 lenㅇ
 
 */
 #include <iostream>
@@ -23,94 +23,102 @@ https://velog.io/@skyepodium/%EB%B0%B1%EC%A4%80-15685-%EB%93%9C%EB%9E%98%EA%B3%A
 
 using namespace std;
 
-int n, x, y, d, g, result;
+int N, M, K;
+int graph[11][11]; // 현재 양분
+int food[11][11]; // 겨울 때 주어지는 양분
+vector<int> v[11][11]; // 나무 나이
+int dx[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+int dy[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-//끝점의 정보
-int end_x, end_y;
-
-bool map[max_int][max_int];
-
-//왼쪽, 위쪽, 오른쪽, 아래쪽
-int dx[] = {0, -1, 0, 1}, dy[] = {1, 0, -1, 0};
-
-
-//이전 세대의 방향정보를 저장하는 스택
-//stl 스택쓰면 귀찮으니까 인덱스로 접근 할 수 있는 벡터를 사용한다.
-vector<int> dragon;
-
-//스택을 조사하면서 드래곤 커브를 만드는 함수
-void make_generation(vector<int> &dragon){
-
-    //현재 스택의 크기를 먼저 계산해 놓는다.
-    int size = (int)dragon.size();
-
-    //스택의 뒤에서 부터 꺼내면서
-    //다음세대의 방향정보를 dir = (dragon[i] + 1)%4; 규칙에 따라 생성한다.
-    for(int i=size-1; i>=0; i--){
-        int dir = (dragon[i] + 1)%4;
-
-        //다음 세대의 방향정보를 바탕으로 다음 x,y를 찾고 이를 갱신한다.
-        end_x = end_x + dx[dir];
-        end_y = end_y + dy[dir];
-
-        //만들어진 드래곤 커브를 지도에 놓아준다.
-        map[end_x][end_y] = true;
-
-        //다음세대를 위하 스택에 방향정보를 넣어준다.
-        dragon.push_back(dir);
-    }
-}
-
-int main(){
-
-    scanf("%d", &n);
-
-    for(int i=0; i<n; i++){
-        //x, y의 순서를 바꿔서 입력받는다.
-        int y, x, d, g;
-        scanf("%d %d %d %d", &y, &x, &d, &g);
-
-        //기존 드래곤 커브의 스택을 비워준다.
-        dragon.clear();
-
-        //시작점에에 드래곤 커브가 놓여있으므로 지도에 표시해준다.
-        map[x][y] = true;
-
-        //0세대는 미리 만들어 놓는다.
-        end_x = x + dx[d];
-        end_y = y + dy[d];
-
-        //0세대를 만든 이후에도 지도에 표시해준다.
-        map[end_x][end_y] = true;
-
-        //0세대의 방향정보를 스택에 넣어준다.
-        dragon.push_back(d);
-
-        //반복문을 통해 0부터 차례차례 드래곤 커브를 만들면서 g세대까지 만든다.
-        for(int i=0; i<g; i++){
-
-            //드래곤 커브를 만들자
-            make_generation(dragon);
-        }
-
-    }
-
-    //100*100 2차원 행렬을 2중 for문 사용한 단순한 탐색
-    //인접한 4칸이 모두 true이면, 4칸이 모두 드래곤 커브의 일부인것
-    //갯수를 1증가시킨다.
-    for(int i=0; i<=max_int-2; i++){
-        for(int j=0; j<=max_int-2; j++){
-
-            //인접한 4칸의 정사각형이 모두 드래곤의 일부이면
-            if(map[i][j] == true && map[i][j+1] == true && map[i+1][j] == true && map[i+1][j+1] == true){
-
-                //갯수를 1 증가시킨다.
-                result++;
+// 여름이랑 합침.
+void Spring() {
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            int sum = 0;
+            int len = v[i][j].size();
+            vector<int> temp;
+            
+            sort(v[i][j].begin(), v[i][j].end());
+            for (int k = 0; k < len; k ++) {
+                if (v[i][j][k] <= graph[i][j]) {
+                    graph[i][j] -= v[i][j][k];
+                    temp.push_back(v[i][j][k] + 1);
+                }
+                else {
+                    sum += v[i][j][k] / 2;
+                }
+            }
+            v[i][j].clear();
+            for (int k = 0; k < temp.size(); k ++) {
+                v[i][j].push_back(temp[k]);
+            }
+            if (sum) {
+                graph[i][j] += sum;
             }
         }
     }
-
-    //갯수 출력
-    printf("%d\n", result);
-
 }
+
+void Autumn() {
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            int len = v[i][j].size();
+            for (int k = 0; k < len; k ++) {
+                if (v[i][j][k] % 5 == 0) {
+                    for (int z = 0; z < 8; z ++) {
+                        int nx = i + dx[z];
+                        int ny = j + dy[z];
+
+                        if (nx < 1 || nx > N || ny < 1 || ny > N) continue;
+
+                        v[nx][ny].push_back(1);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Winter() {
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            graph[i][j] += food[i][j];
+        }
+    }
+}
+
+
+int main()
+{
+    cin >> N >> M >> K;
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            cin >> food[i][j];
+            graph[i][j] = 5;
+        }
+    }
+
+    for (int i = 0; i < M; i ++) {
+        int x, y, z;
+        cin >> x >> y >> z;
+
+        v[x][y].push_back(z);
+    }
+
+    while(K--) {
+        Spring();
+        Autumn();
+        Winter();
+    }
+    
+    int result = 0;
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {    
+            result += v[i][j].size();
+        }
+    }
+
+    cout << result << endl;
+}
+
+

@@ -38,7 +38,7 @@ void Spring() {
             int sum = 0;
             int len = v[i][j].size();
             vector<int> temp;
-            
+
             sort(v[i][j].begin(), v[i][j].end());
             for (int k = 0; k < len; k ++) {
                 if (v[i][j][k] <= graph[i][j]) {
@@ -111,7 +111,7 @@ int main()
         Autumn();
         Winter();
     }
-    
+
     int result = 0;
     for (int i = 1; i <= N; i ++) {
         for (int j = 1; j <= N; j ++) {    
