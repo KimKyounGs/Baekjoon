@@ -1,0 +1,47 @@
+/*
+아이디어 :
+
+Uper_Bound, Lower_Bound 활용 : https://chanhuiseok.github.io/posts/algo-55/
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M;
+vector<int> v;
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    cin >> N;
+    for (int i = 0; i < N; i ++) {
+        int n;
+        cin >> n;
+        v.push_back(n);
+    }
+
+    sort (v.begin(), v.end());
+
+    cin >> M;
+    for (int i = 0; i < M; i ++) {
+        int n;
+        cin >> n;
+        int result = upper_bound(v.begin(), v.end(), n) - lower_bound(v.begin(), v.end(), n);
+        cout << result << ' ';
+    }
+
+    return 0;
+}
