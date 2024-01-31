@@ -1,6 +1,10 @@
 /*
 아이디어 :
 
+가벼운 시뮬레이션 문제이다. 
+R값과 C값이 최대 50이라서 시간면에서 충분했다.
+다만 공기청정기의 바람에 따라서 dx, dy값을 정해두고 바람 방향을 컨트롤 했다. 
+바람이 바뀔 곳을 미리 파악하고 break문을 걸었다.
 
 */
 #include <iostream>
@@ -104,7 +108,7 @@ void AirCleaner() {
             y = ny;
         }
     }
-    
+
     /*
     cout << endl;
     for (int i = 0; i < R; i ++) {
@@ -137,7 +141,7 @@ int main()
         SpreadDust();
         AirCleaner();
     }
-    
+
     int result = 0;
     for (int i = 0; i < R; i ++) {
         for (int j = 0; j < C; j ++) {
