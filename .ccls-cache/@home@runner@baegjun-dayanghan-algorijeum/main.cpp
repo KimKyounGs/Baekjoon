@@ -17,132 +17,114 @@
 
 using namespace std;
 
-int R,C,T;
-int graph[51][51];
-int upIdx;
-int downIdx;
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
-int upAirdx[] = {0, -1, 0, 1};
-int upAirdy[] = {1, 0, -1, 0};
-int downAirdx[] = {0, 1, 0, -1};
-int downAirdy[] = {1, 0, -1, 0};
+struct shark {
+    int x;
+    int y;
+    int speed;
+    int dir;
+    int size;
+};
 
+int R, C, M;
+int graph[101][101];
+int result;
+vector<shark> v;
+int dx[5] = {0, -1, 1, 0, 0};
+int dy[5] = {0, 0, 0, 1, -1};
 
-void SpreadDust() {
-    int temp[51][51] = {0,};
-    for (int i = 0; i < R; i ++) {
-        for (int j = 0; j < C; j ++) {
-            if (graph[i][j] != 0) {
-                int cnt = 0;
-                for (int k = 0; k < 4; k ++) {
-                    int nx = i + dx[k];
-                    int ny = j + dy[k];
+void FishingShark(int col) {
+    for (int i = 1; i <= R; i ++) {
+        if (graph[i][col] != 0) {
+            result += graph[i][col];
+            int len = v.size();
+            for (int j = 0; j < len; j ++) {
+                if (v[j].size == graph[i][col]) {
+                    v.erase(v.begin() + j);
+                    graph[i][col] = 0;
+                    break;
+                }
+            }
+            break;
+        }
+    }
 
-                    if (nx < 0 || nx > R - 1 || ny < 0 || ny > C - 1) continue;
+    return;
+}
 
-                    if (graph[nx][ny] != -1) {
-                        temp[nx][ny] += graph[i][j]/5;
-                        cnt ++;
+void MoveShark() {
+    int temp[101][101] = {0,};
+    vector<shark> tempV;
+    int len = v.size();
+    for (int i = 0; i < len; i ++) {
+        int time = v[i].speed;
+        while(time) {
+            int nx = v[i].x + dx[v[i].dir];
+            int ny = v[i].y + dy[v[i].dir];
+                
+            if (nx < 1 || nx > R || ny < 1 || ny > C) {
+                if (v[i].dir == 1) v[i].dir = 2;
+                else if (v[i].dir == 2) v[i].dir = 1;
+                else if (v[i].dir == 3) v[i].dir = 4;
+                else if (v[i].dir == 4) v[i].dir = 3;
+                continue;
+            }
+
+            v[i].x = nx;
+            v[i].y = ny;
+            time --;
+        }
+
+        if (temp[v[i].x][v[i].y] == 0) {
+            temp[v[i].x][v[i].y] = v[i].size;
+            tempV.push_back(v[i]);
+        }
+        else {
+            if (v[i].size > temp[v[i].x][v[i].y]) {
+                int len2 = tempV.size();
+                for (int j = 0; j < len2; j ++) {
+                    if (tempV[j].size == temp[v[i].x][v[i].y]) {
+                        tempV.erase(tempV.begin() + j);
+                        break;
                     }
                 }
-                if (cnt) {
-                    temp[i][j] += graph[i][j] - graph[i][j]/5*cnt;
-                }
+                temp[v[i].x][v[i].y] = v[i].size;
+                tempV.push_back(v[i]);
             }
         }
     }
-    copy(&temp[0][0], &temp[0][0] + 51*51, &graph[0][0]);
 
-    /*
-    cout << endl;
-    for (int i = 0; i < R; i ++) {
-        for (int j = 0; j < C; j ++) {
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
+    copy(&temp[0][0], &temp[0][0] + 101*101, &graph[0][0]);
+    v.clear();
+    for (int i = 0; i < tempV.size(); i ++) {
+        v.push_back(tempV[i]);
     }
-    */
-}
-
-void AirCleaner() {
-    // 위쪽
-    int temp = 0;
-    int x = upIdx;
-    int y = 0;
-    for (int i = 0; i < 4; i ++) {
-        while(1) {
-            int nx = x + upAirdx[i];
-            int ny = y + upAirdy[i];
-
-            if ((nx == upIdx && ny == C) || (nx == -1 && ny == C-1) || (nx == 0 && ny == -1) || (nx == upIdx && ny == 0)) break;
-
-            int temp2 = temp;
-            temp = graph[nx][ny];
-            graph[nx][ny] = temp2;
-
-            x = nx;
-            y = ny;
-        }
-    }
-    // 아래쪽
-    temp = 0;
-    x = downIdx;
-    y = 0;
-    for (int i = 0; i < 4; i ++) {
-        while(1) {
-            int nx = x + downAirdx[i];
-            int ny = y + downAirdy[i];
-
-            if ((nx == downIdx && ny == C) || (nx == R && ny == C-1) || (nx == R-1 && ny == -1) || (nx == downIdx && ny == 0)) break;
-
-            int temp2 = temp;
-            temp = graph[nx][ny];
-            graph[nx][ny] = temp2;
-
-            x = nx;
-            y = ny;
-        }
-    }
-    
-    /*
-    cout << endl;
-    for (int i = 0; i < R; i ++) {
-        for (int j = 0; j < C; j ++) {
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
-    }
-    */
 }
 
 int main()
 {
-    cin >> R >> C >> T;
-    for (int i = 0; i < R; i++) {
-        for (int j = 0; j < C; j ++) {
-            cin >> graph[i][j];
-            if (graph[i][j] == -1) {
-                if (upIdx == 0) {
-                    upIdx = i;
-                }
-                else {
-                    downIdx = i;
-                }
-            }
-        }
+    cin >> R >> C >> M;
+
+    for (int i = 0; i < M; i ++) {
+        int r, c, s, d, z;
+        cin >> r >> c >> s >> d >> z;
+        graph[r][c] = z;
+        v.push_back({r,c,s,d,z});
     }
 
-    while(T--) {
-        SpreadDust();
-        AirCleaner();
-    }
-    
-    int result = 0;
-    for (int i = 0; i < R; i ++) {
-        for (int j = 0; j < C; j ++) {
-            if (graph[i][j] > 0) result += graph[i][j];
+    for (int i = 1; i <= C; i ++) {
+        FishingShark(i);
+        MoveShark();
+
+        /*
+        cout << "현재 i = " << i << endl;
+        for (int j = 1; j <= R; j ++) {
+            for (int k = 1; k <= C; k ++) {
+                cout << graph[j][k] << ' ';
+            }
+            cout << endl;
         }
+        cout << endl;
+        */
     }
 
     cout << result << endl;
