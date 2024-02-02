@@ -6,12 +6,19 @@
 처음에는 상어 삭제를 벡터를 지우는 형식으로 했는데 시간 초과가 떠서 shark에 사이즈를 인덱스로 놓고 isLive를 통해 상어가 살아있나 없나를 판단함.
 
 그런데 이제와서 다시해보니
+int time = shark[i].speed;
+
+이 부분이 문제였음.
+
+나는 speed 자체로 while문을 반복했는데
+만약 왕복을 줄이면 시간이 더 줄여지게 됨.
+
+그래서 이렇게 고침
 int time;
 if (shark[i].dir == 1 || shark[i].dir == 2) time = shark[i].speed % ((R-1)*2);
 if (shark[i].dir == 3 || shark[i].dir == 4) time = shark[i].speed % ((C-1)*2);
 
-이 부분이 문제였음.
-사실 벡터로 해도 상관 없었다...
+그리고 원래 했던 벡터로 해도 저렇게만 고치면 상관 없었다..
 
 */
 #include <iostream>
@@ -118,10 +125,161 @@ int main()
         graph[r][c] = z;
         maxIndex = max(maxIndex, z);
     }
-    
+
     for (int i = 1; i <= C; i ++) {
         FishingShark(i);
-        
+
+        MoveShark();
+
+        /*
+        cout << "현재 i = " << i << endl;
+        for (int j = 1; j <= R; j ++) {
+            for (int k = 1; k <= C; k ++) {
+                cout << graph[j][k] << ' ';
+            }
+            cout << endl;
+        }
+        cout << endl;
+        */
+    }
+
+    cout << result << endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+아이디어 :
+
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+struct shark {
+    int x;
+    int y;
+    int speed;
+    int dir;
+    int size;
+};
+
+int R, C, M;
+int graph[101][101];
+int result;
+vector<shark> v;
+int dx[5] = {0, -1, 1, 0, 0};
+int dy[5] = {0, 0, 0, 1, -1};
+
+void FishingShark(int col) {
+    for (int i = 1; i <= R; i ++) {
+        if (graph[i][col] != 0) {
+            result += graph[i][col];
+            int len = v.size();
+            for (int j = 0; j < len; j ++) {
+                if (v[j].size == graph[i][col]) {
+                    v.erase(v.begin() + j);
+                    graph[i][col] = 0;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    return;
+}
+
+void MoveShark() {
+    int temp[101][101] = {0,};
+    vector<shark> tempV;
+    int len = v.size();
+    for (int i = 0; i < len; i ++) {
+            int time;
+            if (v[i].dir == 1 || v[i].dir == 2) time = v[i].speed % ((R-1)*2);
+            if (v[i].dir == 3 || v[i].dir == 4) time = v[i].speed % ((C-1)*2);
+        while(time) {
+            int nx = v[i].x + dx[v[i].dir];
+            int ny = v[i].y + dy[v[i].dir];
+
+            if (nx < 1 || nx > R || ny < 1 || ny > C) {
+                if (v[i].dir == 1) v[i].dir = 2;
+                else if (v[i].dir == 2) v[i].dir = 1;
+                else if (v[i].dir == 3) v[i].dir = 4;
+                else if (v[i].dir == 4) v[i].dir = 3;
+                continue;
+            }
+
+            v[i].x = nx;
+            v[i].y = ny;
+            time --;
+        }
+
+        if (temp[v[i].x][v[i].y] == 0) {
+            temp[v[i].x][v[i].y] = v[i].size;
+            tempV.push_back(v[i]);
+        }
+        else {
+            if (v[i].size > temp[v[i].x][v[i].y]) {
+                int len2 = tempV.size();
+                for (int j = 0; j < len2; j ++) {
+                    if (tempV[j].size == temp[v[i].x][v[i].y]) {
+                        tempV.erase(tempV.begin() + j);
+                        break;
+                    }
+                }
+                temp[v[i].x][v[i].y] = v[i].size;
+                tempV.push_back(v[i]);
+            }
+        }
+    }
+
+    copy(&temp[0][0], &temp[0][0] + 101*101, &graph[0][0]);
+    v.clear();
+    for (int i = 0; i < tempV.size(); i ++) {
+        v.push_back(tempV[i]);
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0);
+cin.tie(0);
+cout.tie(0);
+    cin >> R >> C >> M;
+
+    for (int i = 0; i < M; i ++) {
+        int r, c, s, d, z;
+        cin >> r >> c >> s >> d >> z;
+        graph[r][c] = z;
+        v.push_back({r,c,s,d,z});
+    }
+
+    for (int i = 1; i <= C; i ++) {
+        FishingShark(i);
         MoveShark();
 
         /*
