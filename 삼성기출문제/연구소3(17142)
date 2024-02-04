@@ -1,0 +1,121 @@
+/*
+아이디어 :
+
+참고 : https://yabmoons.tistory.com/254
+
+너무 쉽게 생각했던 문제.
+
+처음에는 시간초과로 고생하다가
+나중에는 비활성화 활성화 바이러스에 대해서 고생한 문제.
+게시판에 예외 케이스를 보고 풀다가 안되다가 구글링 한 문제.
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+struct Point {
+    int x,y;
+};
+
+int N, M;
+int result = INF;
+int graph[51][51];
+vector<pair<int, int>> virus;
+bool Select[11];
+vector<pair<int, int>> v;
+int visit[51][51];
+int virusCnt;
+int dx[] = {0, 0, -1, 1};
+int dy[] = {-1, 1, 0, 0};
+
+void BFS() {
+    queue<Point> q;
+    for (int i = 0; i < M; i ++) {
+        q.push({v[i].first, v[i].second});
+        visit[v[i].first][v[i].second] = 0;
+    }
+
+    int Time = 0;
+    int total = 0;
+    while(!q.empty()) {
+        int x = q.front().x;
+        int y = q.front().y;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+
+            if (graph[nx][ny] != 1 && visit[nx][ny] == -1) {
+                visit[nx][ny] = visit[x][y] + 1;
+                if (graph[nx][ny] == 0) {
+                    total ++;
+                    Time = visit[nx][ny];
+                }
+                q.push({nx,ny});
+            }
+        }
+    }
+
+    if (virusCnt == total) {
+        result = min(result, Time);
+    }
+}
+
+void DFS(int cnt, int idx) {
+    if (cnt == M) {
+        memset(visit, -1, sizeof(visit));
+
+        BFS();
+        return;
+    }
+
+    for (int i = idx; i < virus.size(); i ++) {
+        if (!Select[i]) {
+            v.push_back({virus[i].first, virus[i].second});
+            Select[i] = true;
+            DFS(cnt + 1, i+1);
+            v.pop_back();
+            Select[i] = false;
+        }
+    }
+}
+
+int main()
+{
+    cin >> N >> M;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            cin >> graph[i][j];
+            if (graph[i][j] == 0) {
+                virusCnt ++;
+            }
+
+            if (graph[i][j] == 2) {
+                virus.push_back({i,j});
+            }
+        }
+    }
+
+    DFS(0, 0);
+
+    if (result == INF) {
+        cout << -1 << '\n';
+    }
+    else {
+        cout << result << endl;
+    }
+}
+
+
