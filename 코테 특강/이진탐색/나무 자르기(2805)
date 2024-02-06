@@ -1,0 +1,56 @@
+/*
+아이디어 :
+
+
+
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M;
+vector <int> wood;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    cin >> N >> M;
+    for (int i = 0; i < N; i ++) {
+        int w;
+        cin >> w;
+        wood.push_back(w);
+    }
+
+    sort (wood.begin(), wood.end());
+
+    long long result = 0;
+    int start = 0;
+    int end = wood[N-1];
+    while(start <= end) {
+        long long sum = 0;
+        long long mid = (start + end) / 2; // 절단기 높이
+        for (int i = 0; i < N; i ++) {
+            if (wood[i] > mid) sum += wood[i] - mid;
+        }
+
+        if (sum < M) end = mid - 1; // 가져가야할 양이 적으므로 end값을 낮춰서 sum양을 늘리기
+        else {
+            start = mid + 1;
+            result = max(result, mid);
+        }
+    }
+
+    cout << result;
+}
