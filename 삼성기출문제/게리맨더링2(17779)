@@ -29,12 +29,12 @@ int Simulation(int x, int y, int d1, int d2) {
     else {
         return 0;
     }
-  
+
     int result = 0;
     int arr[5] = {0,};
     int mins = INF;
     int maxs = -1;
-    
+
     // 1
     for (int i = 1, sub = 0; i < x + d1; i++) {
         if (i >= x) {
@@ -80,7 +80,7 @@ int Simulation(int x, int y, int d1, int d2) {
     }
 
     result = maxs - mins;
-    
+
     return result;
 }
 
