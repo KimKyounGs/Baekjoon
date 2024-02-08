@@ -103,9 +103,8 @@ int main() {
                     }
                 }
             }
-        }
+        
     }
 
-    cout << result << endl;
 }
 
