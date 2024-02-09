@@ -86,13 +86,7 @@ int Simulation(int x, int y, int d1, int d2) {
 
 int main() {
     cin >> N;
-    for (int i = 1; i <= N; i ++) {
-        for (int j = 1; j <= N; j ++) {
-            cin >> graph[i][j];
-            total += graph[i][j];
-        }
-    }
-
+    
     for (int i = 1; i <= N; i ++) {
         for (int j = 2; j <= N; j++) {
             for (int d1 = 1; d1 <= j; d1++) {
