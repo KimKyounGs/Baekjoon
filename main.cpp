@@ -2,8 +2,6 @@
 아이디어 :
 
 
-쉽게 쉽게 구현이 안된다..ㅠㅠ
-
 */
 #include <iostream>
 #include <vector>
@@ -19,86 +17,132 @@
 
 using namespace std;
 
-int N;
-int graph[22][22];
-int total = 0;
-int result = INF;
+int N, K;
+vector<pair<pair<int, int>, int>> v;
+deque<int> graph[13][13];
+int color[13][13];
+// 0, 1(동), 2(서), 3(북), 4(남)
+int dx[] = {0, 0, 0, -1, 1};
+int dy[] = {0, 1, -1, 0, 0};
+bool check = false;
 
-int Simulation(int x, int y, int d1, int d2) {
-    if ((d1 >= 1) && (d2 >= 1) && (x >= 1) && (x < x + d1 + d2) && (x + d1 + d2 <= N) && (y - d1 >= 1) && (y - d1 < y) && (y < y + d2) && (y + d2 <= N)) {}
-    else {
-        return 0;
-    }
-  
-    int result = 0;
-    int arr[5] = {0,};
-    int mins = INF;
-    int maxs = -1;
-    
-    // 1
-    for (int i = 1, sub = 0; i < x + d1; i++) {
-        if (i >= x) {
-            sub++;
-        }
-        for (int j = 1; j <= y - sub; j++) {
-            arr[0] += graph[i][j];
-        }
-    }
-    // 2 
-    for (int j = N, sub = 0; j > y; j--) {
-        if (j <= y + d2) {
-            sub++;
-        }
-        for (int i = 1; i <= x + d2 - sub; i++) {
-            arr[1] += graph[i][j];
-        }
-    }
-    // 3
-    for (int j = 1, sub = 0; j < y - d1 + d2; j++) {
-        if (j >= y - d1) {
-            sub++;
-        }
-        for (int i = N; i >= x + d1 + sub; i--) {
-            arr[2] += graph[i][j];
-        }
-    }
-    // 4
-    for (int i = N, sub = 0; i > x + d2; i--) {
-        if (i <= x + d1 + d2) {
-            sub++;
-        }
-        for (int j = N; j >= y - d1 + d2 + sub; j--) {
-            arr[3] += graph[i][j];
+void White(int x, int y, int nx, int ny, int n) {
+    queue<int> q;
+    while(1) {
+        int num = graph[x][y].front();
+        q.push(num);
+        graph[x][y].pop_front();
+        if (num == n) {
+            break;
         }
     }
 
-    arr[4] = total - (arr[0] + arr[1] + arr[2] + arr[3]);
-
-    for (int i = 0; i < 5; i ++) {
-        maxs = max(maxs, arr[i]);
-        mins = min(mins, arr[i]);
+    while(!q.empty()) {
+        int num = q.front();
+        graph[nx][ny].push_back(num);
+        q.pop();
     }
 
-    result = maxs - mins;
-    
-    return result;
+    if (graph[nx][ny].size() >= 4) {
+        check = true;
+    }
 }
 
-int main() {
-    cin >> N;
-    
-    for (int i = 1; i <= N; i ++) {
-        for (int j = 2; j <= N; j++) {
-            for (int d1 = 1; d1 <= j; d1++) {
-                for (int d2 = 1; d2 < N - j; d2++) {
-                    int value = Simulation(i, j, d1, d2);
-                    if (value) {
-                        result = min(result, value);
-                    }
+void Red(int x, int y, int nx, int ny, int n) {
+    stack<int> s;
+    while(1) {
+        int num = graph[x][y].front();
+        s.push(num);
+        graph[x][y].pop_front();
+        if (num == n) {
+            break;
+        }
+    }
+
+    while(!s.empty()) {
+        int num = s.top();
+        graph[nx][ny].push_back(num);
+        s.pop();
+    }
+
+    if (graph[nx][ny].size() >= 4) {
+        check = true;
+    }
+}
+
+void Sol() {
+    for (int i = 0; i < K; i ++) {
+        if (check) break;
+        int n = i+1;
+        int x = v[i].first.first;
+        int y = v[i].first.second;
+        int dir = v[i].second;
+
+        int nx = x + dx[dir];
+        int ny = y + dy[dir];
+
+        // 파란색 or 범위 벗어남.
+        if (nx < 1 || nx > N || ny < 1 || ny > N || color[nx][ny] == 2) {
+            if (dir == 1) v[i].second = 2;
+            else if (dir == 2) v[i].second = 1;
+            else if (dir == 3) v[i].second = 4;
+            else if (dir == 4) v[i].second = 3;
+
+            dir = v[i].second;
+            nx = x + dx[dir];
+            ny = y + dy[dir];
+
+            if (nx < 1 || nx > N || ny < 1 || ny > N || color[nx][ny] == 2) {
+                if (dir == 1) v[i].second = 2;
+                else if (dir == 2) v[i].second = 1;
+                else if (dir == 3) v[i].second = 4;
+                else if (dir == 4) v[i].second = 3;
+
+                continue;
+            }
+            else {
+                if (color[nx][ny] == 0) {
+                    White(x,y,nx,ny,n);
+                } 
+                else if (color[nx][ny] == 1) {
+                    Red(x,y,nx,ny,n);
                 }
             }
-        
+        }
+        else if (color[nx][ny] == 0) {
+            White(x,y,nx,ny,n);
+        }
+        else if (color[nx][ny] == 1) {
+            Red(x,y,nx,ny,n);
+        }
     }
-
 }
 
+
+int main() {
+    cin >> N >> K;
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            cin >> color[i][j];
+        }
+    }
+
+    for (int i = 1; i <= K; i ++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        graph[a][b].push_back(i);
+        v.push_back({{a,b},c});
+    }
+
+    for (int i = 1; i < 1000; i ++) {
+        Sol();
+        if (check) {
+            cout << i << endl;
+            return 0;
+        }
+    }
+
+    cout << -1 << endl;
+
+
+}
