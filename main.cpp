@@ -51,6 +51,7 @@ void White(int x, int y, int nx, int ny, int n) {
 void Red(int x, int y, int nx, int ny, int n) {
     stack<int> s;
     while(1) {
+        if (graph[x][y] ==                )
         int num = graph[x][y].front();
         s.push(num);
         graph[x][y].pop_front();
@@ -64,7 +65,7 @@ void Red(int x, int y, int nx, int ny, int n) {
         graph[nx][ny].push_back(num);
         s.pop();
     }
-
+                    
     if (graph[nx][ny].size() >= 4) {
         check = true;
     }
@@ -134,6 +135,17 @@ int main() {
         v.push_back({{a,b},c});
     }
 
+
+    /*
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < N; j ++) {
+            if(graph[i][j].size() != 0) {
+                
+            }
+        }
+    }
+    */
+    
     for (int i = 1; i < 1000; i ++) {
         Sol();
         if (check) {
@@ -143,6 +155,6 @@ int main() {
     }
 
     cout << -1 << endl;
-
+    
 
 }
