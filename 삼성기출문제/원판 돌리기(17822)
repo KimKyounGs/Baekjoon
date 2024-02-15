@@ -1,0 +1,196 @@
+/*
+아이디어 :
+
+진짜 너무 열 받는다. 내 자신에게...
+아니 배수만 돌리는 것인데 for문을
+
+for (int i = x; i <= N; i *= 2) 이렇게 해서 3시간동안 고생했다.
+
+너무 열이 받는다.
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, T;
+deque <pair<int, pair<bool, bool>>> graph[51];
+bool visit[51][51];
+int dx[] = {0, 0, 1, -1};
+int dy[] = {1, -1, 0, 0};
+int total;
+bool check = false; // 인접한 수가 지워줬는지.
+int cnt;
+
+void RotateClockwise(int x) {
+    pair<int, pair<bool, bool>> temp = graph[x].back();
+    graph[x].pop_back();
+    graph[x].push_front(temp);
+    //cout << "De = " << temp.first << endl;
+}
+
+void RotateCounterClockwise(int x) {
+    pair<int, pair<bool, bool>> temp = graph[x].front();
+    graph[x].pop_front();
+    graph[x].push_back(temp);
+}
+
+
+void EraseNum() {
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 0; j < M; j ++) {
+
+            // 위쪽이랑 비교.
+            if (i < N && graph[i][j].second.first && graph[i+1][j].second.first && graph[i][j].first == graph[i+1][j].first) {
+                graph[i][j].second.second = false;
+                graph[i+1][j].second.second = false;
+                if (!check) check = true;
+            }
+
+            // 오른쪽이랑 비교
+            // 마지막 숫자
+            if (j == M-1) {
+                if (graph[i][0].second.first && graph[i][j].second.first && graph[i][0].first == graph[i][j].first) {
+                    graph[i][0].second.second = false;
+                    graph[i][j].second.second = false;
+                    if (!check) check = true;
+                }
+                break;
+            }
+
+            if (graph[i][j].second.first && graph[i][j+1].second.first && graph[i][j].first == graph[i][j+1].first) {
+                graph[i][j].second.second = false;
+                graph[i][j+1].second.second = false;
+                if (!check) check = true;
+            }
+        }
+    }
+}
+
+int TotalSum() {
+    int sum = 0;
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 0; j < M; j ++) {
+            if (graph[i][j].second.first) {
+                sum += graph[i][j].first;
+            }
+        }
+    }
+    return sum;
+}
+
+int main() {
+    cin >> N >> M >> T;
+
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 0; j < M; j ++) {
+            int n;
+            cin >> n;
+            graph[i].push_back({n,{true, true}});
+            total += n;
+        }
+    }
+
+    cnt = N*M;
+
+    while(T--) {
+        int x, d, k;
+        cin >> x >> d >> k;
+
+        for (int i = x, mul = 1; i <= N; i = x * mul) {
+            if (d == 0) {
+                // 시계방향 회전
+                for (int j = 0; j < k; j ++) {
+                    RotateClockwise(i);
+                }
+            }
+            else {
+                // 반시계방향 회전
+                for (int j = 0; j < k; j ++) {
+                    RotateCounterClockwise(i);
+                }
+            }
+            mul++;
+        }
+
+        check = false;
+        EraseNum();
+
+
+        // // Debug_Log
+        // cout << endl << "지우고 난 후" << endl;
+        // for (int i = 1; i <= N; i ++) {
+        //     for (int j = 0; j < M; j ++) {
+        //         if (graph[i][j].second.first) {
+        //             cout << graph[i][j].first << ' ';
+        //         }
+        //         else {
+        //             cout << 'x' << ' ';
+        //         }
+        //     }
+        //     cout << endl;
+        // }
+
+
+        // 지워진 숫자가 있다.
+        if (check) {
+            for (int i = 1; i <= N; i ++) {
+                for (int j = 0; j < M; j++) {
+                    if (graph[i][j].second.first == true && graph[i][j].second.second == false) {
+                        graph[i][j].second.first = false;
+                        cnt --;
+                    } 
+                }
+            }
+        }
+        // 지워진 숫자가 없다.
+        else {
+            // (float)꼭 붙이기.
+            float avg = 0;
+            if (cnt != 0) {
+                float avg = (float)total/cnt;
+                for (int i = 1; i <= N; i ++) {
+                    for (int j = 0; j < M; j++) {
+                        if (graph[i][j].second.first) {
+                            if (graph[i][j].first < avg) {
+                                graph[i][j].first ++;
+                            } 
+                            else if (graph[i][j].first > avg) {
+                                graph[i][j].first --;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // // Debug_Log
+        // cout << endl << "결론" << endl;
+        // for (int i = 1; i <= N; i ++) {
+        //     for (int j = 0; j < M; j ++) {
+        //         if (graph[i][j].second.first) {
+        //             cout << graph[i][j].first << ' ';
+        //         }
+        //         else {
+        //             cout << 'x' << ' ';
+        //         }
+        //     }
+        //     cout << endl;
+        // }
+
+
+        total = TotalSum();
+    }
+
+    cout << total << endl;
+
+}
