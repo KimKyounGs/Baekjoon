@@ -74,9 +74,9 @@ void init(){
     for (int i = 22; i < 27; i++) arr[i] = i+1;
     arr[27] = 20; arr[28] = 29; arr[29] = 30;
     arr[30] = 25; arr[31] = 32; arr[32] = 25;
-        
+
     turn[5] = 22; turn[10] = 31; turn[15] = 28;
-        
+
     for (int i = 0; i < 21; i++) score[i] = 2 * i;
     score[22] = 13; score[23] = 16; score[24] = 19;
     score[25] = 25; score[26] = 30; score[27] = 35;

@@ -1,8 +1,12 @@
 /*
 아이디어 :
 
-N,M의 크기도 작고 벽도 3개까지만 만드는 것을 보고 백트래킹으로 풀 수 있다고 생각했고, 
-감염되는 것을 보고 그래프문제인 것을 알 수 있었다.
+백트레킹 순열로 모든 과정을 보는 것은 파악했는데 이동하는 것이 너무 어려웠다.
+
+이후 다음 사이트를 봤음.
+맵을 고유의 인덱스를 표현해서 쉽게 구현을 해놨음.
+참고 사이트 : https://haejun0317.tistory.com/163
+
 
 */
 #include <iostream>
@@ -14,49 +18,78 @@ N,M의 크기도 작고 벽도 3개까지만 만드는 것을 보고 백트래�
 #include <cstring>
 #include <deque>
 #include <map>
+#include <climits>
 #define INF 1e9
 #define endl '\n'
 
 using namespace std;
 
-vector<int> v;
-int graph[42];
-vector<int> horse;
-bool bHorse[4];
-int result;
+int dice[10];   // 주사위의 입력값
+int piece[4];   // 현재 말의 위치
 
-int Simulation() {
-    int sum = 0;
-    for (int i = 0; i < 10; i ++) {
-        int n = horse[i];
+int arr[34];    // 다음에 갈 위치 저장
+int score[34];  // 윷놀이판 엔트리의 점수
+int turn[34];   // 파란색 화살표가 있는 전환 지점
+bool check[34]; // 윷놀이판 엔트리의 말 존재여부
+
+int ans = INT_MIN;
+int get_max(int a, int b){ return a > b ? a : b; }
+
+void dfs(int cnt, int sum){
+  if(cnt == 10){
+    ans = get_max(ans, sum);
+    return;
+  }
+
+  for (int i = 0; i < 4; i++) {
+    int prev = piece[i];
+    int cur = prev;
+    int move = dice[cnt];
+
+    if(turn[cur] > 0){ // 파란색 화살표 지점 도달시 방향 전환
+      cur = turn[cur]; // 현재 위치가 전환점인지 먼저 확인해서 방향 바꿔놓고, 이동 시작
+      move--;
+    }
+
+    while(move--) cur = arr[cur]; // 남은 이동횟수만큼 칸 이동
+
+    if(cur!=21 && check[cur]) continue; // 도착위치가 아닌데, 해당 위치에 말이 있다면 못 놓음
+
+    check[prev] = false;
+    check[cur] = true;
+    piece[i] = cur;
+
+    dfs(cnt+1, sum+score[cur]); // 이동가능할 시, 해당 칸에 체크하고 점수추가해서 재귀 호출
+
+    piece[i] = prev;
+    check[prev] = true;
+    check[cur] = false;
+  }
+}
+
+void init(){
+
+    for (int i = 0; i < 21; i++) arr[i] = i+1;
+    arr[21] = 21;
+    for (int i = 22; i < 27; i++) arr[i] = i+1;
+    arr[27] = 20; arr[28] = 29; arr[29] = 30;
+    arr[30] = 25; arr[31] = 32; arr[32] = 25;
         
-    }
-
-    return sum;
+    turn[5] = 22; turn[10] = 31; turn[15] = 28;
+        
+    for (int i = 0; i < 21; i++) score[i] = 2 * i;
+    score[22] = 13; score[23] = 16; score[24] = 19;
+    score[25] = 25; score[26] = 30; score[27] = 35;
+    score[28] = 28; score[29] = 27; score[30] = 26;
+    score[31] = 22; score[32] = 24;
 }
 
-void DFS(int cnt) {
-    if (cnt == 10) {
-        int value = Simulation();
-        return;
-    }
+int main(){
+  init();
+  for (int i = 0; i < 10; i++) cin >> dice[i];
+  dfs(0,0);
 
-    for (int i = 0; i < 4; i ++) {
-        horse.push_back(i);
-        DFS(cnt + 1);
-        horse.pop_back();
-    }
+  cout << ans << endl;
+  return 0;
 }
-
-int main()
-{
-    for (int i = 0; i < 10; i ++) {
-        int n;
-        cin >> n;
-        v.push_back(n);
-    }
-    
-    DFS(0);
-}
-
 
