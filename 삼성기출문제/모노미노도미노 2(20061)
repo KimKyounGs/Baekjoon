@@ -1,6 +1,7 @@
 /*
 아이디어 :
 
+Print() 함수를 통해서 시뮬레이션을 중간중간씩 확인하면서 풀면 쉽게 풀 수 있는 문제.
 
 */
 #include <iostream>
@@ -61,7 +62,7 @@ void ScoreCheck() {
         }
     }
 
-    
+
     // 파란색
     cnt = 0;
     for (int i = 9; i >= 4; i --) {
@@ -81,7 +82,7 @@ void ScoreCheck() {
     }
 
 
-    
+
 }
 
 void SpecialCheck() {
@@ -106,7 +107,7 @@ void SpecialCheck() {
             }
         }
     }
-    
+
     // 파란색
     cnt = 0;
     for (int i = 4; i <= 5; i ++) {
@@ -129,7 +130,7 @@ void SpecialCheck() {
         }
     }
 
-    
+
 }
 
 void Move(int t, int x, int y, int n) {

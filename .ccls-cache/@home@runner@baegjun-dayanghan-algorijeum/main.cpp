@@ -1,12 +1,6 @@
 /*
 아이디어 :
 
-백트레킹 순열로 모든 과정을 보는 것은 파악했는데 이동하는 것이 너무 어려웠다.
-
-이후 다음 사이트를 봤음.
-맵을 고유의 인덱스를 표현해서 쉽게 구현을 해놨음.
-참고 사이트 : https://haejun0317.tistory.com/163
-
 
 */
 #include <iostream>
@@ -24,72 +18,233 @@
 
 using namespace std;
 
-int dice[10];   // 주사위의 입력값
-int piece[4];   // 현재 말의 위치
+int N;
+bool graph[10][10];
+int score;
+int total;
 
-int arr[34];    // 다음에 갈 위치 저장
-int score[34];  // 윷놀이판 엔트리의 점수
-int turn[34];   // 파란색 화살표가 있는 전환 지점
-bool check[34]; // 윷놀이판 엔트리의 말 존재여부
-
-int ans = INT_MIN;
-int get_max(int a, int b){ return a > b ? a : b; }
-
-void dfs(int cnt, int sum){
-  if(cnt == 10){
-    ans = get_max(ans, sum);
-    return;
-  }
-
-  for (int i = 0; i < 4; i++) {
-    int prev = piece[i];
-    int cur = prev;
-    int move = dice[cnt];
-
-    if(turn[cur] > 0){ // 파란색 화살표 지점 도달시 방향 전환
-      cur = turn[cur]; // 현재 위치가 전환점인지 먼저 확인해서 방향 바꿔놓고, 이동 시작
-      move--;
+void Total() {
+    for (int i = 4; i <= 9; i++) {
+        for (int j = 0; j <= 3; j ++) {
+            if (graph[i][j] > 0) {
+                total ++;
+            }
+        }
     }
 
-    while(move--) cur = arr[cur]; // 남은 이동횟수만큼 칸 이동
-
-    if(cur!=21 && check[cur]) continue; // 도착위치가 아닌데, 해당 위치에 말이 있다면 못 놓음
-
-    check[prev] = false;
-    check[cur] = true;
-    piece[i] = cur;
-
-    dfs(cnt+1, sum+score[cur]); // 이동가능할 시, 해당 칸에 체크하고 점수추가해서 재귀 호출
-
-    piece[i] = prev;
-    check[prev] = true;
-    check[cur] = false;
-  }
+    for (int i = 0; i <= 3; i ++) {
+        for (int j = 4; j <= 9; j ++) {
+            if (graph[i][j] > 0) {
+                total ++;
+            }
+        }
+    }
 }
 
-void init(){
+void ScoreCheck() {
+    // 초록색
+    int cnt = 0;
+    for (int i = 9; i >= 4; i --) {
+        if (graph[i][0] > 0 && graph[i][1] > 0 && graph[i][2] > 0 && graph[i][3] > 0) {
+            for (int j = 0; j <= 3; j ++) {
+                graph[i][j] = 0;
+            }
+            cnt ++;
+            score++;
+        }
 
-    for (int i = 0; i < 21; i++) arr[i] = i+1;
-    arr[21] = 21;
-    for (int i = 22; i < 27; i++) arr[i] = i+1;
-    arr[27] = 20; arr[28] = 29; arr[29] = 30;
-    arr[30] = 25; arr[31] = 32; arr[32] = 25;
-        
-    turn[5] = 22; turn[10] = 31; turn[15] = 28;
-        
-    for (int i = 0; i < 21; i++) score[i] = 2 * i;
-    score[22] = 13; score[23] = 16; score[24] = 19;
-    score[25] = 25; score[26] = 30; score[27] = 35;
-    score[28] = 28; score[29] = 27; score[30] = 26;
-    score[31] = 22; score[32] = 24;
+        else if (cnt > 0) {
+            for (int j = 0; j <= 3; j ++) {
+                graph[i+cnt][j] = graph[i][j];
+                graph[i][j] = 0;
+            }
+        }
+    }
+
+    
+    // 파란색
+    cnt = 0;
+    for (int i = 9; i >= 4; i --) {
+        if (graph[0][i] > 0 && graph[1][i] > 0 && graph[2][i] > 0 && graph[3][i] > 0) {
+            for (int j = 0; j <= 3; j ++) {
+                graph[j][i] = 0;
+            }
+            cnt ++;
+            score++;
+        }
+        else if (cnt > 0) {
+            for (int j = 0; j <= 3; j ++) {
+                graph[j][i+cnt] = graph[j][i];
+                graph[j][i] = 0;
+            }
+        }
+    }
+
+
+    
+}
+
+void SpecialCheck() {
+    // 초록색
+    int cnt = 0;
+    for (int i = 4; i <= 5; i ++) {
+        bool check = false;
+        for (int j = 0; j <= 3; j ++) {
+            if (graph[i][j] > 0) {
+                check = true;
+                break;
+            }
+        }
+        if (check) cnt ++;
+    }
+
+    if (cnt) {
+        for (int i = 9-cnt; i >= 4; i --) {
+            for (int j = 0; j <= 3; j ++) {
+                graph[i+cnt][j] = graph[i][j];
+                graph[i][j] = 0;
+            }
+        }
+    }
+    
+    // 파란색
+    cnt = 0;
+    for (int i = 4; i <= 5; i ++) {
+        bool check = false;
+        for (int j = 0; j <= 3; j ++) {
+            if (graph[j][i] > 0) {
+                check = true;
+                break;
+            }
+        }
+        if (check) cnt ++;
+    }
+
+    if (cnt) {
+        for (int i = 9-cnt; i >= 4; i --) {
+            for (int j = 0; j <= 3; j ++) {
+                graph[j][i+cnt] = graph[j][i];
+                graph[j][i] = 0;
+            }
+        }
+    }
+
+    
+}
+
+void Move(int t, int x, int y, int n) {
+    if (t == 1) {
+        int nx = x;
+        // 초록색
+        while(1) {
+            if (graph[nx+1][y] == 0 && nx + 1 <= 9) {
+                nx ++;
+            }
+            else {
+                graph[nx][y] = n;
+                break;
+            }
+        }
+
+        // 파란색 
+        int ny = y;
+        while(1) {
+            if (graph[x][ny+1] == 0 && ny + 1 <= 9) {
+                ny ++;
+            }
+            else {
+                graph[x][ny] = n;
+                break;
+            }
+        }
+    }
+
+    else if (t == 2) {
+        // 초록색
+        int nx = x;
+        while(1) {
+            if (graph[nx+1][y] == 0 && graph[nx+1][y+1] == 0 && nx + 1 <= 9) {
+                nx ++;
+            }
+            else {
+                graph[nx][y] = n;
+                graph[nx][y+1] = n;
+                break;
+            }
+        }
+
+        // 파란색
+        int ny = y + 1;
+        while(1) {
+            if (graph[x][ny+1] == 0 && ny + 1 <= 9) {
+                ny ++;
+            }
+            else {
+                graph[x][ny] = n;
+                graph[x][ny-1] = n;
+                break;
+            }
+        }
+    }
+
+    else if (t == 3) {
+        // 초록색
+        int nx = x + 1;
+        while(1) {
+            if (graph[nx+1][y] == 0 && nx + 1 <= 9) {
+                nx ++;
+            }
+            else {
+                graph[nx][y] = n;
+                graph[nx-1][y] = n;
+                break;
+            }
+        }
+
+        // 파란색
+        int ny = y;
+        while(1) {
+            if (graph[x][ny+1] == 0 && graph[x+1][ny+1] == 0 && ny + 1 <= 9) {
+                ny ++;
+            }
+            else {
+                graph[x][ny] = n;
+                graph[x+1][ny] = n;
+                break;
+            }
+        }
+    }
+}
+
+void Print() {
+    cout << "*************************" << endl;
+    for (int i = 0; i <= 9; i ++) {
+        for (int j = 0; j <= 9; j ++) {
+            if (i >= 4 && j >= 4) continue;
+            cout << graph[i][j] << ' ';
+        }
+        cout << endl;
+    }
+    cout << "*************************" << endl;
 }
 
 int main(){
-  init();
-  for (int i = 0; i < 10; i++) cin >> dice[i];
-  dfs(0,0);
+    cin >> N;
 
-  cout << ans << endl;
-  return 0;
+    for (int i = 1; i <= N; i ++) {
+        int t, x, y;
+        cin >> t >> x >> y;
+
+        Move(t,x,y,i);
+        // Print();
+        ScoreCheck();
+        // Print();
+        SpecialCheck();
+        // Print();
+        // cout << "------------------- 끝 --------------------" << endl;
+    }
+
+    Total();
+    cout << score << endl << total << endl;
 }
 

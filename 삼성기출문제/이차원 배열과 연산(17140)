@@ -1,0 +1,141 @@
+/*
+아이디어 :
+
+처음에 문제 해석하는데 많은 시간이 걸렸다.
+
+독해력을 길러야 할 듯..
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#include <climits>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int r,c,k;
+int arr[101][101];
+int row = 3;
+int cal = 3;
+int numArr[101];
+
+// R 연산
+void R() {
+    vector<int> size;
+
+    for (int i = 1; i <= cal; i ++) {
+        vector<pair<int, int>> v; // pair<등장 횟수, 숫자>
+        memset(numArr, 0, sizeof(numArr));
+        // 수와 등장 횟수 조사.
+        for (int j = 1; j <= row; j ++) {
+            numArr[arr[i][j]] ++;
+        }
+        // num배열에 들어있는 값을 가지고 v구성.
+        for (int j = 1; j <= 100; j ++) {
+            if (numArr[j] != 0) {
+                v.push_back({numArr[j], j});
+            }
+        }
+
+        // 정렬 -> 등장 횟수를 먼저 기준으로 정렬 같으면 수를 기준으로 정렬
+        sort(v.begin(), v.end());
+
+        // 초기화
+        for (int j = 1; j <= row; j ++) {
+            arr[i][j] = 0;
+        }
+
+        // 수를 먼저 넣고 그 다음 등장 횟수
+        int idx = 1;
+        for (int j = 0; j < v.size(); j ++) {
+            arr[i][idx++] = v[j].second;
+            arr[i][idx++] = v[j].first;
+        }
+        idx--;
+        size.push_back(idx);
+    } 
+    sort(size.begin(), size.end());
+    row = size.back();
+}
+
+// C 연산
+void C() {
+    vector<int> size;
+
+    for (int i = 1; i <= row; i ++) {
+        vector<pair<int, int>> v; // pair<등장 횟수, 숫자>
+        memset(numArr, 0, sizeof(numArr));
+        // 수와 등장 횟수 조사.
+        for (int j = 1; j <= cal; j ++) {
+            numArr[arr[j][i]] ++;
+        }
+        // num배열에 들어있는 값을 가지고 v구성.
+        for (int j = 1; j <= 100; j ++) {
+            if (numArr[j] != 0) {
+                v.push_back({numArr[j], j});
+            }
+        }
+
+        // 정렬 -> 등장 횟수를 먼저 기준으로 정렬 같으면 수를 기준으로 정렬
+        sort(v.begin(), v.end());
+
+        // 초기화
+        for (int j = 1; j <= cal; j ++) {
+            arr[j][i] = 0;
+        }
+
+        // 수를 먼저 넣고 그 다음 등장 횟수
+        int idx = 1;
+        for (int j = 0; j < v.size(); j ++) {
+            arr[idx++][i] = v[j].second;
+            arr[idx++][i] = v[j].first;
+        }
+        idx--;
+        size.push_back(idx);
+    } 
+    sort(size.begin(), size.end());
+    cal = size.back();
+}
+
+int main(){
+    cin >> r >> c >> k;
+    for (int i = 1; i <= 3; i ++) {
+        for (int j = 1; j <= 3; j ++) {
+            cin >> arr[i][j];
+        }
+    }
+
+    if (arr[r][c] == k) {
+        cout << 0 << endl;
+        return 0;
+    }
+
+    for (int i = 1; i <= 100; i ++) {
+
+        //cout << cal << ' ' << row << endl;
+        if (cal >= row) {
+            R();
+        }
+        else {
+            C();
+        }
+
+        if (arr[r][c] == k) {
+            cout << i << endl;
+            return 0;
+        }
+    }
+
+    cout << -1 << endl;
+    return 0;
+
+}
+
