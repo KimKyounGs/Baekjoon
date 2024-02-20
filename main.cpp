@@ -216,18 +216,6 @@ void Move(int t, int x, int y, int n) {
     }
 }
 
-void Print() {
-    cout << "*************************" << endl;
-    for (int i = 0; i <= 9; i ++) {
-        for (int j = 0; j <= 9; j ++) {
-            if (i >= 4 && j >= 4) continue;
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
-    }
-    cout << "*************************" << endl;
-}
-
 int main(){
     cin >> N;
 
@@ -236,12 +224,8 @@ int main(){
         cin >> t >> x >> y;
 
         Move(t,x,y,i);
-        // Print();
         ScoreCheck();
-        // Print();
         SpecialCheck();
-        // Print();
-        // cout << "------------------- 끝 --------------------" << endl;
     }
 
     Total();

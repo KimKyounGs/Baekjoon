@@ -129,8 +129,6 @@ void SpecialCheck() {
             }
         }
     }
-
-
 }
 
 void Move(int t, int x, int y, int n) {
@@ -242,7 +240,6 @@ int main(){
         // Print();
         SpecialCheck();
         // Print();
-        // cout << "------------------- 끝 --------------------" << endl;
     }
 
     Total();
