@@ -1,7 +1,7 @@
 /*
 아이디어 :
 
-
+시뮬레이션 이제 잘 하는 듯
 */
 #include <iostream>
 #include <vector>
@@ -72,7 +72,7 @@ int main(){
         cin >> n;
         graph.push_back({n,false});
     }
-    
+
     while(1) {
         result ++;
         cnt = 0;
@@ -92,6 +92,6 @@ int main(){
     }
 
     cout << result << endl;
-    
+
 }
 

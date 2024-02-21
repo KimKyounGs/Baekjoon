@@ -18,217 +18,80 @@
 
 using namespace std;
 
-int N;
-bool graph[10][10];
-int score;
-int total;
+int N, K;
+deque<pair<int, bool>> graph;
+int cnt = 0;
+int result = 0;
 
-void Total() {
-    for (int i = 4; i <= 9; i++) {
-        for (int j = 0; j <= 3; j ++) {
-            if (graph[i][j] > 0) {
-                total ++;
-            }
-        }
-    }
+void BeltRotate() {
+    pair<int, bool> n = graph.back();
+    graph.pop_back();
+    graph.push_front(n);
 
-    for (int i = 0; i <= 3; i ++) {
-        for (int j = 4; j <= 9; j ++) {
-            if (graph[i][j] > 0) {
-                total ++;
-            }
-        }
+    if (graph[N-1].second == true) {
+        graph[N-1].second = false;
     }
 }
 
-void ScoreCheck() {
-    // 초록색
-    int cnt = 0;
-    for (int i = 9; i >= 4; i --) {
-        if (graph[i][0] > 0 && graph[i][1] > 0 && graph[i][2] > 0 && graph[i][3] > 0) {
-            for (int j = 0; j <= 3; j ++) {
-                graph[i][j] = 0;
+
+void RobotMove() {
+    for (int i = N-2; i >= 0; i --) {
+        if (graph[i].second == true) {
+            if (graph[i+1].second == false && graph[i+1].first >= 1) {
+                graph[i].second = false;
+                graph[i+1].second = true;
+                graph[i+1].first--;
             }
+        } 
+    }
+
+    if (graph[N-1].second == true) {
+        graph[N-1].second = false;
+    }
+}
+
+void RobotUp() {
+    if (graph[0].first >= 1 && graph[0].second == false) {
+        graph[0].first--;
+        graph[0].second = true;
+    }
+}
+
+void BeltCheck() {
+    for (int i = 0; i < 2*N; i ++) {
+        if (graph[i].first <= 0) {
             cnt ++;
-            score++;
-        }
-
-        else if (cnt > 0) {
-            for (int j = 0; j <= 3; j ++) {
-                graph[i+cnt][j] = graph[i][j];
-                graph[i][j] = 0;
-            }
-        }
-    }
-
-    
-    // 파란색
-    cnt = 0;
-    for (int i = 9; i >= 4; i --) {
-        if (graph[0][i] > 0 && graph[1][i] > 0 && graph[2][i] > 0 && graph[3][i] > 0) {
-            for (int j = 0; j <= 3; j ++) {
-                graph[j][i] = 0;
-            }
-            cnt ++;
-            score++;
-        }
-        else if (cnt > 0) {
-            for (int j = 0; j <= 3; j ++) {
-                graph[j][i+cnt] = graph[j][i];
-                graph[j][i] = 0;
-            }
-        }
-    }
-
-
-    
-}
-
-void SpecialCheck() {
-    // 초록색
-    int cnt = 0;
-    for (int i = 4; i <= 5; i ++) {
-        bool check = false;
-        for (int j = 0; j <= 3; j ++) {
-            if (graph[i][j] > 0) {
-                check = true;
-                break;
-            }
-        }
-        if (check) cnt ++;
-    }
-
-    if (cnt) {
-        for (int i = 9-cnt; i >= 4; i --) {
-            for (int j = 0; j <= 3; j ++) {
-                graph[i+cnt][j] = graph[i][j];
-                graph[i][j] = 0;
-            }
-        }
-    }
-    
-    // 파란색
-    cnt = 0;
-    for (int i = 4; i <= 5; i ++) {
-        bool check = false;
-        for (int j = 0; j <= 3; j ++) {
-            if (graph[j][i] > 0) {
-                check = true;
-                break;
-            }
-        }
-        if (check) cnt ++;
-    }
-
-    if (cnt) {
-        for (int i = 9-cnt; i >= 4; i --) {
-            for (int j = 0; j <= 3; j ++) {
-                graph[j][i+cnt] = graph[j][i];
-                graph[j][i] = 0;
-            }
-        }
-    }
-
-    
-}
-
-void Move(int t, int x, int y, int n) {
-    if (t == 1) {
-        int nx = x;
-        // 초록색
-        while(1) {
-            if (graph[nx+1][y] == 0 && nx + 1 <= 9) {
-                nx ++;
-            }
-            else {
-                graph[nx][y] = n;
-                break;
-            }
-        }
-
-        // 파란색 
-        int ny = y;
-        while(1) {
-            if (graph[x][ny+1] == 0 && ny + 1 <= 9) {
-                ny ++;
-            }
-            else {
-                graph[x][ny] = n;
-                break;
-            }
-        }
-    }
-
-    else if (t == 2) {
-        // 초록색
-        int nx = x;
-        while(1) {
-            if (graph[nx+1][y] == 0 && graph[nx+1][y+1] == 0 && nx + 1 <= 9) {
-                nx ++;
-            }
-            else {
-                graph[nx][y] = n;
-                graph[nx][y+1] = n;
-                break;
-            }
-        }
-
-        // 파란색
-        int ny = y + 1;
-        while(1) {
-            if (graph[x][ny+1] == 0 && ny + 1 <= 9) {
-                ny ++;
-            }
-            else {
-                graph[x][ny] = n;
-                graph[x][ny-1] = n;
-                break;
-            }
-        }
-    }
-
-    else if (t == 3) {
-        // 초록색
-        int nx = x + 1;
-        while(1) {
-            if (graph[nx+1][y] == 0 && nx + 1 <= 9) {
-                nx ++;
-            }
-            else {
-                graph[nx][y] = n;
-                graph[nx-1][y] = n;
-                break;
-            }
-        }
-
-        // 파란색
-        int ny = y;
-        while(1) {
-            if (graph[x][ny+1] == 0 && graph[x+1][ny+1] == 0 && ny + 1 <= 9) {
-                ny ++;
-            }
-            else {
-                graph[x][ny] = n;
-                graph[x+1][ny] = n;
-                break;
-            }
         }
     }
 }
 
 int main(){
-    cin >> N;
+    cin >> N >> K;
+    for (int i = 0; i < 2*N; i ++) {
+        int n;
+        cin >> n;
+        graph.push_back({n,false});
+    }
+    
+    while(1) {
+        result ++;
+        cnt = 0;
+        // 1. 벨트 회전
+        BeltRotate();
 
-    for (int i = 1; i <= N; i ++) {
-        int t, x, y;
-        cin >> t >> x >> y;
+        // 2. 로봇 움직이기
+        RobotMove();
 
-        Move(t,x,y,i);
-        ScoreCheck();
-        SpecialCheck();
+        // 3. 올리는 위치에 로봇 올리기
+        RobotUp();
+
+        // 4. 내구도 조사
+        BeltCheck();
+
+        if (cnt >= K) break;
     }
 
-    Total();
-    cout << score << endl << total << endl;
+    cout << result << endl;
+    
 }
 
