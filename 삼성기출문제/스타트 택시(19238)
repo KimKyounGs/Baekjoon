@@ -1,6 +1,9 @@
 /*
 아이디어 :
 
+어우 빡셌다.
+다른 사람 코드를 보니 벽을 -1로 표현했다.
+나도 다음에 할 때는 -1로 표현하는 것이 보기 좋고 코드 작성에도 좋을 듯 하다.
 
 */
 #include <iostream>
@@ -44,7 +47,7 @@ int BFS(int x1, int y1, int x2, int y2) {
         int x = q.front().first;
         int y = q.front().second;
         q.pop();
-        
+
         for (int i = 0; i < 4; i ++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
@@ -63,7 +66,7 @@ int BFS(int x1, int y1, int x2, int y2) {
             }
         }
     }
-    
+
     return -1;
 }
 
@@ -132,6 +135,21 @@ void Sol() {
     // 최단거리 계산.
     BFS(taxiX, taxiY);
 
+    // cout << endl << "-- customer --" << endl;
+    // for (int i = 0; i < M; i ++) {
+    //     cout << customer[i] << ' ';
+    // }
+    // cout << endl;
+
+    // cout << endl << "-- temp --" << endl;
+    // for (int i = 1; i <= N; i ++) {
+    //     for (int j = 1; j <= N; j ++) {
+    //         cout << temp[i][j] << ' ';
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+
     int min = INF;
     int cusIdx = -1;
     // 최단거리 손님 구하기
@@ -144,7 +162,7 @@ void Sol() {
             min = customer[i];
             cusIdx = i;
         }
-            
+
         else if (min == customer[i]) {
             // 행 번호가 가장 작은 손님
             if (cStart[i].first < cStart[cusIdx].first) {

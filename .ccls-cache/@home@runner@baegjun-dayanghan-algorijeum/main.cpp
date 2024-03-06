@@ -44,7 +44,7 @@ int BFS(int x1, int y1, int x2, int y2) {
         int x = q.front().first;
         int y = q.front().second;
         q.pop();
-        if (temp[x][y] >= fuel) continue;
+        
         for (int i = 0; i < 4; i ++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
@@ -52,13 +52,15 @@ int BFS(int x1, int y1, int x2, int y2) {
             // 범위체크, 방문체크, 벽 체크
             if (nx < 1 || ny < 1 || nx > N || ny > N || visit[nx][ny] || graph[nx][ny] == 1) continue;
 
-            if (nx == x2 && ny == y2) {
-                return temp[x][y] + 1;
+            if (temp[x][y] + 1 <= fuel) {
+                if (nx == x2 && ny == y2) {
+                    return temp[x][y] + 1;
+                }
+
+                temp[nx][ny] = temp[x][y] + 1;
+                q.push({nx,ny});
+                visit[nx][ny] = true;
             }
-            
-            temp[nx][ny] = temp[x][y] + 1;
-            q.push({nx,ny});
-            visit[nx][ny] = true;
         }
     }
     
@@ -71,7 +73,7 @@ void BFS(int x, int y) {
     visit[x][y] = true;
 
     // 택시 시작점에 손님이 있는 경우
-    if (graph[x][y] >= 2) {
+    if (graph[x][y] >= 2 && customer[graph[x][y]-2] != -2) {
         customer[graph[x][y]-2] = 0;
     }
 
@@ -79,7 +81,7 @@ void BFS(int x, int y) {
         int x = q.front().first;
         int y = q.front().second;
         q.pop();
-        if (temp[x][y] >= fuel) continue;
+
         for (int i = 0; i < 4; i ++) {
             int nx = x + dx[i];
             int ny = y + dy[i];
@@ -87,16 +89,17 @@ void BFS(int x, int y) {
             // 범위체크, 방문체크, 벽 체크
             if (nx < 1 || ny < 1 || nx > N || ny > N || visit[nx][ny] || graph[nx][ny] == 1) continue;
 
-            if (graph[nx][ny] != 0) {
-                // 목적지에 도착한 손님이 아니면.
-                if (customer[graph[nx][ny]-2] != -2) {
-                    customer[graph[nx][ny]-2] = temp[x][y] + 1;
+            if (temp[x][y] + 1 <= fuel) {
+                if (graph[nx][ny] != 0) {
+                    // 목적지에 도착한 손님이 아니면.
+                    if (customer[graph[nx][ny]-2] != -2) {
+                        customer[graph[nx][ny]-2] = temp[x][y] + 1;
+                    }
                 }
+                temp[nx][ny] = temp[x][y] + 1;
+                q.push({nx,ny});
+                visit[nx][ny] = true;
             }
-            temp[nx][ny] = temp[x][y] + 1;
-            q.push({nx,ny});
-            visit[nx][ny] = true;
-
         }
     }
 }
@@ -129,28 +132,13 @@ void Sol() {
     // 최단거리 계산.
     BFS(taxiX, taxiY);
 
-    // cout << endl << "-- customer --" << endl;
-    // for (int i = 0; i < M; i ++) {
-    //     cout << customer[i] << ' ';
-    // }
-    // cout << endl;
-
-    // cout << endl << "-- temp --" << endl;
-    // for (int i = 1; i <= N; i ++) {
-    //     for (int j = 1; j <= N; j ++) {
-    //         cout << temp[i][j] << ' ';
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-
     int min = INF;
     int cusIdx = -1;
     // 최단거리 손님 구하기
     for (int i = 0; i < M; i++) {
 
         // 이미 도착한 손님.
-        if (customer[i] == -2) continue;
+        if (customer[i] == -2 || customer[i] == -1) continue;
 
         if (min > customer[i]) {
             min = customer[i];
@@ -173,17 +161,10 @@ void Sol() {
         }
     }
 
-    // 손님이 아무도 없다.
+    // 태울 손님이 아무도 없다.
     if (cusIdx == -1) {
-        // 모든 손님을 태웠을 경우
-        if (cnt == M) {
-            cout << fuel << endl;
-            exit(0);
-        }    
-        else {
-            cout << -1 << endl;
-            exit(0);
-        }
+        cout << -1 << endl;
+        exit(0);
     }
 
     // 이동하기
@@ -192,6 +173,12 @@ void Sol() {
         taxiY = cEnd[cusIdx].second;
         customer[cusIdx] = -2;
         cnt ++;
+
+        // 모든 손님 다 태움
+        if (cnt == M) {
+            cout << fuel << endl;
+            exit(0);
+        }
     }
     else {
         cout << -1 << endl;
@@ -202,6 +189,10 @@ void Sol() {
 
 int main() 
 {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
     cin >> N >> M >> fuel;
     for (int i = 1; i <= N; i ++) {
         for (int j = 1; j <= N; j ++) {
@@ -220,11 +211,9 @@ int main()
         customer[i] = -1;
     }
 
-    while(1) {
+    for (int i = 0; i < M; i ++) {
         Sol();
     }
-
-    // cout << result << endl;
 
     return 0;
 }
