@@ -53,7 +53,7 @@ void Fill(int n, int a, int b, int c, int d) {
                     if (nx < 1 || ny < 1 || nx > N || ny > N) continue;
 
                     if (graph[nx][ny] == a || graph[nx][ny] == b || graph[nx][ny] == c || graph[nx][ny] == d) like ++;
-                    
+
                     if (graph[nx][ny] == 0) blank ++;
                 }
 
@@ -78,15 +78,15 @@ int main()
         student[i].push_back(b);
         student[i].push_back(c);
         student[i].push_back(d);
-        
+
         Fill(n, a, b, c, d);
         sort(v.begin(), v.end(), compare);
-        
+
         int x = v[0].second.first;
         int y = v[0].second.second;
         student[i].push_back(x);
         student[i].push_back(y);
-        
+
         graph[x][y] = n;
 
         v.clear();
