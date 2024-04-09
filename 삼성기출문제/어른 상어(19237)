@@ -121,6 +121,7 @@ void ReduceSmell() {
             }
         }
     }
+
 }
 
 void Simulation() {
