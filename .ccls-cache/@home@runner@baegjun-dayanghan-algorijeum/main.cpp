@@ -12,162 +12,22 @@
 
 using namespace std;
 
-struct Shark {
-    int x;
-    int y;
-    bool isLive;
-    int recentDir; // 현재 보고 있는 방향 
-    int PriorityDir[6][6]; // dir[보고 있는 방향에 대한][우선순위];
-};
+/*
+4
+2 1 1 0
 
-int N, M, K;
-int dieSharkCnt;
-int graph[21][21];
-pair<int, int> sharkSmell[21][21]; // pair<상어 번호, K>
-Shark sharks[401];
-// 북, 남, 서, 동
-int dx[5] = {0, -1, 1, 0, 0};
-int dy[5] = {0, 0, 0, -1, 1};
+-1 -1 -1 -1
+ 4   2  1  3
 
-void LeaveSmell() {
-    for (int i = 1; i <= M; i ++) {
-        // 살아있는 상어에 대해서만 냄새 남기기.
-        if (sharks[i].isLive) {
-            sharkSmell[sharks[i].x][sharks[i].y] = {i,K};
-        }
-    }
-}
+7
+6 1 1 1 2 0 0
 
-void MoveShark() {
-    for (int i = 1; i <= M; i ++) {
-        if (sharks[i].isLive == false) continue;
-        // 상어 정보 받아오기
-        int x = sharks[i].x;
-        int y = sharks[i].y;
-        int dir = sharks[i].recentDir;
-        // *빈칸(냄새가)이 있으면 반드시 빈칸에 가야하기 때문에 첫 번째로 자기 냄새가 있는 빈칸만 정보 저장.  
-        bool check = false; 
-        int mySmellDx = 0;
-        int mySmellDy = 0;
-        int mySmellDir = 0;
+-1 -1 -1 -1 -1 -1 -1
+6   2  3  4  7   5   1
 
-        for (int j = 1; j <= 4; j ++) {
-            int nx = x + dx[sharks[i].PriorityDir[dir][j]];
-            int ny = y + dy[sharks[i].PriorityDir[dir][j]];
-
-            if (nx < 1 || ny < 1 || nx > N || ny > N) continue;
-
-            // 아무 냄새가 없는 곳
-            if (sharkSmell[nx][ny].second == 0) {
-                // 가려는 곳에 다른 상어(자기 보다 번호가 낮은 상어)가 있다면 상어 삭제
-                if (graph[nx][ny] != 0) {
-                    sharks[i].isLive = false;
-                    dieSharkCnt ++;
-                    graph[x][y] = 0;
-                    check = true; // 상어가 이동했으면
-                    break;
-                }
-                // 바로 이동
-                else {
-                    sharks[i].x = nx;
-                    sharks[i].y = ny;
-                    sharks[i].recentDir = sharks[i].PriorityDir[dir][j];
-                    graph[nx][ny] = i;
-                    graph[x][y] = 0;
-                    check = true; // 상어가 이동했으면
-                    break;
-                }
-            }
-                
-            // 자기 냄새가 있는 곳
-            else if (sharkSmell[nx][ny].first == i) {
-                if (mySmellDx == 0 && mySmellDy == 0 && mySmellDir == 0) {
-                    mySmellDx = nx;
-                    mySmellDy = ny;
-                    mySmellDir = sharks[i].PriorityDir[dir][j];
-                }
-            }
-        }
-
-        // 빈칸이 없거나 상어가 없어지지 않았고 자기 냄새가 있는 빈칸이 있으면 실행
-        if (mySmellDx != 0 && mySmellDy != 0 && mySmellDir != 0 && !check) {
-            sharks[i].x = mySmellDx;
-            sharks[i].y = mySmellDy;
-            sharks[i].recentDir = mySmellDir;
-            graph[mySmellDx][mySmellDy] = i;
-            graph[x][y] = 0;
-        }
-    }
-
-    // cout << endl;
-    // for (int i = 1; i <= N; i++) {
-    //     for(int j = 1; j <= N; j++) {
-    //         cout << graph[i][j] << ' ';
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-}
-
-void ReduceSmell() {
-    for (int i = 1; i <= N; i ++) {
-        for (int j = 1; j <= N; j ++) {
-            // 칸에 상어가 없고 냄새만 있는 경우
-            if (graph[i][j] == 0 && sharkSmell[i][j].second > 0) {
-                sharkSmell[i][j].second--;
-                if (sharkSmell[i][j].second == 0) {
-                    sharkSmell[i][j].first = 0;
-                }
-            }
-        }
-    }
-}
-
-void Simulation() {
-    LeaveSmell();
-    MoveShark();
-    ReduceSmell();
-}
-
+*/
 int main()
 {   
-    cin >> N >> M >> K;
-    for (int i = 1; i <= N; i ++) {
-        for (int j = 1; j <= N; j++) {
-            cin >> graph[i][j];
-            if (graph[i][j] > 0) {
-                sharks[graph[i][j]].x = i;
-                sharks[graph[i][j]].y = j;
-                sharks[graph[i][j]].isLive = true;
-            }
-        }
-    }
 
-    for (int i = 1; i <= M; i ++) {
-        cin >> sharks[i].recentDir;
-    }
-
-    for (int i = 1; i <= M; i ++) {
-        for (int j = 1; j <= 4; j ++) {
-            for (int k = 1; k <= 4; k ++) {
-                cin >> sharks[i].PriorityDir[j][k];
-            }
-        }
-    }
-
-    // Simulation();
-    // Simulation();
-    // Simulation();
-
-    for (int i = 1; i <= 1000; i ++) {
-        Simulation();
-
-        if (dieSharkCnt == M-1) {
-            cout << i << endl;
-            return 0;
-        }
-    }
-
-    cout << -1 << endl;
     return 0;
 }
