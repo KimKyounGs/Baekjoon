@@ -21,6 +21,9 @@ FireBall graph[51][51];
 int dx[] = {-1, -1, 0, 1, 1, 1, 0, -1};
 int dy[] = {0, 1, 1, 1, 0, -1, -1, -1};
 
+void Back() {
+    
+}
 
 int main()
 {   
@@ -28,5 +31,7 @@ int main()
     for (int i = 0; i < M; i ++) {
         int x, y, m, s, d;
     }
+
+    
     return 0;
 }
