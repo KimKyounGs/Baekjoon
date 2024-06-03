@@ -14,10 +14,37 @@
 
 using namespace std;
 
+int N;
+int graph[500][500];
+pair<int, int> TornadoLocation;
+
+void MoveTornado() {
+    
+}
+
+void SpreadSand() {
+    
+}
+
+void Simulation() {
+    while(!(TornadoLocation.first == 1 && TornadoLocation.second == 1)) {
+        MoveTornado();
+        SpreadSand();
+    }
+}
 
 int main()
 {   
+    cin >> N;
+    TornadoLocation = {N/2+1, N/2+1};
+    for (int i = 1; i <= N; i ++) {
+        for (int j = 1; j <= N; j ++) {
+            cin >> graph[i][j];
+        }
+    }
+
+    Simulation();
     
-    
+        
     return 0;
 }
