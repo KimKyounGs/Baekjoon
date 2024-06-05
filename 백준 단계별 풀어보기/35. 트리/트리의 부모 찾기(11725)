@@ -1,0 +1,42 @@
+/*
+아이디어 : 옛날에 푼걸 해설함.
+
+말 그대로 루트 노드를 찾는 문제임 그래서 DFS문을 통해서 루트 노드를 찾음.
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int N;
+vector <int> graph[100001];
+bool visited[100001];
+int parant[100001];
+
+void findParant(int Parant) {
+    visited[Parant] = true;
+
+    for (int i = 0; i < graph[Parant].size(); i ++) {
+        int Child = graph[Parant][i];
+
+        if (!visited[Child]) {
+            parant[Child] = Parant;
+            findParant(Child);
+        }
+    }
+}
+
+int main() {
+    cin >> N;
+    for (int i = 1; i < N; i ++) {
+        int p, n;
+        cin >> p >> n;
+        graph[n].push_back(p);
+        graph[p].push_back(n);
+    }
+
+    findParant(1);
+
+    for (int i = 2; i <= N; i ++) {
+        cout << parant[i] << '\n';
+    }
+}
