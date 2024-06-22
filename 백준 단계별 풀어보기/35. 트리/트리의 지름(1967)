@@ -1,4 +1,6 @@
 /*
+아이디어 : 가중치가 있는 트리의 지름을 구하는 문제이다.
+단순히 DFS를 통해서 모든 노드를 돌면서 가장 가중치가 더한 값이 큰 것을 찾아냈다.
 */
 #include <iostream>
 #include <vector>
@@ -23,7 +25,7 @@ void DFS(int x, int sum) {
     // cout << "Debug = " << x << endl;
     result = max(result, sum);
     visited[x] = true;
-    
+
     for (int i = 0; i < graph[x].size(); i ++) {
         int nx = graph[x][i].first;
         int weight = graph[x][i].second;
