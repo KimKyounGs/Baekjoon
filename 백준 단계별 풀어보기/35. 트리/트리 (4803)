@@ -1,0 +1,108 @@
+/*
+아이디어 : 
+트리 개수만 구하면은 탐색으로 풀면 되는데 사이클이 포함되면 그 트리는 트리라고 하지 않는다. 여기서 분리집합 개념이 들어가서 사이클을 판단해준다. 
+푸는 방법은 사이클이 판명이 되면 DFS를 통해서 방문처리를 해준다. 
+밑에서 필기한 것을 보면 알겠지만, 이미 사이클이 판명된 트리랑 접촉하면 그 정점을 포함하는 트리 또한 방문처리를 해줘야 한다. (이게 가장 중요 포인트)
+입력을 다 받으면 DFS를 통해서 방문처리 안된 정점을 찾아가며 답을 도출하면 된다.
+*/
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int parent[501];
+vector<int> graph[501];
+bool visited[501];
+
+int find_root(int x) {
+    if (x == parent[x]) return x;
+    return parent[x] = find_root(parent[x]);
+}
+
+void union_root(int x, int y) {
+    x = find_root(x);
+    y = find_root(y);
+
+    if (x != y) {
+        parent[y] = x;
+    }
+}
+
+void Init(int n) {
+    for (int i = 1; i <= n; i ++) {
+        parent[i] = i;
+    }
+}
+
+bool DFS(int x) {    
+    if(visited[x]) {
+        return false;
+    }
+
+    // 방문처리.
+    visited[x] = true;
+
+    for (int i = 0; i < graph[x].size(); i ++) {
+        DFS(graph[x][i]);
+    }
+    return true;
+}
+
+int main() {
+    int cnt = 1;
+    while(1) {
+        int n, m;
+        cin >> n >> m;
+        if (!n && !m) break;
+
+        // 초기화
+        for (int i = 1; i <= n; i ++) {
+            graph[i].clear();
+        }
+        memset(visited, 0, sizeof(visited));
+        Init(n);
+
+        // 입력받기
+        for (int i = 0; i < m; i ++) {
+            int v1,v2;
+            cin >> v1 >> v2;
+
+
+            graph[v1].push_back(v2);
+            graph[v2].push_back(v1);
+            // 사이클 찾기.
+            if (find_root(v1) == find_root(v2)) {
+                DFS(v1);
+            }
+            else {
+                union_root(v1,v2);
+            }
+            // 이미 사이클 그룹이랑 접촉하면 접촉하는 정점을 포함하는 트리 또한 방문처리.
+            if (visited[v1] || visited[v2]) {
+                DFS(v1);
+                DFS(v2);
+            }
+        }
+
+        int result = 0;
+        // DFS 탐색
+        for (int i = 1; i <= n; i ++) {
+            if (DFS(i)) {
+                // cout << "i = " << i << '\n';
+                result ++;
+            }
+        }
+
+        if (result > 1) {
+            printf("Case %d: A forest of %d trees.\n", cnt, result);
+        }    
+        else if (result == 1) {
+            printf("Case %d: There is one tree.\n", cnt);
+        }
+        else {
+            printf("Case %d: No trees.\n",cnt);
+        }
+        cnt ++;
+    }
+
+    return 0;
+}
