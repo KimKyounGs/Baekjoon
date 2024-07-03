@@ -1,0 +1,62 @@
+/*
+옛날에 풀었던 문제 유니온 파인드 복습하기 위해서 다시 풀었음
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int n, m;
+int parent[1000001];
+
+int find_root(int x) {
+    if (x == parent[x]) return x;
+    return parent[x] = find_root(parent[x]);
+}
+
+void union_root(int x, int y) {
+    x = find_root(x);
+    y = find_root(y);
+
+    if (x != y) {
+        parent[y] = x;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cin >> n >> m;
+    for (int i = 0; i <= n; i ++) {
+        parent[i] = i;
+    }
+
+    for (int i = 0; i < m; i ++) {
+        int check, a, b;
+        cin >> check >> a >> b;
+
+        if (check == 0) { // Union
+            union_root(a,b);
+        }
+        else { // Find
+            if (find_root(a) == find_root(b)) {
+                cout << "YES" << '\n';
+            }
+            else {
+                cout << "NO" << '\n';
+            }
+        }
+    }
+
+    return 0;
+}
