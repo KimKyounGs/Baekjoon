@@ -1,4 +1,6 @@
 /*
+아이디어 : 정렬 기준 순서에 맞게 vector를 구성함.
+나머지는 그대로 구현하는 것이라서 어려운 것은 없고 시간만 걸렸음.
 */
 #include <iostream>
 #include <vector>
@@ -105,7 +107,7 @@ void ApplyGravity() {
 
 void Rotate() {
     int temp[21][21] = {0,};
-    
+
     for (int x = 0; x < N / 2; x++) {
         for (int y = x; y < N - x - 1; y++) {
             // 현재 셀의 값을 저장합니다
@@ -147,11 +149,11 @@ bool Simulation() {
     ApplyGravity();
     // cout << "ApplyGravity" << endl;
     // DebugPrint();
-    
+
     Rotate();
     // cout << "Rotate" << endl;
     // DebugPrint();
-    
+
     ApplyGravity();
     // cout << "ApplyGravity" << endl;
     // DebugPrint();
