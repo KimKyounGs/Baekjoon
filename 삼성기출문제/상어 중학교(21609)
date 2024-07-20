@@ -27,7 +27,7 @@ vector<pair<pair<int, int>, vector<pair<int, int>>>> blockCoords; // 탐색한 �
 int dx[] = {1, -1, 0, 0};
 int dy[] = {0, 0, 1, -1};
 
-vector<pair<int, int>> BFS(int x, int y, int id) {
+vector<pair<int, int>> BFS(int x, int y, int id) { 
     vector<pair<int, int>> v;
     v.push_back({x,y});
     queue<pair<int, int>> q;
