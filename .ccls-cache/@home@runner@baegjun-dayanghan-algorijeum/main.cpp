@@ -1,3 +1,8 @@
+/*
+아이디어 :
+
+
+*/
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -6,142 +11,97 @@
 #include <cmath>
 #include <cstring>
 #include <deque>
+#include <map>
 #define INF 1e9
+#define endl '\n'
 
 using namespace std;
 
-int N;
-vector<int> outcome[51]; 
-int order[10]; // 타순
-int result = 0;
+int N, M;
+int result;
+int graph[9][9];
+int visit[9][9];
+vector<pair<int, int>> v;
+int dx[] = {0, 0, -1, 1};
+int dy[] = {-1, 1, 0, 0};
 
-void Hits(bool *base, int type, int *sum) {
-    if (type == 1) {    
-        if (base[2] == true) {
-            (*sum) ++;
-            base[2] = false;
+void BFS(int x, int y) {
+    queue<pair<int, int>> q;
+    q.push({x,y});
+    visit[x][y] = true;
+
+    while(!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];    
+
+            if (nx < 0 || nx >= N || ny < 0 || ny >= M || visit[nx][ny]) continue;
+
+            if (graph[nx][ny] == 0) {
+                q.push({nx,ny});
+                graph[nx][ny] = 2;
+                visit[nx][ny] = true;
+            }
         }
-        if (base[1] == true) {
-            base[2] = true;
-            base[1] = false;
-        }
-        if (base[0] == true) {
-            base[1] = true;
-        }
-        base[0] = true;
-    }
-    else if (type == 2) {
-        if (base[2] == true) {
-            (*sum) ++;
-            base[2] = false;
-        }
-        if (base[1] == true) {
-            (*sum) ++;
-            base[2] = false;
-        }
-        if (base[0] == true) {
-            base[2] = true;
-            base[0] = false;
-        }
-        base[1] = true;
-    }
-    else if (type == 3) {
-        if (base[2] == true) {
-            (*sum) ++;
-            base[2] = false;
-        }
-        if (base[1] == true) {
-            (*sum) ++;
-            base[1] = false;
-        }
-        if (base[0] == true) {
-            (*sum) ++;
-            base[0] = false;
-        }
-        base[2] = true;
-    }
-    else if (type == 4) {
-        if (base[2] == true) {
-            (*sum) ++;
-            base[2] = false;
-        }
-        if (base[1] == true) {
-            (*sum) ++;
-            base[1] = false;
-        }
-        if (base[0] == true) {
-            (*sum) ++;
-            base[0] = false;
-        }
-        (*sum) ++;
     }
 }
 
-void Play() {
-    int sum = 0; // 점수
-    int recent = 1; // 주자 순서
+void DFS(int cnt) {
+    if (cnt == 3) {
+        int temp[9][9];
+        int sum = 0;
+        int len = v.size();
+
+        copy(&graph[0][0], &graph[0][0]+81, &temp[0][0]);
+
+        for (int i = 0; i < len; i ++) {
+            BFS(v[i].first, v[i].second);
+        }
+
+        for (int i = 0; i < N; i ++) {
+            for (int j = 0; j < M; j ++) {
+                if (graph[i][j] == 0) {
+                    sum ++;
+                }
+            }
+        }
+
+
+        result = max(sum, result);
+        copy(&temp[0][0], &temp[0][0]+81, &graph[0][0]);
+        memset(visit, 0, sizeof(visit));
+        return;
+    }
+
     for (int i = 0; i < N; i ++) {
-        int out = 0; // 아웃 카운트
-        bool base[3] = {0,};
-        while(out != 3) {
-            if (outcome[i][order[recent]-1] == 0) out ++;
-            else if (outcome[i][order[recent]-1] == 1) { // 안타
-                Hits(base, 1, &sum);
+        for (int j = 0; j < M; j ++) {
+            if (graph[i][j] == 0) {
+                graph[i][j] = 1;
+                DFS(cnt + 1);
+                graph[i][j] = 0;
             }
-            else if (outcome[i][order[recent]-1] == 2) { // 2루타
-                Hits(base, 2, &sum);
-            }
-            else if (outcome[i][order[recent]-1] == 3) { // 3루타
-                Hits(base, 3, &sum);
-            }
-            else if (outcome[i][order[recent]-1] == 4) { // 홈런
-                Hits(base, 4, &sum);
-            } 
-            recent ++;
-            if (recent == 10) recent = 1;
         }
     }
-
-    result = max(result, sum);
 }
 
-void Permutation() {
-    vector<int> v;
-    for (int i = 2; i <= 9; i ++) {
-        v.push_back(i);
-    }
-
-    do {
-        order[4] = 1;
-        int cnt = 1;
-        for (int i = 0; i < 8; ++i) {
-            order[cnt] = v[i];
-            cnt ++;
-            if (cnt == 4) cnt ++; // 4번 타자는 1번으로 정해져 있음.
-        }
-        // for (int i = 1; i <= 9; i ++) {
-        //     cout << order[i] << ' ';
-        // }
-        // cout << endl;
-        Play();
-    } while (next_permutation(v.begin(), v.end()));
-}
-
-void Solution() {
-    Permutation();
-}
-
-int main() {
-    cin >> N;
+int main()
+{
+    cin >> N >> M;
     for (int i = 0; i < N; i ++) {
-        for (int j = 0; j < 9; j ++) {
-            int n;
-            cin >> n;
-            outcome[i].push_back({n});
+        for (int j = 0; j < M; j ++) {
+            cin >> graph[i][j];
+            if (graph[i][j] == 2) {
+                v.push_back({i,j});
+            }
         }
     }
 
-    Solution();
-    
-    cout << result << '\n';
+    DFS(0);
+
+    cout << result << endl;
 }
+
+
