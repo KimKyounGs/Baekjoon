@@ -1,0 +1,87 @@
+/*
+아이디어 :
+
+문자열 정규식(regex) 사용법 : https://blog.naver.com/jinhan814/222090272427
+문자열 정규식 풀이법 : https://suri78.tistory.com/270
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int T = 0;
+string s = "";
+bool isResult = false;
+// 100+1+ : 0이 무조건 2개이상, 뒤에 붙는 1이 무조건 하나이상
+// 100011001 -> 1. 100011 001 2. 10001 1001 : 1이 나와있는 곳에서 각각 끝낼 수 있음.
+
+void DFS(int idx, int& len)
+{
+    if (idx == len)
+    {
+        isResult = true;
+        return;
+    }
+
+    if (s[idx] == '0')
+    {
+        if (s[idx+1] == '1')
+        {
+            DFS(idx+2, len);
+        }
+    }
+    else if (s[idx] == '1')
+    {
+        if (s[idx+1] == '0' && s[idx+2] == '0') // 0이 두 개 이상은 나와야 함.
+        {
+            int temp = idx+3; 
+            int check = false; // 1이 나오면 true -> true일 때 0이 나오면 break하기 위해서
+            while(temp < len) // 1이 나올 때 까지
+            {
+                if (s[temp] == '1')
+                {
+                    DFS(temp+1, len);
+                    if (check == false) check = true;
+                }
+                else if (s[temp] == '0' && check)
+                {
+                    DFS(temp, len);
+                    break;
+                }
+                temp ++;
+            }
+        }
+    }
+    return;
+}
+
+int main()
+{
+    cin >> T;
+    while(T--)
+    {
+        cin >> s;
+        int len = s.length();
+        isResult = false;
+        DFS(0, len);
+        if (isResult)
+        {
+            cout << "YES" << endl;
+        }
+        else 
+        {
+            cout << "NO" << endl;
+        }
+    }
+}
+
+

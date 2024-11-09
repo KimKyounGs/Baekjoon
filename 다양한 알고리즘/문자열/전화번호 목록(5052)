@@ -1,0 +1,61 @@
+/*
+아이디어 :
+트라이라는 알고리즘으로도 문제를 풀어봐야한다.
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int T;
+
+int main()
+{
+    cin >> T;
+    while(T--)
+    {
+        int N;
+        cin >> N;
+        vector<string> v;
+        for (int i = 0; i < N; i ++) 
+        {
+            string s;
+            cin >> s;
+            v.push_back(s);
+        }
+        sort(v.begin(), v.end());
+        int len = v.size();
+        bool check = false;
+        for (int i = 0; i < len-1; i ++) 
+        {
+            string s1 = v[i];
+            string s2 = v[i+1];
+
+            if (s1.length() > s2.length()) continue;
+            if (s1 == s2.substr(0,s1.length()))
+            {
+                check = true;
+                break;
+            }
+        }
+        if (!check)
+        {
+            cout << "YES" << endl;
+        }
+        else 
+        {
+            cout << "NO" << endl;
+        }
+    }
+}
+
+

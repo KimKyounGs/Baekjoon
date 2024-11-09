@@ -1,14 +1,6 @@
 /*
 아이디어 :
 
-1. t 가 2억이라서 시뮬레이션으로 하면 시간초가
-
-2. 수학적인 방법으로 다가가면 된다.
--> x, y 각각 생각하면 각각 2*w, 2*h만큼의 주기가 있다.
--> x만 생각해보면 원래 있던 위치(p) + 시간 t했을 때 마지막 위치가 나오게 된다.
--> 이것을 w만큼 나눠주고 그 결과에 따라 값이 달라진다. 
--> ex) w = 6, x = 2, t = 5 이면 x+t = 7이 되고 이것은  
-
 */
 #include <iostream>
 #include <vector>
@@ -24,44 +16,57 @@
 
 using namespace std;
 
-int w, h;
-int x, y;
-int t;
+int N, M, K;
+bool arr[51][51];
+int result;
+
+void Switch(int idx, bool (*temp)[51])
+{
+    for (int i = 0; i < N; i ++) {
+        temp[i][idx] = !temp[i][idx];
+    }
+}
+
+int CheckResult(bool (*temp)[51])
+{
+    int value = 0;
+    for (int i = 0; i < N; i ++) {
+        int cnt = 0;
+        for (int j = 0; j < M; j ++) {
+            if (temp[i][j]) cnt ++;
+        }
+        if (cnt == M) value++;
+    }
+
+    return value;
+}
+
+void DFS(int cnt, bool temp[51][51])  
+{
+    if (cnt == K) {
+        result = max(result, CheckResult(temp));
+        return;
+    }
+
+    for (int i = 0; i < M; i ++) {
+        Switch(i, temp);
+        DFS(cnt + 1, temp);
+        Switch(i, temp);
+    }
+}
 
 int main()
 {
-    cin >> w >> h;
-    cin >> x >> y;
-    cin >> t;
-
-    if (t%(w*2) == 0) {
-        cout << x << ' ';
-    }
-    else {
-        int a = (t%(w*2)+x)/w; // (총 이동량 + 원래 있던 자리) / w; 
-        int b = (t%(w*2)+x)%w; // (총 이동량 + 원래 있던 자리) % w; 
-        if (a % 2 == 0) { // +을 할 것이냐
-            cout << 0+b << ' ';
-        } 
-        else { // -을 할 것이냐.
-            cout << w-b << ' ';
+    cin >> N >> M;
+    for (int i = 0; i < N; i ++) {
+        for (int j = 0; j < M; j ++) {
+            scanf("%1d",&arr[i][j]);
         }
     }
+    cin >> K;
 
-    if (t%(h*2) == 0) {
-        cout << y << ' ';
-    }
-    else {
-        int a = (t%(h*2)+y)/h;
-        int b = (t%(h*2)+y)%h; 
-        if (a % 2 == 0) {
-            cout << 0+b << ' ';
-        } 
-        else {
-            cout << h-b << ' ';
-        }
-    }
-    
+    DFS(0, arr);
+    cout << result << endl;
 }
 
 
