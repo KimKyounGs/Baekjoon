@@ -1,0 +1,40 @@
+참고 : https://cocoon1787.tistory.com/396
+/*
+아이디어 : 
+수학적으로
+(sum[i] - sum[j-1])%m = 0 이라는 뜻은 sum[i]%m = 0 and sum[j-1]%m = 0
+그래서 나눴을 때의 나머지의 조합을 봐야함 -> 0으로 나머지는 한번 더 더해줘야함. 왜냐하면 원소 하나 자체로의 값이 되기 때문이다.
+*/
+
+
+#include <iostream>
+
+using namespace std;
+
+int N, M;
+long long result;
+unsigned long long sum;
+long long modul[1001];
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> N >> M;
+
+    for (int i = 1; i <= N; i ++) {
+        int n;
+        cin >> n;
+        sum += n;
+        modul[sum % M] ++;
+    }
+
+
+    for (int i = 0; i <= M; i++)
+    {
+        result += (modul[i] * (modul[i]-1)) / 2;
+    }
+
+    cout << result + modul[0] << '\n';
+
+}
