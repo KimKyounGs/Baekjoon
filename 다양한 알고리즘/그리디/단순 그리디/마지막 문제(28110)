@@ -1,6 +1,6 @@
 /*
 아이디어 :
-
+단순 그리디 정렬 문제이다.
 */
 #include <iostream>
 #include <vector>
@@ -30,27 +30,27 @@ int main()
     }
 
     sort(v.begin(), v.end());
-    int a = 0;
-    int b = 0;
+    int result = 0;
     int maxs = 0;
 
     for (int i = 0; i < N-1; i ++) 
     {
-        if (maxs < v[i+1] - v[i])
+        int num = (v[i+1] + v[i])/2;
+        // 여기서 짝수는 중앙 2개중에 왼쪽 값을 선택하기 때문에 v[i+1]-num이 아니라 num-v[i]로 해야한다. 
+        if (maxs < num-v[i])
         {
-            a = i+1;
-            b = i;
-            maxs = v[i+1] - v[i];
+            maxs = num-v[i];
+            result = num;
         }
     }
 
-    if (maxs == 1)
+    if (maxs == 0)
     {
         cout << -1 << endl;
     }
-    else
+    else 
     {
-        cout << (v[a] + v[b])/2;
+        cout << result << endl;
     }
-    
+
 }
