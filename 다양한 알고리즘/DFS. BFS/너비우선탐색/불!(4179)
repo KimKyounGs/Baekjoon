@@ -1,6 +1,7 @@
 /*
 아이디어 :
-
+불을 먼저 이동시킨 다음에 지훈이를 이동시킨다. 지훈이가 이동 중에는 불의 속도가 지훈이의 속도보다 절대값이 큰 경우에만 지훈이는 이동할 수 았다. 
+ex) 지훈이는 1 불은 -2 이면 이동가능 그러나 지훈이는 3 불은 -2 이면 이동 불가능
 */
 #include <iostream>
 #include <vector>
@@ -36,7 +37,7 @@ void FireBFS()
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if (nx < 0 || ny << 0 || nx > R-1|| ny > C-1) continue;
+            if (nx < 0 || ny < 0 || nx > R-1|| ny > C-1) continue;
 
             if (graph[nx][ny] == 0)
             {
@@ -98,7 +99,7 @@ int main()
                 // 지훈이가 가장자리에 있으면 바로 탈출 가능
                 if (i == 0 || i == R-1 || j == 0 || j == C-1) 
                 {
-                    cout << 2 << '\n';
+                    cout << 1 << '\n';
                     return 0;
                 }
                 graph[i][j] = 0;
@@ -114,40 +115,42 @@ int main()
     }
 
     FireBFS();
-    for (int i = 0; i < R; i ++)
-    {
-        for (int j = 0; j < C; j ++)
-        {
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
-    }
+    // for (int i = 0; i < R; i ++)
+    // {
+    //     for (int j = 0; j < C; j ++)
+    //     {
+    //         cout << graph[i][j] << ' ';
+    //     }
+    //     cout << endl;
+    // }
 
-    cout << endl;
+    // cout << endl;
+
     BFS();
+    // for (int i = 0; i < R; i ++)
+    // {
+    //     for (int j = 0; j < C; j ++)
+    //     {
+    //         cout << graph[i][j] << ' ';
+    //     }
+    //     cout << endl;
+    // }
 
+    // cout << endl;
+
+    int result = INF;
     for (int i = 0; i < R; i ++)
     {
-        for (int j = 0; j < C; j ++)
-        {
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
+        if (graph[i][0] > 1) result = min(result, graph[i][0]);
+        if (graph[i][C-1] > 1) result = min(result, graph[i][C-1]);
     }
 
-    cout << endl;
-
-    int result = 0;
-    for (int i = 0; i < R; i ++)
+    for (int i = 0; i < C; i ++)
     {
-        for (int j = 0; j < C; j ++)
-        {
-            if (i != 0 || i != R-1 || j != 0 || j != C-1) continue;
-
-            if (graph[i][j] > 1) result = max(result, graph[i][j]);
-        }
+        if (graph[0][i] > 1) result = min(result, graph[0][i]);
+        if (graph[R-1][i] > 1) result = min(result, graph[R-1][i]);
     }
 
-    if (result == 0) cout << "IMPOSSIBLE" << endl;
-    else cout << result + 1 << endl;
+    if (result == INF) cout << "IMPOSSIBLE" << endl;
+    else cout << result << endl;
 }
