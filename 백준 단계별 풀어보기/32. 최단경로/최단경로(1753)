@@ -1,0 +1,81 @@
+/*
+아이디어 :
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int V, E, K;
+vector<pair<int, int>> graph[20001];
+int dist[20001];
+
+void dijkstra(int start)
+{
+    priority_queue<pair<int, int>> pq;
+    dist[start] = 0;
+    pq.push({0, start});
+
+    while(!pq.empty())
+    {
+        int current = pq.top().second;
+        int distance = -pq.top().first;
+        pq.pop();
+
+        // 갱신하지 않아도 되는 노드(최단 거리가 아닌 노드)는 continue 해주기
+        if (dist[current] < distance) continue;
+
+        for (int i = 0; i < graph[current].size(); i ++)
+        {
+            int next = graph[current][i].first;
+            int nextDistance = graph[current][i].second + distance;
+
+            // 기본 최소비용 보다 더 작다면 비용 교체하기.
+            if (nextDistance < dist[next])
+            {
+                dist[next] = nextDistance;
+                pq.push({-nextDistance, next});
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> V >> E;
+    cin >> K;
+    for (int i = 0; i < E; i ++)
+    {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u].push_back({v, w});
+    }
+
+    for (int i = 1; i <= V; i++)
+    {
+        dist[i] = INF;
+    }
+    dijkstra(K);
+
+    for (int i = 1; i <= V; i ++)
+    {
+        if (dist[i] == INF)
+        {
+            cout << "INF" << endl;
+        }
+        else 
+        {
+            cout << dist[i] << endl;
+        }
+    }
+}
