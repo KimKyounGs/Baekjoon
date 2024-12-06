@@ -28,8 +28,8 @@ void dijkstra(int start)
 
     while(!pq.empty())
     {
-        int current = pq.top().second;
         int distance = -pq.top().first;
+        int current = pq.top().second;
         pq.pop();
 
         // 갱신하지 않아도 되는 노드(최단 거리가 아닌 노드)는 continue 해주기
