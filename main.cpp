@@ -16,138 +16,228 @@
 
 using namespace std;
 
-int R, C;
-int graph[1001][1001];
-int jX, jY;
-queue<pair<int, int>> fQ;
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
+int N, K;
+int arr[11][11];
+int ky[21];
+int mh[21];
+bool visited[11];
+bool result = false;
+vector<int> v;
 
-void FireBFS()
-{
-    while(!fQ.empty())
-    {
-        int x = fQ.front().first;
-        int y = fQ.front().second;
-        fQ.pop();
 
-        for (int i = 0; i < 4; i ++)
+bool Simulation()
+{   
+    int victory[3] = {0, 0, 0}; // 지우, 경희, 민호
+    int order[3] = {1, 2, 0}; // 지우, 경희, 민호
+
+    int idx = 0;
+
+    for (int i = 0; i < 20; i ++)
+    {   
+        if (victory[0] == K || victory[1] == K || victory[2] == K)
         {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
+            if (victory[0] == K) return true;
+            else return false;
+        }
 
-            if (nx < 0 || ny << 0 || nx > R-1|| ny > C-1) continue;
-
-            if (graph[nx][ny] == 0)
+        int player1 = -1;
+        int player2 = -1;
+        for (int j = 0; j < 3; j ++)
+        {
+            if (order[j] == 1)
             {
-                graph[nx][ny] = graph[x][y] - 1;
-                fQ.push({nx, ny});
+                player1 = j;
             }
-        }   
+            else if (order[j] == 2)
+            {
+                player2 = j;
+            }
+        }
+
+        // 지우 차례
+        if (player1 == 0 || player2 == 0)
+        {
+            // 지우가 첫 번째
+            if (player1 == 0)
+            {
+                int value = (player2 == 1) ? ky[i] : mh[i];
+                if (arr[v[idx]][value] == 0 || arr[v[idx]][value] == 1)
+                {
+                    // 경희
+                    if (player2 == 1)
+                    {
+                        order[0] = 0;
+                        order[1] = 1;
+                        order[2] = 2;
+                        victory[1] ++;
+                    }
+                    // 민호
+                    else if (player2 == 2)
+                    {
+                        order[0] = 0;
+                        order[1] = 2;
+                        order[2] = 1;
+                        victory[2] ++;
+                    }
+                }
+                else if (arr[v[idx]][value] == 2)
+                {
+                    // 경희
+                    if (player2 == 1)
+                    {
+                        order[0] = 1;
+                        order[1] = 0;
+                        order[2] = 2;
+                    }
+                    // 민호
+                    else if (player2 == 2)
+                    {
+                        order[0] = 1;
+                        order[1] = 2;
+                        order[2] = 0;
+                    }
+                    victory[0] ++;
+                }
+            }
+            // 지우가 두 번쨰
+            else if (player2 == 0)
+            {
+                int value = (player1 == 1) ? ky[i] : mh[i];
+                if (arr[value][v[idx]] == 2 || arr[value][v[idx]] == 1)
+                {
+                    // 경희
+                    if (player1 == 1)
+                    {
+                        order[0] = 1;
+                        order[1] = 0;
+                        order[2] = 2;
+                    }
+                    // 민호
+                    else if (player1 == 2)
+                    {
+                        order[0] = 1;
+                        order[1] = 2;
+                        order[2] = 0;
+                    }
+                    victory[0] ++;
+                }
+                else if (arr[value][v[idx]] == 0)
+                {
+                    // 경희
+                    if (player1 == 1)
+                    {
+                        order[0] = 0;
+                        order[1] = 1;
+                        order[2] = 2;
+                        victory[1] ++;
+                    }
+                    // 민호
+                    else if (player1 == 2)
+                    {
+                        order[0] = 0;
+                        order[1] = 2;
+                        order[2] = 1;
+                        victory[2] ++;
+                    }
+                }
+            }
+            idx ++;
+        }
+        // 경희 vs 민호
+        else
+        {
+            // 경희 vs 민호
+            if (player1 == 1 && player2 == 2)
+            {
+                if (arr[ky[i]][mh[i]] == 0 || arr[ky[i]][mh[i]] == 1)
+                {
+                    order[0] = 2;
+                    order[1] = 0;
+                    order[2] = 1;
+                    victory[2] ++;
+                }
+                else if (arr[ky[i]][mh[i]] == 2)
+                {
+                    order[0] = 2;
+                    order[1] = 1;
+                    order[2] = 0;
+                    victory[1] ++;
+                }
+            }
+            // 민호 vs 경희
+            else if (player1 == 2 && player2 == 1)
+            {
+                if (arr[mh[i]][ky[i]] == 0 || arr[mh[i]][ky[i]] == 1)
+                {
+                    order[0] = 2;
+                    order[1] = 1;
+                    order[2] = 0;
+                    victory[1] ++;
+                }
+                else if (arr[mh[i]][ky[i]] == 2)
+                {
+                    order[0] = 2;
+                    order[1] = 0;
+                    order[2] = 1;
+                    victory[2] ++;
+                }
+            }
+        }
     }
+    return false;
 }
 
-void BFS()
+void DFS(int cnt)
 {
-    queue<pair<int, int>> q;
-    q.push({jX, jY});
-    graph[jX][jY] = 1;
-
-    while(!q.empty())
+    if (cnt == N)
     {
-        int x = q.front().first;
-        int y = q.front().second;
-        q.pop();
-
-        for (int i = 0; i < 4; i ++)
+        if (Simulation())
         {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
+            result = true;
+        }
+        return;
+    }
 
-            if (nx < 0 || ny < 0 || nx > R-1|| ny > C-1) continue;
-
-            // 지훈이가 가려는 곳이 불이 타고 있는 곳이 아니거나 불의 탄 시점보다 더 빠른 경우에 이동 가능
-            if (graph[nx][ny] == 0 || (graph[nx][ny] < 0 && -graph[nx][ny] > graph[x][y]+1))
-            {
-                graph[nx][ny] = graph[x][y] + 1;
-                q.push({nx,ny});
-            }
+    for (int i = 1; i <= N; i++)
+    {
+        if (visited[i] == false)
+        {
+            v.push_back(i);
+            visited[i] = true;
+            DFS(cnt + 1);
+            visited[i] = false;
+            v.pop_back();
         }
     }
 }
 
 int main()
 {
-    cin >> R >> C;
-    for (int i = 0; i < R; i ++) 
+    cin>> N >> K;
+    for (int i = 1; i <= N; i ++)
     {
-        for (int j = 0; j < C; j ++)
+        for(int j = 1; j <= N; j ++)
         {
-            char c;
-            cin >> c;
-            if (c == '#')
-            {
-                graph[i][j] = 1;
-            }
-            else if (c == '.')
-            {
-                graph[i][j] = 0;
-            }
-            else if (c == 'J')
-            {
-                // 지훈이가 가장자리에 있으면 바로 탈출 가능
-                if (i == 0 || i == R-1 || j == 0 || j == C-1) 
-                {
-                    cout << 2 << '\n';
-                    return 0;
-                }
-                graph[i][j] = 0;
-                jX = i;
-                jY = j;
-            }
-            else if (c == 'F')
-            {
-                graph[i][j] = -1;
-                fQ.push({i,j});
-            }
+            cin >> arr[i][j];
         }
     }
-
-    FireBFS();
-    for (int i = 0; i < R; i ++)
+    for (int i = 0; i < 20; i ++)
     {
-        for (int j = 0; j < C; j ++)
-        {
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
+        cin >> ky[i];
+    }
+    for (int i = 0; i < 20; i ++)
+    {
+        cin >> mh[i];
     }
 
-    cout << endl;
-    BFS();
+    DFS(0);
 
-    for (int i = 0; i < R; i ++)
+    if (result == true)
     {
-        for (int j = 0; j < C; j ++)
-        {
-            cout << graph[i][j] << ' ';
-        }
-        cout << endl;
+        cout << 1 << endl;
     }
-
-    cout << endl;
-
-    int result = 0;
-    for (int i = 0; i < R; i ++)
+    else
     {
-        for (int j = 0; j < C; j ++)
-        {
-            if (i != 0 || i != R-1 || j != 0 || j != C-1) continue;
-
-            if (graph[i][j] > 1) result = max(result, graph[i][j]);
-        }
+        cout << 0 << endl;
     }
-
-    if (result == 0) cout << "IMPOSSIBLE" << endl;
-    else cout << result + 1 << endl;
 }
