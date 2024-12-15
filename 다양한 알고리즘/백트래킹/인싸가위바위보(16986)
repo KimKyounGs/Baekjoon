@@ -1,0 +1,220 @@
+/*
+아이디어 :
+
+문제가 이상했다.
+헷갈린 것들
+1. 경희, 민호가 내는 
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+이 값들은 라운드에서 내는 값이 아닌 앞으로 낼 손 동작이다.
+-> 이거는 내가 문제를 오해해서 생긴 일이라서 ㅇㅋ
+
+그런데
+2. 침 펄 풍 예시에서는 1라운드 펄이 이겨서 펄이 첫 번째 선수로 라운드가 시작하는데, 문제 게임에서는
+무조건 지우, 경희, 민호 순으로 정해져 있다고 한다.
+물론 이것도 내가 글을 오해해서 생긴 일이라고 할 수 있지만 아니 그래도 예시를 저렇게 보여주면 예시에서도 
+똑같이 침 펄 풍 순서가 정해져 있다고 하고 ㅁ예시를 고쳐야 하는 것 아닌가? 서운하다.
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, K;
+int arr[11][11];
+int ky[21];
+int mh[21];
+bool visited[11];
+bool result = false;
+vector<int> v;
+
+
+bool Simulation()
+{   
+    int victory[3] = {0, 0, 0}; // 지우, 경희, 민호
+    int order[3] = {1, 2, 0}; // 지우, 경희, 민호
+
+    int idx1 = 0;
+    int idx2 = 0;
+    int idx3 = 0;
+
+    while(true)
+    {   
+        if (victory[0] == K || victory[1] == K || victory[2] == K)
+        {
+            // cout << victory[0] << ' ' << victory[1] << ' ' << victory[2] << endl;
+            if (victory[0] == K) return true;
+            else return false;
+        }
+
+        if (idx1 >= v.size())
+        {
+            return false;
+        }
+
+        int player1 = -1;
+        int player2 = -1;
+        for (int j = 0; j < 3; j ++)
+        {
+            if (order[j] == 1)
+            {
+                player1 = j;
+            }
+            else if (order[j] == 2)
+            {
+                player2 = j;
+            }
+        }
+        
+        // 지우 차례
+        if (player1 == 0)
+        {
+            // 지우가 첫 번째
+            if (player1 == 0)
+            {
+                int num = (player2 == 1) ? ky[idx2] : mh[idx3];
+                int value = arr[v[idx1]][num];
+                if (value == 0 || value == 1)
+                {
+                    // 경희
+                    if (player2 == 1)
+                    {
+                        order[0] = 0;
+                        order[1] = 1;
+                        order[2] = 2;
+                        victory[1] ++;
+                        idx2++;
+                    }
+                    // 민호
+                    else if (player2 == 2)
+                    {
+                        order[0] = 0;
+                        order[1] = 1;
+                        order[2] = 2;
+                        victory[2] ++;
+                        idx3++;
+                    }
+                }
+                else if (value == 2)
+                {
+                    // 경희
+                    if (player2 == 1)
+                    {
+                        order[0] = 1;
+                        order[1] = 0;
+                        order[2] = 2;
+                        idx2++;
+                    }
+                    // 민호
+                    else if (player2 == 2)
+                    {
+                        order[0] = 1;
+                        order[1] = 2;
+                        order[2] = 0;
+                        idx3++;
+                    }
+                    victory[0] ++;
+                }
+            }
+            idx1 ++;
+        }
+        // 경희 vs 민호
+        else
+        {
+            // 경희 vs 민호
+            if (player1 == 1 && player2 == 2)
+            {
+                int value = arr[ky[idx2]][mh[idx3]];
+                if (value == 0 || value == 1)
+                {
+                    order[0] = 1;
+                    order[1] = 0;
+                    order[2] = 2;
+                    victory[2] ++;
+                }
+                else if (value == 2)
+                {
+                    order[0] = 1;
+                    order[1] = 2;
+                    order[2] = 0;
+                    victory[1] ++;
+                }
+            }
+            idx2++;
+            idx3++;
+        }
+    }
+    return false;
+}
+
+void DFS(int cnt)
+{
+    if (cnt == N)
+    {
+        /*
+        for (int i = 0; i < v.size(); i ++)
+        {
+            cout << v[i] << ' ';
+        }
+        cout << endl;
+        */
+        if (Simulation())
+        {
+            result = true;
+        }
+        return;
+    }
+
+    for (int i = 1; i <= N; i++)
+    {
+        if (visited[i] == false)
+        {
+            v.push_back(i);
+            visited[i] = true;
+            DFS(cnt + 1);
+            visited[i] = false;
+            v.pop_back();
+        }
+    }
+}
+
+int main()
+{
+    cin>> N >> K;
+    for (int i = 1; i <= N; i ++)
+    {
+        for(int j = 1; j <= N; j ++)
+        {
+            cin >> arr[i][j];
+        }
+    }
+    for (int i = 0; i < 20; i ++)
+    {
+        cin >> ky[i];
+    }
+    for (int i = 0; i < 20; i ++)
+    {
+        cin >> mh[i];
+    }
+
+    DFS(0);
+
+    if (result == true)
+    {
+        cout << 1 << endl;
+    }
+    else
+    {
+        cout << 0 << endl;
+    }
+}
