@@ -1,0 +1,81 @@
+/*
+
+참고 : https://jaimemin.tistory.com/674
+
+이 부분은 이때까지 탐색해온 노드들을 더해주는 코드이다.
+        for (int i = next; i != start; i = v[i-1])
+        {
+            cnt++;
+        }
+        cnt++;
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int T, N;
+int cnt;
+vector<int> v;
+bool visited[100001];
+bool done[100001];
+
+void DFS(int start)
+{
+    visited[start] = true;
+
+    int next = v[start-1];
+    if (!visited[next])
+    {
+        DFS(next);
+    }
+    else if (!done[next])
+    {
+        for (int i = next; i != start; i = v[i-1])
+        {
+            cnt++;
+        }
+        cnt++;
+    }
+
+    done[start] = true;
+}
+
+int main()
+{
+    cin >> T;
+    while(T--)
+    {
+        cin >> N;
+        for (int i = 0; i < N; i ++)
+        {
+            int n;
+            cin >> n;
+            v.push_back(n);
+        }
+
+        cnt = 0;
+        for (int i = 1; i <= N; i ++)
+        {
+            if (!visited[i])
+            {
+                DFS(i);
+            }
+        }
+        cout << N-cnt << endl;
+
+        memset(visited, 0, sizeof(visited));
+        memset(done, 0, sizeof(done));
+        v.clear();
+    }
+}
