@@ -16,228 +16,101 @@
 
 using namespace std;
 
-int N, K;
-int arr[11][11];
-int ky[21];
-int mh[21];
-bool visited[11];
-bool result = false;
-vector<int> v;
+int N;
+int graph[101][101];
+bool visited[101][101];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+int result = INF;
 
+void BFS(int x, int y, int num)
+{
+    queue<pair<int, int>> q;
+    q.push({x,y});
+    graph[x][y] = num;
 
-bool Simulation()
-{   
-    int victory[3] = {0, 0, 0}; // 지우, 경희, 민호
-    int order[3] = {1, 2, 0}; // 지우, 경희, 민호
-
-    int idx = 0;
-
-    for (int i = 0; i < 20; i ++)
-    {   
-        if (victory[0] == K || victory[1] == K || victory[2] == K)
+    while(!q.empty())
+    {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++)
         {
-            if (victory[0] == K) return true;
-            else return false;
-        }
+            int nx = x + dx[i];
+            int ny = y + dy[i];
 
-        int player1 = -1;
-        int player2 = -1;
-        for (int j = 0; j < 3; j ++)
-        {
-            if (order[j] == 1)
-            {
-                player1 = j;
-            }
-            else if (order[j] == 2)
-            {
-                player2 = j;
-            }
-        }
+            if (nx < 0 || ny < 0 || nx > N-1 || ny > N-1 || graph[nx][ny] < 0) continue;
 
-        // 지우 차례
-        if (player1 == 0 || player2 == 0)
-        {
-            // 지우가 첫 번째
-            if (player1 == 0)
+            if (graph[nx][ny] == 1)
             {
-                int value = (player2 == 1) ? ky[i] : mh[i];
-                if (arr[v[idx]][value] == 0 || arr[v[idx]][value] == 1)
-                {
-                    // 경희
-                    if (player2 == 1)
-                    {
-                        order[0] = 0;
-                        order[1] = 1;
-                        order[2] = 2;
-                        victory[1] ++;
-                    }
-                    // 민호
-                    else if (player2 == 2)
-                    {
-                        order[0] = 0;
-                        order[1] = 2;
-                        order[2] = 1;
-                        victory[2] ++;
-                    }
-                }
-                else if (arr[v[idx]][value] == 2)
-                {
-                    // 경희
-                    if (player2 == 1)
-                    {
-                        order[0] = 1;
-                        order[1] = 0;
-                        order[2] = 2;
-                    }
-                    // 민호
-                    else if (player2 == 2)
-                    {
-                        order[0] = 1;
-                        order[1] = 2;
-                        order[2] = 0;
-                    }
-                    victory[0] ++;
-                }
-            }
-            // 지우가 두 번쨰
-            else if (player2 == 0)
-            {
-                int value = (player1 == 1) ? ky[i] : mh[i];
-                if (arr[value][v[idx]] == 2 || arr[value][v[idx]] == 1)
-                {
-                    // 경희
-                    if (player1 == 1)
-                    {
-                        order[0] = 1;
-                        order[1] = 0;
-                        order[2] = 2;
-                    }
-                    // 민호
-                    else if (player1 == 2)
-                    {
-                        order[0] = 1;
-                        order[1] = 2;
-                        order[2] = 0;
-                    }
-                    victory[0] ++;
-                }
-                else if (arr[value][v[idx]] == 0)
-                {
-                    // 경희
-                    if (player1 == 1)
-                    {
-                        order[0] = 0;
-                        order[1] = 1;
-                        order[2] = 2;
-                        victory[1] ++;
-                    }
-                    // 민호
-                    else if (player1 == 2)
-                    {
-                        order[0] = 0;
-                        order[1] = 2;
-                        order[2] = 1;
-                        victory[2] ++;
-                    }
-                }
-            }
-            idx ++;
-        }
-        // 경희 vs 민호
-        else
-        {
-            // 경희 vs 민호
-            if (player1 == 1 && player2 == 2)
-            {
-                if (arr[ky[i]][mh[i]] == 0 || arr[ky[i]][mh[i]] == 1)
-                {
-                    order[0] = 2;
-                    order[1] = 0;
-                    order[2] = 1;
-                    victory[2] ++;
-                }
-                else if (arr[ky[i]][mh[i]] == 2)
-                {
-                    order[0] = 2;
-                    order[1] = 1;
-                    order[2] = 0;
-                    victory[1] ++;
-                }
-            }
-            // 민호 vs 경희
-            else if (player1 == 2 && player2 == 1)
-            {
-                if (arr[mh[i]][ky[i]] == 0 || arr[mh[i]][ky[i]] == 1)
-                {
-                    order[0] = 2;
-                    order[1] = 1;
-                    order[2] = 0;
-                    victory[1] ++;
-                }
-                else if (arr[mh[i]][ky[i]] == 2)
-                {
-                    order[0] = 2;
-                    order[1] = 0;
-                    order[2] = 1;
-                    victory[2] ++;
-                }
+                graph[nx][ny] = num;
+                q.push({nx,ny});
             }
         }
     }
-    return false;
 }
 
-void DFS(int cnt)
+void BFS(int x, int y)
 {
-    if (cnt == N)
-    {
-        if (Simulation())
-        {
-            result = true;
-        }
-        return;
-    }
+    queue<pair<int, int>> q;
+    q.push({x, y});
+    visited[x][y] = true;
+    int num = graph[x][y];
 
-    for (int i = 1; i <= N; i++)
+    while(!q.empty())
     {
-        if (visited[i] == false)
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++)
         {
-            v.push_back(i);
-            visited[i] = true;
-            DFS(cnt + 1);
-            visited[i] = false;
-            v.pop_back();
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || ny < 0 || nx > N-1 || ny > N-1 || visited[nx][ny] < 0 || graph[nx][ny] == num) continue;
+
+            if (graph[nx][ny] == 0)
+            {
+
+            }
         }
     }
 }
 
 int main()
 {
-    cin>> N >> K;
-    for (int i = 1; i <= N; i ++)
+    cin >> N;
+    for(int i = 0; i < N; i ++)
     {
-        for(int j = 1; j <= N; j ++)
+        for (int j = 0; j < N; j ++)
         {
-            cin >> arr[i][j];
+            cin >> graph[i][j];
         }
     }
-    for (int i = 0; i < 20; i ++)
+
+    int num = -1;
+    for(int i = 0; i < N; i ++)
     {
-        cin >> ky[i];
-    }
-    for (int i = 0; i < 20; i ++)
-    {
-        cin >> mh[i];
+        for (int j = 0; j < N; j ++)
+        {
+            if (graph[i][j] == 1)
+            {
+                BFS(i, j, num);
+                num --;
+            }
+        }
     }
 
-    DFS(0);
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < N; j ++)
+        {
+            if (graph[i][j] < 0)
+            {
+                BFS(i, j);
+            }
+            memset(visited, 0, sizeof(visited));
+        }
 
-    if (result == true)
-    {
-        cout << 1 << endl;
-    }
-    else
-    {
-        cout << 0 << endl;
     }
 }
