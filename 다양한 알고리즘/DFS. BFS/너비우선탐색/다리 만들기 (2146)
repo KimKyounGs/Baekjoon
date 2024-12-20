@@ -1,0 +1,143 @@
+/*
+아이디어 :
+
+섬 각 하나를 -1 , -2 등으로 만든 뒤에 
+각각 BFS를 실행시킴.
+N의 크기가 최대 100이라서 전체 시간복잡도O(N^4)로 풀어봤음.
+
+배열
+https://codechacha.com/ko/cpp-copy-array/#1-stdcopy%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EB%B0%A9%EB%B2%95
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N;
+int graph[101][101];
+int visited[101][101];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+int result = INF;
+
+void BFS(int x, int y, int num)
+{
+    queue<pair<int, int>> q;
+    q.push({x,y});
+    graph[x][y] = num;
+
+    while(!q.empty())
+    {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || ny < 0 || nx > N-1 || ny > N-1 || graph[nx][ny] < 0) continue;
+
+            if (graph[nx][ny] == 1)
+            {
+                graph[nx][ny] = num;
+                q.push({nx,ny});
+            }
+        }
+    }
+}
+
+void BFS(int x, int y)
+{
+    queue<pair<int, int>> q;
+    q.push({x, y});
+    int num = graph[x][y]; 
+    visited[x][y] = 1;
+
+
+    while(!q.empty())
+    {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 범위 체크, 똑같은 땅이면 continue;
+            if (nx < 0 || ny < 0 || nx > N-1 || ny > N-1 || visited[nx][ny] == num ) continue;
+
+            // 바다면
+            if (visited[nx][ny] == 0)
+            {
+                visited[nx][ny] = visited[x][y] + 1;
+                q.push({nx,ny});
+            }
+            // 다른 땅에 도착하면
+            else if (visited[nx][ny] < 0)
+            {
+                // cout << "nx, ny = " << nx << ',' << ny << " x, y = " << x << ',' << y << " visited[x][y] =  " << visited[x][y] << endl; 
+                result = min(result, visited[x][y]);
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> N;
+    for(int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < N; j ++)
+        {
+            cin >> graph[i][j];
+        }
+    }
+
+    int num = -1;
+    for(int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < N; j ++)
+        {
+            if (graph[i][j] == 1)
+            {
+                BFS(i, j, num);
+                num --;
+            }
+        }
+    }   
+    memcpy(&(visited), &(graph), sizeof(graph));
+
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < N; j ++)
+        {
+            if (graph[i][j] < 0)
+            {
+                memcpy(&(visited), &(graph), sizeof(graph));
+                BFS(i, j);
+            }
+        }
+    }  
+    // BFS(4,3);
+
+    // for (int i = 0; i < N; i ++)
+    // {
+    //     for (int j = 0; j < N; j ++) 
+    //     {
+    //         cout << visited[i][j] << ' ';
+    //     }
+    //     cout << endl;
+    // }
+    cout << result-1 << '\n'; 
+}
