@@ -1,0 +1,116 @@
+/*
+아이디어 :
+
+벽 부수기에서 영감을 받고 푼 문제이다.
+특정 구역에 대해서 말 처럼 걸어서 방문한 것이랑, 아닌 것이랑 다르기 때문에 visitd배열을 3중배열로 했다.
+
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int K, W, H;
+int graph[201][201];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+int hdx[] = {-1, -2, -2, -1, 1, 2, 2, 1};
+int hdy[] = {-2, -1, 1, 2, 2, 1, -1, -2};
+int visited[201][201][31];
+
+void BFS(int x, int y)
+{
+    queue<pair<pair<int, int>, int>> q;
+    q.push({{x,y},0});
+    visited[x][y][0] = 1;
+
+    while(!q.empty())
+    {
+        int x = q.front().first.first;
+        int y = q.front().first.second;
+        int k = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0|| ny < 0 || nx > H-1 || ny > W-1) continue;
+
+            // 방문하지 않은 곳
+            if (!visited[nx][ny][k] && graph[nx][ny] == 0 )
+            {
+                visited[nx][ny][k] = visited[x][y][k]+1;
+                q.push({{nx,ny},k});
+            }
+        }
+        for (int i = 0; i < 8; i ++)
+        {
+            int nx = x + hdx[i];
+            int ny = y + hdy[i];
+
+            if (nx < 0 || ny < 0 || nx > H-1 || ny > W-1) continue;
+
+            if (k + 1 <= K && !visited[nx][ny][k+1] && graph[nx][ny] == 0)
+            {
+                visited[nx][ny][k+1] = visited[x][y][k] + 1;
+                q.push({{nx,ny},k+1});
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> K;
+    cin >> W >> H;
+    for(int i = 0; i < H; i ++)
+    {
+        for(int j = 0; j < W; j ++)
+        {
+            cin >> graph[i][j];
+        }
+    }
+
+    BFS(0, 0);      
+    // cout << endl;
+    // for (int k = 0; k <= K; k++) {
+    //     for(int i = 0; i < H; i ++)
+    //     {
+    //         for(int j = 0; j < W; j ++)
+    //         {
+    //             cout << visited[i][j][k] << ' ';
+    //         }
+    //         cout << endl;
+    //     }
+    //     cout << endl;
+    // }
+
+    int result = INF;
+    for (int i = 0; i <= K; i ++)
+    {
+        if (visited[H-1][W-1][i] > 0)
+        {
+            result = min(result, visited[H-1][W-1][i]);
+        } 
+    }
+
+    if (result == INF)
+    {
+        cout << -1 << endl;
+    }
+    else 
+    {
+        cout << result-1 << endl;
+    }
+}
