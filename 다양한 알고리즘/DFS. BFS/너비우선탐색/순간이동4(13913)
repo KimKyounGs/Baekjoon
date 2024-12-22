@@ -1,0 +1,90 @@
+/*
+아이디어 :
+
+어려운 문제는 아니고 단순 BFS 문제이다. 
+예외로 N == K가 같을 때만 주의하면 될 것 같다.
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, K;
+int graph[200001];
+int visited[200001];
+int dx[] = {2, 1, -1};
+vector<int> result;
+
+void DFS(int start)
+{
+    int next = graph[start];
+    result.push_back(next);
+    if (next == N) return;
+    else DFS(next);
+}
+
+void BFS(int start)
+{
+    queue<int> q;
+    q.push({start});
+    visited[start] = 1;
+    while(!q.empty())
+    {   
+        int x = q.front();
+        q.pop();
+        for (int i = 0; i < 3; i ++)
+        {
+            int nx;
+            if (i == 0) nx = x*dx[i];
+            else nx = x + dx[i];
+
+            if (nx < 0 || nx > 100001 || visited[nx] > 0) continue;
+
+            visited[nx] = visited[x] + 1;
+            q.push(nx);
+            graph[nx] = x;
+        }
+    }
+}
+
+int main()
+{
+    cin >> N >> K;
+
+    if (N == K)
+    {
+        cout << 0 << endl;
+        cout << N << endl;
+        return 0;
+    }
+    BFS(N);
+
+    // for (int i = 0; i <= 20; i ++)
+    // {
+    //     cout << graph[i] << ' ';
+    // }
+    // cout << endl;
+    // for (int i = 0; i <= 20; i ++)
+    // {
+    //     cout << visited[i] << ' ';
+    // }
+    // cout << endl;
+
+    cout << visited[K] - 1;
+    result.push_back(K);
+    DFS(K);
+    cout << endl;
+    for (int i = result.size()-1; i >= 0; i --)
+    {
+        cout << result[i] << ' ';
+    }
+}
