@@ -1,0 +1,97 @@
+/*
+아이디어 :
+
+특정한 공간(ex graph[1][2])에 대해서 벽을 뿌수고 이동했나 or 그냥 이동했나 에 따라서 경우가 다르다.
+그래서 visited 배열을 3중배열로 만들었다. (visited[x좌표][y좌표][벽을 뿌순 개수])
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, K;
+int graph[1001][1001];
+int visited[1001][1001][11];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void BFS(int x, int y)
+{
+    queue<pair<pair<int, int>, int>> q;
+    q.push({{x,y},0});
+    visited[x][y][0] = 1;
+    while(!q.empty())
+    {
+        int x = q.front().first.first;
+        int y = q.front().first.second;
+        int wall = q.front().second;
+        q.pop();
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 1 || ny < 1 || nx > N || ny > M) continue;
+
+            // 벽이 아니고 방문하지 않은 곳
+            if (graph[nx][ny] == 0 && visited[nx][ny][wall] == 0)
+            {
+                visited[nx][ny][wall] = visited[x][y][wall] + 1;
+                q.push({{nx,ny}, wall});
+            }
+            // 벽이고 벽을 뿌실 수 있으며 벽을 뿌섰을 때 한번도 가지 않은 곳
+            else if (graph[nx][ny] == 1 && wall + 1 <= K && visited[nx][ny][wall+1] == 0)
+            {
+                visited[nx][ny][wall+1] = visited[x][y][wall] + 1;
+                q.push({{nx,ny}, wall+1});
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> N >> M >> K;
+    for (int i = 1; i <= N; i ++)
+    {
+        for (int j = 1; j <= M; j ++)
+        {
+            scanf("%1d", &graph[i][j]);
+        }
+    }
+
+    BFS(1,1);
+    // cout << endl;
+    // for (int k = 0; k <= K; k ++)
+    // {
+    //     cout << "k = " << k << endl;
+    //     for (int i = 1; i <= N; i ++)
+    //     {
+    //         for (int j = 1; j <= M; j ++)
+    //         {
+    //             cout << visited[i][j][k] << ' ';
+    //         }
+    //         cout << endl;
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+
+    int result = INF;
+    for (int i = 0; i <= K; i ++)
+    {
+        if (visited[N][M][i] > 0) result = min(result,visited[N][M][i]);
+    }
+
+    if (result == INF) cout << -1 << endl;
+    else cout << result << endl;
+}
