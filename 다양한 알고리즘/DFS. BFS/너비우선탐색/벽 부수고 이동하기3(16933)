@@ -1,0 +1,112 @@
+/*
+아이디어 :
+
+https://yabmoons.tistory.com/215
+
+내가 생각했던 것보다 복잡했던 문제.
+
+나는 밤일 때 벽을 부수지 못하니 하루밤 새고 벽을 부수고 카운트를 하였다. 
+그러니깐 먼저 다른 구역에서 목적지로 먼저 방문을 해버려서 안되었다.
+
+머든지 하나의 행동만을 정의하는 것이 올바른 코딩인 것 같다.
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, K;
+int graph[1001][1001];
+bool visited[1001][1001][11];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void BFS(int x, int y)
+{
+    queue<pair<tuple<int, int, int>, pair<int, string>>> q;
+    q.push({{x,y,1}, {0,"Morning"}});
+    visited[x][y][0] = true;
+    while(!q.empty())
+    {
+        int x = get<0>(q.front().first);
+        int y = get<1>(q.front().first);
+        int cnt = get<2>(q.front().first);
+        int wall = q.front().second.first;
+        string day = q.front().second.second;
+        q.pop();
+
+        if (x == N && y == M)
+        {
+            cout << cnt << endl;
+            return;
+        }
+
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 1 || ny < 1 || nx > N || ny > M) continue;
+
+            // 빈 공간일 때
+            if (graph[nx][ny] == 0)
+            {
+                // 방문하지 않았다면?
+                if (visited[nx][ny][wall] == false)
+                {
+                    visited[nx][ny][wall] = true;
+                    if (day == "Morning") q.push({{nx, ny, cnt + 1,}, {wall, "Night"}});
+                    else q.push({{nx, ny, cnt + 1,}, {wall, "Morning"}});
+                }
+            }
+            // 벽일 때
+            else if (graph[nx][ny] == 1)
+            {
+                // 벽을 부술 수 있다면?
+                if (wall < K)
+                {
+                    // 방문을 하지 않았다면?
+                    if (visited[nx][ny][wall + 1] == false)
+                    {
+                        // 아침일 때?
+                        if (day == "Morning")
+                        {
+                            visited[nx][ny][wall+1] = true;
+                            q.push({{nx,ny,cnt+1}, {wall + 1, "Night"}});
+                        }
+                        // 밤일 때?
+                        else
+                        {
+                            q.push({{x,y,cnt+1}, {wall, "Morning"}});
+                        }
+                    }
+                }
+            }
+        }
+    }
+    cout << -1 << endl;
+    return;
+}
+
+int main()
+{
+    cin >> N >> M >> K;
+    for (int i = 1; i <= N; i ++)
+    {
+        for (int j = 1; j <= M; j ++)
+        {
+            scanf("%1d", &graph[i][j]);
+        }
+    }
+
+    BFS(1,1);
+}
