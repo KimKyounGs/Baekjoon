@@ -1,5 +1,13 @@
 /*
-아이디어 :
+
+참고 : https://jaimemin.tistory.com/674
+
+이 부분은 이때까지 탐색해온 노드들을 더해주는 코드이다.
+        for (int i = next; i != start; i = v[i-1])
+        {
+            cnt++;
+        }
+        cnt++;
 
 */
 #include <iostream>
@@ -16,62 +24,35 @@
 
 using namespace std;
 
-int N;
-int graph[101][101];
-bool visited[101][101];
+int N, M, P;
+int graph[1001][1001];
+bool visited[1001][1001];
+priority_queue<pair<pair<int, int>, pair<int, int>>, vector<pair<pair<int, int>, pair<int, int>>>, greater<pair<pair<int, int>, pair<int, int>>>> pq;
+
 int dx[] = {1, -1, 0, 0};
 int dy[] = {0, 0, 1, -1};
-int result = INF;
 
-void BFS(int x, int y, int num)
+void BFS()
 {
-    queue<pair<int, int>> q;
-    q.push({x,y});
-    graph[x][y] = num;
-
-    while(!q.empty())
+    while(!pq.empty())
     {
-        int x = q.front().first;
-        int y = q.front().second;
-        q.pop();
+        int num = pq.top().first.first;
+        int cnt = pq.top().first.second;
+        int x = pq.top().second.first;
+        int y = pq.top().second.second;
+        pq.pop();
         for (int i = 0; i < 4; i ++)
         {
             int nx = x + dx[i];
             int ny = y + dy[i];
 
-            if (nx < 0 || ny < 0 || nx > N-1 || ny > N-1 || graph[nx][ny] < 0) continue;
+            // 범위 제한 및 벽 체크
+            if (nx < 0 || nx > N-1 || ny < 0 || ny > M-1 || graph[nx][ny] == -1) continue;
 
-            if (graph[nx][ny] == 1)
+            if (graph[nx][ny] == 0) 
             {
                 graph[nx][ny] = num;
-                q.push({nx,ny});
-            }
-        }
-    }
-}
-
-void BFS(int x, int y)
-{
-    queue<pair<int, int>> q;
-    q.push({x, y});
-    visited[x][y] = true;
-    int num = graph[x][y];
-
-    while(!q.empty())
-    {
-        int x = q.front().first;
-        int y = q.front().second;
-        q.pop();
-        for (int i = 0; i < 4; i ++)
-        {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-
-            if (nx < 0 || ny < 0 || nx > N-1 || ny > N-1 || visited[nx][ny] < 0 || graph[nx][ny] == num) continue;
-
-            if (graph[nx][ny] == 0)
-            {
-
+                pq.push({{num,cnt+1}, {nx,ny}});
             }
         }
     }
@@ -79,38 +60,30 @@ void BFS(int x, int y)
 
 int main()
 {
-    cin >> N;
-    for(int i = 0; i < N; i ++)
-    {
-        for (int j = 0; j < N; j ++)
-        {
-            cin >> graph[i][j];
-        }
-    }
-
-    int num = -1;
-    for(int i = 0; i < N; i ++)
-    {
-        for (int j = 0; j < N; j ++)
-        {
-            if (graph[i][j] == 1)
-            {
-                BFS(i, j, num);
-                num --;
-            }
-        }
-    }
-
+    cin >> N >> M >> P;
     for (int i = 0; i < N; i ++)
     {
-        for (int j = 0; j < N; j ++)
+        for (int j = 0; j < M; j ++)
         {
-            if (graph[i][j] < 0)
-            {
-                BFS(i, j);
-            }
-            memset(visited, 0, sizeof(visited));
-        }
+            char c;
+            cin >> c;
 
+            if (c >= 48 && c <= 57)
+            {
+                int num = c - '48';
+                graph[i][j] = num;
+                pq.push({{0, 1},{i,j}});
+            }
+            else if (c == '.') 
+            {
+                graph[i][j] = 0;
+            }
+            else if (c == '#')
+            {
+                graph[i][j] = '-1';
+            }
+        }
     }
+
+    BFS();
 }
