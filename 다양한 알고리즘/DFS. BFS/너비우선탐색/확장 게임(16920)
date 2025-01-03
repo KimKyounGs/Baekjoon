@@ -1,0 +1,135 @@
+/*
+테스트 케이스 공유 글 : https://www.acmicpc.net/board/view/64280
+
+우선순위 큐를 이용해서 문제를 풀었다.
+큐의 구성은 다음과 같다.
+<pair<pair<cnt, num>, pair<s,pair<x,y>>>
+cnt : 턴의 회수
+num : 누가 땅을 넓히는지
+s : 몇번 움직일 수 있는지
+x, y : 좌표
+
+s는 -을 하는 이유는 예를 들어서 1이 시작부터 2개(1^x, 1^y) 이상 있고 움직이는 회수가 2번 이상일 때 (s > 1)경우 
+하나가(1^x)가 나머지 다른 하나의(1^y)의 앞을 가로 막아서 (1^y)이 움직의 제한을 둘 수 있기 때문이다. 
+그래서 s또한 우선순위 큐에 영향을 주기 위해서? 받기 위해서? -을 두어서 s의 값이 작은 것이 먼저 탐색할 수 있도록 하였다.
+반례 예시
+3 4 2
+2 1
+1...
+1..2
+....
+답 : 9 3
+(원래는 : 8 4가 나왔었음.)
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, P;
+int graph[1001][1001];
+int S[10];
+int result[10];
+priority_queue<pair<pair<int, int>, pair<int, pair<int,int>>>, vector<pair<pair<int, int>, pair<int, pair<int,int>>>>, greater<pair<pair<int, int>, pair<int, pair<int,int>>>>> pq;
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+
+// cnt num
+// 1   2
+// 2   1
+
+void BFS()
+{
+    while(!pq.empty())
+    {
+        int cnt = pq.top().first.first;
+        int num = pq.top().first.second;
+        int x = pq.top().second.second.first;
+        int y = pq.top().second.second.second;
+        int s = -pq.top().second.first;
+        pq.pop();
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            // 범위 제한 및 벽 체크
+            if (nx < 0 || nx > N-1 || ny < 0 || ny > M-1 || graph[nx][ny] == -1) continue;
+
+            // 비어있는 칸
+            if (graph[nx][ny] == 0) 
+            {
+                graph[nx][ny] = num;
+                if (s-1 > 0)
+                {
+                    pq.push({{cnt,num}, {-(s-1),{nx,ny}}});
+                }
+                else if (s-1 == 0)
+                {
+                    pq.push({{cnt+1,num}, {-S[num],{nx,ny}}});
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> N >> M >> P;
+    for (int i = 1; i <= P; i ++)
+    {
+        cin >> S[i];
+    }
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < M; j ++)
+        {
+            char c;
+            cin >> c;
+
+            if (c >= 48 && c <= 57)
+            {
+                int num = c - 48;
+                // cout << "num = " << num << endl;
+                graph[i][j] = num;
+                pq.push({{0, num},{-S[num],{i,j}}});
+            }
+            else if (c == '.') 
+            {
+                graph[i][j] = 0;
+            }
+            else if (c == '#')
+            {
+                graph[i][j] = -1;
+            }
+        }
+    }
+
+    BFS();
+
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < M; j ++)
+        {
+            int num = graph[i][j];
+            result[num]++;
+            // cout << graph[i][j] << ' ';
+        }
+        // cout << endl;
+    }
+
+    for (int i = 1; i <= P; i ++)
+    {
+        cout << result[i] << ' ';
+    }
+}
