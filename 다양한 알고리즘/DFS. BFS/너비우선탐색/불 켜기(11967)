@@ -1,0 +1,110 @@
+/*
+1. 해당 지역을 도착했을 때 스위치 다 키기. -> v 이용.
+2. 원래 왔던 곳 주변에 불이 켜진 경우 생각하기. -> 그 방의 상하좌우 체크하기
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M;
+bool graph[101][101]; 
+bool visited[101][101]; // 전에 왔던 곳에 갈 수 있는지 check
+int result = 0;
+vector<pair<int, int>> v[101][101];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void BFS(int x, int y)
+{
+    queue<pair<int, int>> q;
+    q.push({x,y});
+    graph[x][y] = true;
+    visited[x][y] = true;
+
+    while(!q.empty())
+    {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+
+        // 이 방에서 불을 밝힐 수 있는 방 모두 밝히기.
+        for (int i = 0; i < v[x][y].size(); i ++)
+        {
+            int nx = v[x][y][i].first;
+            int ny = v[x][y][i].second;
+            if (graph[nx][ny]) continue;
+            graph[nx][ny] = true;
+
+            // 밝혔을 때 그 방을 갈 수 있으면 가기.
+            for (int j = 0; j < 4; j ++)
+            {
+                int nnx = nx + dx[j];
+                int nny = ny + dy[j];
+
+                if (nnx < 1 || nny < 1 || nnx > N || nny > N) continue;
+
+                // 주변이 불이 밝혀져 있는 방이면
+                if (visited[nnx][nny])
+                {
+                    q.push({nx,ny});
+                    visited[nx][ny] = true;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 1 || ny < 1 || nx > N || ny > N || visited[nx][ny]) continue;
+
+            if (graph[nx][ny])
+            {
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+            }
+        }
+    }
+}
+
+
+int main()
+{
+    cin >> N >> M;
+    for (int i = 0; i < M; i ++)
+    {   
+        int x, y, a, b;
+        cin >> x >> y >> a >> b;
+        v[x][y].push_back({a,b});
+    }
+
+    BFS(1,1);
+
+    for (int i = 1; i <= N; i ++)
+    {
+        for (int j = 1; j <= N; j ++)
+        {
+            // cout << graph[i][j] << ' ';
+            if (graph[i][j])
+            {
+                result ++;
+            }
+        }
+        // cout << endl;
+    }
+    cout << result << '\n';
+
+}
