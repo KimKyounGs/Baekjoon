@@ -1,0 +1,187 @@
+/*
+처음 외벽을 조사할 때 들어갈 수 있는지 확인한다.
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int T;
+int h, w;
+char graph[101][101];
+vector<pair<int, int>> door[27]; // 발견된 문 넣어주기
+bool key[27];
+bool visited[101][101];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+int result = 0;
+
+queue<pair<int, int>> q;
+
+void BFS()
+{
+    while(!q.empty())
+    {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || nx > h - 1 || ny < 0 || ny > w - 1 || visited[nx][ny] || graph[nx][ny] == '*') continue;
+
+            if (graph[nx][ny] == '.')
+            {
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+            }
+            else if (graph[nx][ny] >= 'A' && graph[nx][ny] <= 'Z')
+            {
+                int n = graph[nx][ny] - 'A';
+                // 열쇠를 가지고 있을 때는 문 열고 탐색
+                if (key[n] == true)
+                {
+                    q.push({nx, ny});
+                    visited[nx][ny] = true;
+                }
+                // 열쇠를 가지고 있지 않을 때 문에 도달했다면 door에 넣어주기.
+                else
+                {
+                    door[n].push_back({nx,ny});
+                }
+            }
+            else if (graph[nx][ny] >= 'a' && graph[nx][ny] <= 'z')
+            {
+                int n = graph[nx][ny] - 'a';
+
+                // 이미 가지고 있는 열쇠는 따로 처리하지 않기
+                if (key[n] == true) 
+                {
+                    q.push({nx,ny});
+                    visited[nx][ny] = true;
+                    continue;
+                }
+                key[n] = true;
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+                // 발련된 문들을 큐에 넣어주기.
+                for (int j = 0; j < door[n].size(); j ++)
+                {
+                    q.push({door[n][j].first, door[n][j].second});
+                    visited[door[n][j].first][door[n][j].second] = true;
+                }
+                door[n].clear();
+            }
+            else if (graph[nx][ny] == '$')
+            {
+                result ++;
+                q.push({nx,ny});
+                visited[nx][ny] = true;
+            }
+        }
+    }
+}
+
+int main()
+{
+    cin >> T;
+    while(T--)
+    {
+        memset(door, 0, sizeof(door));
+        memset(key, 0, sizeof(key));
+        memset(visited, 0, sizeof(visited));
+        result = 0;
+
+        cin >> h >> w;
+        for (int i = 0; i < h; i ++)
+        {
+            for (int j = 0; j < w; j ++)
+            {
+                cin >> graph[i][j];
+            }
+        }
+        string s;
+        cin >> s;
+        if (s == "0")
+        {
+            // cout << "열쇠 없음" << endl; 
+        }
+        else
+        {
+            int len = s.length();
+            for (int i = 0; i < len; i ++)
+            {
+                key[s[i]-'a'] = true;
+            }
+        }
+
+        // 건물 벽 조사하기.
+        for (int i = 0; i < h; i ++)
+        {
+            for (int j = 0; j < w; j ++)
+            {
+                if ((i == 0 || i == h-1 || j == 0 || j == w-1))
+                {
+                    // 그냥 들어갈 수 있다면
+                    if (graph[i][j] == '.') 
+                    {
+                        q.push({i,j});
+                        visited[i][j] = true;
+                    }
+                    else if (graph[i][j] >= 'A' && graph[i][j] <= 'Z')
+                    {
+                        int n = graph[i][j] - 'A';
+                        // 열쇠를 가지고 있을 때는 문 열고 탐색
+                        if (key[n] == true)
+                        {
+                            q.push({i, j});
+                            visited[i][j] = true;
+                        }
+                        // 열쇠를 가지고 있지 않을 때 문에 도달했다면 door에 넣어주기.
+                        else
+                        {
+                            door[n].push_back({i,j});
+                        }
+                    }
+                    else if (graph[i][j] >= 'a' && graph[i][j] <= 'z')
+                    {
+                        int n = graph[i][j] - 'a';
+
+                        key[n] = true;
+                        q.push({i,j});
+                        visited[i][j] = true;
+                        // 발련된 문들을 큐에 넣어주기.
+                        for (int k = 0; k < door[n].size(); k ++)
+                        {
+                            q.push({door[n][k].first, door[n][k].second});
+                            visited[door[n][k].first][door[n][k].second] = true;
+                        }
+                        door[n].clear();
+                    }
+                    else if (graph[i][j] == '$')
+                    {
+                        result ++;
+                        q.push({i,j});
+                        visited[i][j] = true;
+                    }
+                }
+            }
+        }
+        BFS();
+        cout << result << endl;
+    }
+
+}
