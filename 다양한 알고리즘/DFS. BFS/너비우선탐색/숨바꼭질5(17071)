@@ -1,0 +1,81 @@
+/*
+처음 외벽을 조사할 때 들어갈 수 있는지 확인한다.
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, K;
+bool visited[2][500001];
+int cnt = 1;
+int result = -1;
+
+void BFS(int x)
+{
+    queue<int> q;
+    q.push({x});
+
+    while(!q.empty())
+    {
+        K += cnt;
+        if (K > 500000)
+        {
+            result = -1;
+            return;
+        }
+
+        if (visited[cnt % 2][K])
+        {
+            result = cnt;
+            return;
+        }
+
+        int size = q.size();
+        for (int i = 0; i < size; i ++)
+        {
+            int x = q.front();
+            q.pop();        
+
+            for (int nx : {x-1, x+1, x*2})
+            {
+                if (nx == K)
+                {
+                    result = cnt;
+                    return;
+                }
+                if (nx < 0 || nx > 500000) continue;
+                if (visited[cnt % 2][nx]) continue;
+
+                visited[cnt % 2][nx] = true;
+                q.push(nx);
+            }   
+        }
+        cnt ++;
+    }
+}
+
+int main()
+{
+    cin >> N >> K;
+    if (N == K) 
+    {
+        cout << 0 << endl;
+        return 0;
+    }
+
+    BFS(N);
+
+    cout << result << '\n';
+    return 0;
+}
