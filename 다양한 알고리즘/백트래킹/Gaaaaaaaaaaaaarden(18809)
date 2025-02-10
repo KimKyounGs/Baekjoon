@@ -1,0 +1,194 @@
+/*
+1. 먼저 배양액을 심을 수 있는 땅에 대해서 따로 groundPos 벡터에 저장한다.
+2. 백트래킹을 이용해서 groundUse에 땅의 위치를 저장한다. 방식은 조합 방식이다.
+3. v에 초록색 빨간색 배양액의 개수만큼 차례로 저장한다.
+4. 그런 다음 초록색 빨간색 중복이 안되게끔 조합을 구한다. (ex 3 3 4 -> 3 3 4, 3 4 3, 4 3 3)
+-> 이 방식에서 next_permutation함수를 이용해서 조합을 구하고 Set 컨테이너를 통해서 중복을 제거한다. 
+5. uniquePernutations(Set 컨테이너)에 저장된 배양액 조합을 groundUse에 대입하여 BFS문을 실행한다.
+6. BFS문에서는 pq을 사용했다. pq는 심은 시간(cnt), 배양액 색깔(color), 위치(nx, ny)을 기준으로 오름차순 했다.
+7. 초록색(3)과 빨간색(4) 배양액이 동시에 만나는 조건이 부합되면 꽃(5)이 핀다.
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#include <set>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, G, R;
+int graph[51][51][2];
+int temp[51][51][2];
+int result = 0;
+int resultMax = 0;
+vector<int> v;
+set<vector<int>> uniquePermutations;
+vector<pair<int, int>> groundPos;
+vector<pair<int ,int>> groundUse;
+bool groundVisited[2501];
+priority_queue<pair<pair<int,int>, pair<int, int>>, vector<pair<pair<int,int>, pair<int, int>>>, greater<pair<pair<int,int>, pair<int, int>>>> pq;
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void BFS()
+{
+    while(!pq.empty())
+    {
+        int cnt = pq.top().first.first;
+        int color = pq.top().first.second;
+        int x = pq.top().second.first;
+        int y = pq.top().second.second;   
+        pq.pop();
+
+        // 꽃이 핀 곳이면
+        if (temp[x][y][0] == 5) continue;
+
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            // 범위제한 및 호수 뛰어넘기
+            if (nx < 0 || nx > N-1 || ny < 0 || ny > M-1 || temp[nx][ny] == 0) continue;
+
+            // 아무도 것도 없는 땅
+            if (temp[nx][ny][0] == 1 || temp[nx][ny][0] == 2)
+            {
+                temp[nx][ny][0] = color;
+                temp[nx][ny][1] = cnt+1;
+                pq.push({{cnt+1, color}, {nx, ny}});
+            }
+
+            // 초록색인데 빨강색을 동시에 만났을 때
+            else if (color == 3 && temp[nx][ny][0] == 4 && temp[nx][ny][1] == cnt+1)
+            {
+                temp[nx][ny][0] = 5;
+                result ++;
+            }
+
+            // 빨강색인 초록색을 동시에 만났을 때
+            else if (color == 4 && temp[nx][ny][0] == 3 && temp[nx][ny][1] == cnt+1)
+            {
+                temp[nx][ny][0] = 5;
+                result ++;
+            }
+        }
+    }
+}
+
+void Simulation()
+{
+    for (auto& perm : uniquePermutations)
+    {
+        result = 0;
+        memcpy(temp, graph, sizeof(graph));
+        // 씨앗 심기.
+        for (int j = 0; j < groundUse.size(); j ++)
+        {
+            int color = perm[j];
+            int x = groundUse[j].first;
+            int y = groundUse[j].second;
+            temp[x][y][0] = color;
+            pq.push({{0,color},{x, y}});
+        }
+
+        BFS();
+        // if (resultMax < result)
+        // {
+        //     resultMax = result;
+        //     cout << "perm = ";
+        //     for (auto num : perm)
+        //     {
+        //         cout << num << " ";
+        //     }
+        //     cout << endl;
+        //     cout << "groundUse = "; 
+        //     for (auto num : groundUse)
+        //     {
+        //         cout << num.first << " " << num.second << " ,";
+        //     }
+        //     cout << endl;
+
+        //     cout << "BFS = " << endl;
+        //     for (int index = 0; index < N; index ++)
+        //     {
+        //         for (int index1 = 0; index1 < M; index1 ++)
+        //         {
+        //             cout << temp[index][index1][0] << " ";
+        //         }
+        //         cout << endl;
+        //     }
+        //     cout << endl;
+        //     cout << "result = " << result << endl;
+        // }
+        resultMax = max(resultMax, result);
+    }
+}   
+
+
+void Back(int cnt, int num)
+{
+    if (cnt == G + R)
+    {
+        Simulation();
+        return;
+    }
+
+    for (int i = num; i < groundPos.size(); i ++)
+    {   
+        if (groundVisited[i] == true) continue;
+        groundVisited[i] = true;
+        groundUse.push_back({groundPos[i].first, groundPos[i].second});
+        Back(cnt+1, i+1);
+        groundUse.pop_back();
+        groundVisited[i] = false;
+    }
+}
+
+void Permutations(vector<int> v)
+{
+    // set<vector<int>> uniquePermutations;
+    // sort(v.begin(), v.end());
+    do {
+        uniquePermutations.insert(v);
+    } while(next_permutation(v.begin(), v.end()));
+}
+
+int main()
+{   
+    cin >> N >> M >> G >> R;
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < M; j ++) 
+        {
+            cin >> graph[i][j][0];
+            if (graph[i][j][0] == 2)
+            {
+                groundPos.push_back({i,j});
+            }
+        }
+    }
+
+    for (int i = 0; i < G; i ++)
+    {
+        v.push_back(3);
+    }
+    for (int j = 0; j < R; j ++)
+    {
+        v.push_back(4);
+    }
+
+    Permutations(v);
+
+    Back(0, 0);
+
+    cout << resultMax << endl;
+}
