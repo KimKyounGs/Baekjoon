@@ -1,0 +1,149 @@
+/*
+
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#include <set>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int N, M, K;
+int R, C;
+int graph[41][41];
+int sticker[11][11];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+
+void Copy(int x, int y)
+{
+    for (int i = 0; i < R; i++) {
+        for (int j = 0; j < C; j++) {
+            if (graph[x+i][y+j] == 0 && sticker[i][j] == 1)
+            {
+                graph[x + i][y + j] = sticker[i][j];
+            }
+        }
+    }
+}
+
+void RotateSticker()
+{
+    int temp[11][11];
+    for (int i = 0; i < R; i ++)
+    {
+        for (int j = 0; j < C; j ++)
+        {
+            temp[j][R-1-i] = sticker[i][j];
+        }
+    }
+    int tempNum = R;
+    R = C;
+    C = tempNum;
+
+    copy(&temp[0][0], &temp[0][0] + 11*11, &sticker[0][0]);
+}
+
+bool CheckGraph(int x, int y)
+{
+    if (x + R > N || y + C > M) return false;
+
+    for (int i = x; i < x + R; i ++)
+    {
+        for (int j = y; j < y + C; j ++)
+        {
+            if (graph[i][j] == 1 && sticker[i-x][j-y] == 1)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool FindLocation()
+{
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < M; j ++)
+        {
+            if (CheckGraph(i, j))
+            {
+                Copy(i, j);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void Simulation()
+{
+    int cnt = 0;
+    while(cnt < 4)
+    {
+        if (FindLocation()) 
+        {   
+            break;
+        }
+        else 
+        {
+            RotateSticker();
+        }
+    }
+
+    cout << "현재 graph" << endl;
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < M; j ++)
+        {
+            cout << graph[i][j] << ' ';
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+int main()
+{
+    cin >> N >> M >> K;
+    while(K--)
+    {
+        memset(sticker, 0, sizeof(sticker));
+        cin >> R >> C;
+        for (int i = 0; i < R; i ++)
+        {
+            for (int j = 0; j < C; j ++)
+            {
+                cin >> sticker[i][j];
+            }
+        }
+        Simulation();
+    }
+
+    int result = 0;
+    for (int i = 0; i < N; i ++)
+    {
+        for (int j = 0; j < M; j ++)
+        {
+            if (graph[i][j] == 1)
+            {
+                result ++;
+            }
+        }
+    }   
+
+    cout << result << endl;
+
+    return 0;
+}

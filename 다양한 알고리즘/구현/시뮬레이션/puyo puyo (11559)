@@ -1,0 +1,166 @@
+/*
+
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#include <set>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+char graph[12][6];
+bool visited[12][6];
+int dx[] = {1, -1, 0, 0};
+int dy[] = {0, 0, 1, -1};
+bool check;
+int result = 0;
+vector<pair<int, int>> v;
+
+void Down()
+{
+    for (int i = 10; i >= 0; i --)
+    {
+        for (int j = 0; j < 6; j ++)
+        {
+            if (graph[i][j] != '.')
+            {
+                char c = graph[i][j];
+                int idx = i;
+                while(true)
+                {
+                    if (idx+1 <= 11 && graph[idx+1][j] == '.')
+                    {
+                        idx ++;
+                    }
+                    else break;
+                }
+                if (idx != i)
+                {
+                    graph[idx][j] = c;
+                    graph[i][j] = '.';
+                }
+            }
+        }
+    }
+}
+
+void Remove()
+{
+    for (int i = 0; i < v.size(); i ++)
+    {
+        graph[v[i].first][v[i].second] = '.';
+    }
+}
+
+int BFS(int x, int y)
+{
+    queue<pair<int, int>> q;
+    q.push({x, y});
+    visited[x][y] = true;
+    v.push_back({x, y});
+    int cnt = 1;
+
+    while(!q.empty())
+    {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+
+        for (int i = 0; i < 4; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx < 0 || ny < 0 || nx > 11 || ny > 5 || graph[nx][ny] == '.' || visited[nx][ny]) continue;
+
+            if (graph[nx][ny] == graph[x][y])
+            {
+                cnt ++;
+                q.push({nx, ny});
+                visited[nx][ny] = true;
+                v.push_back({nx, ny});
+            }
+        }
+    }
+    return cnt;
+}
+
+void Simulation()
+{
+    while(true)
+    {
+        check = false;
+        for (int i = 0; i < 12; i ++)
+        {
+            for (int j = 0; j < 6; j ++)
+            {
+                if (graph[i][j] != '.') 
+                {
+                    v.clear();
+                    memset(visited, 0, sizeof(visited));
+                    int cnt = BFS(i,j);
+                    if (cnt >= 4)
+                    {
+                        Remove();
+                        check = true;
+                    }
+                }
+            }
+        }
+
+        // cout << endl << "Remove " << endl;
+        // for (int i = 0; i < 12; i ++)
+        // {
+        //     for (int j = 0; j < 6; j ++)
+        //     {
+        //         cout << graph[i][j] << ' ';
+        //     }
+        //     cout << endl;
+        // }
+
+        if (check)
+        {
+            result ++;
+            Down();
+        }
+        else // 더 이상 연쇄반응 x
+        {
+            break;
+        }
+
+        // cout << endl << "Down " << endl;
+        // for (int i = 0; i < 12; i ++)
+        // {
+        //     for (int j = 0; j < 6; j ++)
+        //     {
+        //         cout << graph[i][j] << ' ';
+        //     }
+        //     cout << endl;
+        // }
+    }
+}
+
+int main()
+{
+    for (int i = 0; i < 12; i ++)
+    {
+        for (int j = 0; j < 6; j ++)
+        {
+            cin >> graph[i][j];
+        }
+    }
+
+    Simulation();
+
+    cout << result << endl;
+    return 0;
+}
