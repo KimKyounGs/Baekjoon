@@ -1,0 +1,251 @@
+/*
+ways : 쌓아올릴 블록 순서
+ways2 : 각각의 블록 회전 횟수
+
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <cstring>
+#include <deque>
+#include <map>
+#include <set>
+#define INF 1e9
+#define endl '\n'
+
+using namespace std;
+
+int graph[5][5][5];
+int temp[5][5][5];
+int temp2[5][5][5];
+int distances[5][5][5];
+bool visited[5][5][5];
+int result = INF;
+int dx[] = {1, -1, 0, 0, 0, 0};
+int dy[] = {0, 0, 1, -1, 0, 0};
+int dz[] = {0, 0, 0, 0, 1, -1};
+vector<int> ways;
+vector<int> ways2;
+bool wayVisited[5];
+
+struct Point
+{
+    int x;
+    int y;
+    int z;
+};
+
+void Reset()
+{
+    memset(visited, 0, sizeof(visited));
+    memset(distances, 0, sizeof(distances));
+}
+
+bool Check()
+{
+    if (temp[0][0][0] == 0 || temp[4][4][4] == 0) return false;
+    return true;
+}
+
+void Exits()
+{
+    if (!Check()) return;
+    Reset();
+    queue<Point> q;
+    q.push({0, 0, 0});
+    visited[0][0][0] = true;
+    distances[0][0][0] = 0;
+
+    while(!q.empty())
+    {
+        int x = q.front().x;
+        int y = q.front().y;
+        int z = q.front().z;    
+        q.pop();
+        for (int i = 0; i < 6; i ++)
+        {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            int nz = z + dz[i];
+            if (nx < 0 || nx > 4 || ny < 0 || ny > 4 || nz < 0 || nz > 4 || visited[nx][ny][nz]) continue;
+
+            if (temp[nx][ny][nz] == 1)
+            {
+                q.push({nx,ny,nz});
+                distances[nx][ny][nz] = distances[x][y][z] + 1;
+                visited[nx][ny][nz] = true;
+            }
+        }
+
+    }
+}
+
+void Build()
+{
+    for (int i = 0; i < 5; i ++)
+    {
+        for (int j = 0; j < 5; j ++)
+        {
+            for (int k = 0; k < 5; k ++)
+            {
+                temp[ways[i]][j][k] = temp2[i][j][k];
+            }
+        }
+    }
+}
+
+void Rotate(int idx, int cnt)
+{
+    int rotateTemp1[5][5] = {0, };
+    for (int i = 0; i < 5; i ++)
+    {
+        for (int j = 0; j < 5; j ++)
+        {
+            rotateTemp1[i][j] = graph[idx][i][j];
+        }
+    }
+
+    cnt %= 4;
+    for (int c = 0; c < cnt; c ++)
+    {
+        int rotateTemp2[5][5];
+        for (int i = 0; i < 5; i ++)
+        {
+            for (int j = 0; j < 5; j ++)
+            {
+                rotateTemp2[j][5 - 1 - i] = rotateTemp1[i][j];
+            }
+        }
+
+        // rotateTemp2 배열을 rotateTemp1 복사
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                rotateTemp1[i][j] = rotateTemp2[i][j];
+            }
+        }
+    }
+
+    for (int i = 0; i < 5; i ++)
+    {
+        for (int j = 0; j < 5; j ++)
+        {
+            temp2[idx][i][j] = rotateTemp1[i][j];
+        }
+    }
+}
+
+void Back2(int cnt)
+{
+    if (cnt == 5)
+    {   
+        // cout << endl;
+        // cout << "-----ways----- " << endl;
+        // for (int i = 0; i < 5; i ++)
+        // {
+        //     cout << ways[i] << ' ';
+        // }
+        // cout << endl;
+
+        // cout << "-----ways2----- " << endl;
+        // for (int i = 0; i < 5; i ++)
+        // {
+        //     cout << ways2[i] << ' ';
+        // }
+        // cout << endl;
+
+
+        // 돌려주고
+        for (int i = 0; i < 5; i ++)
+        {
+            Rotate(i, ways2[i]);
+        }
+
+        // 다르게 쌓아주고
+        Build();
+
+        // cout << endl << endl;
+        // for (int i = 0; i < 5; i ++)
+        // {
+        //     for (int j = 0; j < 5; j ++)
+        //     {
+        //         for (int k = 0; k < 5; k ++)
+        //         {
+        //             cout << temp[i][j][k] << ' ';
+        //         }
+        //         cout << endl;
+        //     }
+        //     cout << endl;
+        // }
+
+        // 탈출 시작
+        Exits();
+        if (distances[4][4][4] > 1)
+        {
+            result = min(result, distances[4][4][4]);
+        }
+
+        return;
+    }
+
+    for (int i = 1; i <= 4; i ++)
+    {
+        ways2.push_back(i);
+        Back2(cnt + 1);
+        ways2.pop_back();
+    }
+}
+
+void Back(int cnt)
+{
+    if (cnt == 5)
+    {
+        Back2(0);
+        return;
+    }
+
+    for (int i = 0; i < 5; i ++)
+    {
+        if (wayVisited[i]) continue;
+        wayVisited[i] = true;
+        ways.push_back(i);
+        Back(cnt + 1);
+        ways.pop_back();
+        wayVisited[i] = false;
+    }
+}
+
+void Simulation()
+{
+    Back(0);
+}
+
+int main()
+{
+    for (int i = 0; i < 5; i ++)
+    {
+        for (int j = 0; j < 5; j ++)
+        {
+            for (int k = 0; k < 5; k ++)
+            {
+                cin >> graph[i][j][k];
+            }
+        }
+    }
+
+    Simulation();
+
+    if (result == INF)
+    {
+        cout << -1 << endl;
+    }
+    else
+    {
+        cout << result << endl;
+    }
+    return 0;
+}
