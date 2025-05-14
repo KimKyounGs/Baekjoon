@@ -1,5 +1,5 @@
 /*
-아이디어 : 처음 외벽을 조사할 때 들어갈 수 있는지 확인한다.
+아이디어 : N+1에 궁수 3명 배치하는 것을 떠올려라!
 
 */
 #include <iostream>
@@ -45,7 +45,7 @@ vector<pair<int, pair<int,int>>> BFS(int x, int y)
     int limit = x;
     q.push({{x, y},0});
     visited[x][y] = true;
-    
+
     while(!q.empty())
     {
         int x = q.front().first.first;
